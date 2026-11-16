@@ -46,7 +46,8 @@ def test_evolution_is_reproducible_and_seed_sensitive():
 
 
 @pytest.mark.parametrize("gate,kappa", [("kappa", 0.0), ("kappa", 0.5), ("kappa", 1.0),
-                                        ("welfare", 0.0), ("noharm", 0.0)])
+                                        ("welfare", 0.0), ("welfare_universal", 0.0),
+                                        ("noharm", 0.0)])
 def test_all_gates_spend_the_same_simulation_budget(gate, kappa):
     e = EvoConfig(generations=3, K=2, M=2, gate=gate, kappa=kappa)
     r = evolve(DevSampler(CFG), C, e, seed=1)

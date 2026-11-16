@@ -29,6 +29,11 @@ class WorldConfig:
     payments_per_bank: int = 20
     heterogeneity: float = 0.0  # bank size weight ~ rank ** -heterogeneity
     p_urgent: float = 0.15
+    # share of payments that belong to closed cycles (A->B->C->A, equal amounts).
+    # Cycle payments net to zero for every bank, so liquidity is needed for the
+    # *timing* of gross flows rather than to fund net positions, as in real
+    # large-value systems where daily turnover is many times posted liquidity.
+    balanced: float = 0.85
 
 
 def size_weights(cfg: WorldConfig) -> np.ndarray:
@@ -50,7 +55,8 @@ def expected_outflow(cfg: WorldConfig) -> tuple[int, ...]:
 def make_scenario(cfg: WorldConfig, family: str, split: str, index: int) -> Scenario:
     rng = np.random.default_rng(
         [_SPLIT_ID[split], _FAMILY_ID[family], index, cfg.n, cfg.T,
-         cfg.payments_per_bank, int(round(cfg.heterogeneity * 1000))]
+         cfg.payments_per_bank, int(round(cfg.heterogeneity * 1000)),
+         int(round(cfg.balanced * 1000))]
     )
     n, T = cfg.n, cfg.T
     w = size_weights(cfg)
@@ -76,24 +82,39 @@ def make_scenario(cfg: WorldConfig, family: str, split: str, index: int) -> Scen
         start = int(rng.integers(2, T // 2))
         outage = ((hit, start, start + T // 4),)
 
-    senders = rng.choice(n, size=P, p=send_w)
-    pay = []
-    for s in senders:
-        pr = recv_w.copy()
-        pr[s] = 0.0
-        pr /= pr.sum()
-        r = int(rng.choice(n, p=pr))
+    def draw_amount() -> int:
         mu = -(sigma**2 - AMOUNT_SIGMA**2) / 2  # keep the mean amount fixed
-        amt = max(1, int(round(AMOUNT_SCALE * rng.lognormal(mu, sigma))))
+        return max(1, int(round(AMOUNT_SCALE * rng.lognormal(mu, sigma))))
+
+    def draw_timing() -> tuple[int, int]:
         if family == "late_heavy":
             arr = int(min(T - 2, math.floor(rng.beta(3.0, 1.5) * (T - 1))))
         else:
             arr = int(rng.integers(0, T - 1))
-        if rng.random() < cfg.p_urgent:
-            dl = min(T - 1, arr + int(rng.integers(0, 3)))
+        dl = min(T - 1, arr + int(rng.integers(0, 3))) if rng.random() < cfg.p_urgent else -1
+        return arr, dl
+
+    pay = []
+    while len(pay) < P:
+        s = int(rng.choice(n, p=send_w))
+        if rng.random() < cfg.balanced and n >= 2:
+            length = int(rng.integers(2, min(n, 4) + 1))
+            members = [s]
+            pr = recv_w.copy()
+            for _ in range(length - 1):
+                pr[members[-1]] = 0.0
+                q = pr / pr.sum()
+                members.append(int(rng.choice(n, p=q)))
+            amt = draw_amount()
+            for a, b in zip(members, members[1:] + members[:1]):
+                arr, dl = draw_timing()
+                pay.append((a, b, amt, arr, dl))
         else:
-            dl = -1
-        pay.append((int(s), r, amt, arr, dl))
+            pr = recv_w.copy()
+            pr[s] = 0.0
+            pr /= pr.sum()
+            arr, dl = draw_timing()
+            pay.append((s, int(rng.choice(n, p=pr)), draw_amount(), arr, dl))
     pay.sort(key=lambda p: (p[3], p[0], p[1], p[2]))
     arrivals: list[list[int]] = [[] for _ in range(T)]
     for k, p in enumerate(pay):

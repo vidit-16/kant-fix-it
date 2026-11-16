@@ -22,14 +22,14 @@ PILOT_SEEDS = range(1000, 1006)
 
 def costs_for(delay_day: float) -> Costs:
     """delay_day = cost of delaying one unit for a whole day, in units of cL."""
-    return Costs(cL=1.0, cD=delay_day / T, cX=0.5, cE=2.0)
+    return Costs(cL=1.0, cD=delay_day / T, cX=2.0, cE=10.0)
 
 
 def spec(name, seed, *, delay_day, n=6, het=0.0, gate="kappa", kappa=0.0, fee=0.0,
-         sequential=False, defector=None, split="holdout", kind="evolve"):
+         sequential=False, defector=None, split="holdout", kind="evolve", gens=40):
     return dict(exp=name, seed=seed, delay_day=delay_day, n=n, het=het, gate=gate,
                 kappa=kappa, fee=fee, sequential=sequential, defector=defector,
-                split=split, kind=kind)
+                split=split, kind=kind, gens=gens)
 
 
 def run_one(sp: dict) -> dict:
@@ -44,7 +44,7 @@ def run_one(sp: dict) -> dict:
         kb = None
         if sp["defector"] is not None:
             kb = tuple(0.0 if i == sp["defector"] else sp["kappa"] for i in range(sp["n"]))
-        ecfg = EvoConfig(gate=sp["gate"], kappa=sp["kappa"], fee=sp["fee"],
+        ecfg = EvoConfig(generations=sp["gens"], gate=sp["gate"], kappa=sp["kappa"], fee=sp["fee"],
                          sequential=sp["sequential"], kappa_by_bank=kb)
         r = evolve(sampler, costs, ecfg, sp["seed"])
         profile, sims = r.profile, r.sims
@@ -59,7 +59,7 @@ def run_one(sp: dict) -> dict:
 def experiments(which: str) -> list[dict]:
     S = []
     if which == "pilot":
-        for d in (0.5, 1.0, 2.0, 4.0):
+        for d in (0.1, 0.5, 2.0, 6.0):
             for seed in PILOT_SEEDS:
                 for g, k in (("kappa", 0.0), ("kappa", 1.0), ("welfare", 0.0)):
                     S.append(spec("pilot", seed, delay_day=d, gate=g, kappa=k, split="pilot"))
@@ -71,18 +71,22 @@ def experiments(which: str) -> list[dict]:
             for k in (0.0, 0.25, 0.5, 0.75, 1.0):
                 S.append(spec("E1", seed, delay_day=D, kappa=k))
             S.append(spec("E1", seed, delay_day=D, gate="welfare"))
+            S.append(spec("E1", seed, delay_day=D, gate="welfare_universal"))
             S.append(spec("E1", seed, delay_day=D, gate="noharm"))
             for fee in (1.0, 2.0, 4.0, 8.0):
                 S.append(spec("E1", seed, delay_day=D, fee=fee))
             S.append(spec("E1", seed, delay_day=D, kind="planner", gate="planner"))
         elif which == "E2":  # heterogeneity
             for het in (0.75, 1.5):
-                for g, k in (("kappa", 0.0), ("kappa", 1.0), ("welfare", 0.0), ("noharm", 0.0)):
+                for g, k in (("kappa", 0.0), ("kappa", 1.0), ("welfare", 0.0),
+                             ("welfare_universal", 0.0), ("noharm", 0.0)):
                     S.append(spec("E2", seed, delay_day=D, het=het, gate=g, kappa=k))
+                S.append(spec("E2", seed, delay_day=D, het=het, kind="planner", gate="planner"))
         elif which == "E3":  # cost regime
             for d in OTHER_DELAY_DAYS:
                 for g, k in (("kappa", 0.0), ("kappa", 1.0), ("welfare", 0.0)):
                     S.append(spec("E3", seed, delay_day=d, gate=g, kappa=k))
+                S.append(spec("E3", seed, delay_day=d, kind="planner", gate="planner"))
         elif which == "E4":  # one private defector among universalizing banks
             for het in (0.0, 1.5):
                 S.append(spec("E4", seed, delay_day=D, het=het, kappa=1.0, defector=seed % 6))
@@ -90,14 +94,19 @@ def experiments(which: str) -> list[dict]:
             for g, k in (("kappa", 0.0), ("kappa", 1.0), ("welfare", 0.0)):
                 S.append(spec("E5seq", seed, delay_day=D, gate=g, kappa=k, sequential=True))
                 S.append(spec("E5n10", seed, delay_day=D, n=10, gate=g, kappa=k))
+            S.append(spec("E5n10", seed, delay_day=D, n=10, kind="planner", gate="planner"))
+        elif which == "E6":  # three times the search budget
+            if seed < 10:
+                for g, k in (("kappa", 0.0), ("kappa", 1.0), ("welfare", 0.0)):
+                    S.append(spec("E6", seed, delay_day=D, gate=g, kappa=k, gens=120))
         else:
             raise SystemExit(f"unknown experiment {which}")
     return S
 
 
 # Frozen after the pilot; see docs/PREREGISTRATION.md.
-PRIMARY_DELAY_DAY = 1.0
-OTHER_DELAY_DAYS = (0.5, 2.0, 4.0)
+PRIMARY_DELAY_DAY = 0.5
+OTHER_DELAY_DAYS = (0.1, 2.0, 6.0)
 
 
 def main(argv=None):

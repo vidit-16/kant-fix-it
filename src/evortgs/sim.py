@@ -42,8 +42,8 @@ Profile = tuple[Policy, ...]
 class Costs:
     cL: float = 1.0   # per unit of opening liquidity, per day
     cD: float = 0.05  # per unit of value, per tick of delay
-    cX: float = 0.5   # per unit of time-critical value that misses its deadline
-    cE: float = 2.0   # per unit of value unsettled at close
+    cX: float = 2.0   # per unit of time-critical value that misses its deadline
+    cE: float = 10.0  # per unit of value unsettled at close
 
 
 @dataclass(frozen=True)

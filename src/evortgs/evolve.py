@@ -16,6 +16,9 @@ Gates
                   Reads only the proposing bank's own cost.
 ``welfare``       score = change in total system cost under unilateral change.
                   Needs every bank's cost (a central observer).
+``welfare_universal``  score = change in total system cost when every bank
+                  applies the same shift. Separates the effect of *joint moves*
+                  from the effect of *whose cost is read*.
 ``noharm``        accept the best private improvement among candidates that do
                   not raise the summed cost of the other banks.
 
@@ -35,11 +38,12 @@ from .sim import Costs, Profile, Scenario, simulate
 
 @dataclass(frozen=True)
 class EvoConfig:
-    generations: int = 25
-    K: int = 3            # candidates per bank per generation
+    generations: int = 40
+    K: int = 4            # candidates per bank per generation
     M: int = 8            # half-batch of scenarios; each candidate costs 2*M sims
-    sigma: float = 0.12   # mutation scale
-    gate: str = "kappa"   # kappa | welfare | noharm
+    sigma: float = 0.15   # mutation scale at generation 0
+    sigma_end: float = 0.03  # mutation scale at the last generation (linear decay)
+    gate: str = "kappa"   # kappa | welfare | welfare_universal | noharm
     kappa: float = 0.0
     fee: float = 0.0
     sequential: bool = False  # banks update one after another instead of simultaneously
@@ -83,7 +87,9 @@ def evolve(sampler: DevSampler, costs: Costs, cfg: EvoConfig, seed: int,
     for g in range(cfg.generations):
         # scenario indices depend on (seed, generation) only -> paired across gates
         scns = sampler.batch(start=seed * 100_000 + g * S, count=S)
-        deltas = rng.normal(0.0, cfg.sigma, size=(n, cfg.K, 3))
+        frac = g / max(1, cfg.generations - 1)
+        sig = cfg.sigma + (cfg.sigma_end - cfg.sigma) * frac
+        deltas = rng.normal(0.0, sig, size=(n, cfg.K, 3))
         base = _costs(scns, profile, costs, cfg.fee)
         res.sims += S
         gen_cost = float(base[:, :, 0].sum(axis=1).mean())
@@ -120,6 +126,11 @@ def evolve(sampler: DevSampler, costs: Costs, cfg: EvoConfig, seed: int,
                                       + kappa * (ck[:, i, 1] - base[h:, i, 1]).mean())
                 elif cfg.gate == "welfare":
                     c = _costs(scns, uni, costs, cfg.fee)
+                    score = float((c[:, :, 0].sum(axis=1) - base[:, :, 0].sum(axis=1)).mean())
+                elif cfg.gate == "welfare_universal":
+                    allp = tuple(tuple(_clip(cur[j][a] + d[a]) for a in range(3))
+                                 for j in range(n))
+                    c = _costs(scns, allp, costs, cfg.fee)
                     score = float((c[:, :, 0].sum(axis=1) - base[:, :, 0].sum(axis=1)).mean())
                 elif cfg.gate == "noharm":
                     c = _costs(scns, uni, costs, cfg.fee)
