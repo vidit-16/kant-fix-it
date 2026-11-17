@@ -96,17 +96,20 @@ def planner_asym(sampler: DevSampler, seed: int, batch: int = 64, sweeps: int = 
 
 
 def spec(name, seed, *, gamma, n=6, gate="kappa", kappa=0.0, instrument=None, level=0.0,
-         split="holdout", kind="evolve", gens=40, het=None):
+         split="holdout", kind="evolve", gens=40, het=None, skew=None):
     d = dict(exp=name, seed=seed, gamma=gamma, n=n, gate=gate, kappa=kappa,
              instrument=instrument, level=level, split=split, kind=kind, gens=gens)
     if het is not None:
         d["het"] = het
+    if skew is not None:
+        d["skew"] = skew
     return d
 
 
 def run_one(sp: dict) -> dict:
     t0 = time.perf_counter()
-    cfg = CodebaseConfig(n=sp["n"], conceal_cost=sp["gamma"], heterogeneity=sp.get("het", 0.0))
+    cfg = CodebaseConfig(n=sp["n"], conceal_cost=sp["gamma"], heterogeneity=sp.get("het", 0.0),
+                         exposure_skew=sp.get("skew", 0.0))
     sampler = DevSampler(cfg, split="pilot" if sp["split"] == "pilot" else "dev")
     if sp["kind"] == "planner":
         profile = planner(sampler, sp["seed"])
@@ -162,6 +165,21 @@ def experiments(which: str) -> list[dict]:
                         S.append(spec("cbpilot2", seed, instrument=inst, level=lev, **kw))
                 S.append(spec("cbpilot2", seed, kind="planner", gate="planner", **kw))
                 S.append(spec("cbpilot2", seed, kind="planner_asym", gate="planner_asym", **kw))
+        return S
+    if which == "cbpilot3":  # exposure-heterogeneity pilot (size heterogeneity preserved symmetry)
+        grids = {"proxy": (0.1, 0.2, 0.4, 0.8), "surface": (1.0, 2.0, 4.0, 8.0),
+                 "ambient": (0.5, 1.0, 1.5, 2.0)}
+        for seed in PILOT_SEEDS:
+            for skew in (0.75, 1.5):
+                kw = dict(gamma=0.25, skew=skew, split="pilot")
+                for k in (0.0, 0.5, 1.0):
+                    S.append(spec("cbpilot3", seed, kappa=k, **kw))
+                S.append(spec("cbpilot3", seed, gate="welfare", **kw))
+                for inst, levels in grids.items():
+                    for lev in levels:
+                        S.append(spec("cbpilot3", seed, instrument=inst, level=lev, **kw))
+                S.append(spec("cbpilot3", seed, kind="planner", gate="planner", **kw))
+                S.append(spec("cbpilot3", seed, kind="planner_asym", gate="planner_asym", **kw))
         return S
     if which == "E9":  # frozen in docs/PREREGISTRATION_E9.md
         for seed in CONFIRM_SEEDS:

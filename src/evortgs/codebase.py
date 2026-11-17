@@ -73,10 +73,19 @@ class CodebaseConfig:
     convex: float = 0.3          # quadratic term of the incident rate
     incident_loss: float = 0.2
     heterogeneity: float = 0.0   # module size ~ rank ** -heterogeneity, mean 1
+    # incident exposure ~ rank ** -exposure_skew, mean 1: central modules absorb
+    # most incidents, peripheral ones rarely break; coupling enters the shared
+    # debt by size alone, so exposure and contribution come apart
+    exposure_skew: float = 0.0
 
 
 def sizes(cfg: CodebaseConfig) -> np.ndarray:
     w = np.arange(1, cfg.n + 1, dtype=float) ** (-cfg.heterogeneity)
+    return w * cfg.n / w.sum()
+
+
+def exposure(cfg: CodebaseConfig) -> np.ndarray:
+    w = np.arange(1, cfg.n + 1, dtype=float) ** (-cfg.exposure_skew)
     return w * cfg.n / w.sum()
 
 
@@ -186,6 +195,8 @@ def simulate(b: Batch, profile, cfg: CodebaseConfig, check: bool = False) -> Out
     gain = 1.0 + cfg.boost * (2 * s - s * s) * (1.0 - cfg.conceal_cost * m)   # (n,)
     keep = 1.0 - cfg.harden_cost * q
     expo = 1.0 - cfg.harden_effect * q
+    if cfg.exposure_skew:
+        expo = expo * exposure(cfg)
     load = s * (1.0 + cfg.conceal_harm * m)                                     # debt per unit capacity
     S, T, n = b.cap.shape
     D = b.d0.astype(float).copy()

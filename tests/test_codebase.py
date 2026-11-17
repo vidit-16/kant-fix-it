@@ -26,13 +26,14 @@ profiles = st.lists(policy, min_size=4, max_size=4)
 def reference_simulate(b, i, profile, cfg):
     """Slow, scalar re-implementation of one scenario, written from the docstring."""
     A = cb.sizes(cfg)
+    W = cb.exposure(cfg)
     D = float(b.d0[i])
     cost = [0.0] * cfg.n
     for t in range(cfg.T):
         newD = (1 - cfg.decay) * D
         for a, (s, m, q) in enumerate(profile):
             capA = b.cap[i, t, a] * A[a]
-            lam = cfg.rate * (D + cfg.convex * D * D) * b.mult[i, t] * (1 - cfg.harden_effect * q)
+            lam = cfg.rate * (D + cfg.convex * D * D) * b.mult[i, t] * (1 - cfg.harden_effect * q) * W[a]
             u, k, p, c = b.u[i, t, a], 0, math.exp(-lam), math.exp(-lam)
             while u > c and k < cb.KMAX:
                 k += 1
@@ -221,3 +222,36 @@ def test_e9_specification_unchanged():
     from evortgs.cb_experiments import experiments
     S = experiments("E9")
     assert len(S) == 1280 and all("het" not in s for s in S)
+
+
+@settings(max_examples=15, deadline=None)
+@given(profiles)
+def test_vectorised_matches_reference_with_skewed_exposure(prof):
+    cfg = cb.CodebaseConfig(n=4, T=8, exposure_skew=1.5, heterogeneity=0.75)
+    b = cb.make_batch(cfg, "base", "dev", 0, 4)
+    o = cb.simulate(b, prof, cfg, check=True)
+    for i in range(len(b)):
+        assert np.allclose(o.cost[i], reference_simulate(b, i, prof, cfg), rtol=1e-9, atol=1e-9)
+
+
+def test_exposure_skew_moves_incidents_not_debt():
+    flat = cb.CodebaseConfig(n=4, T=8)
+    skew = cb.CodebaseConfig(n=4, T=8, exposure_skew=1.5)
+    assert np.isclose(cb.exposure(skew).mean(), 1.0) and cb.exposure(skew)[0] > cb.exposure(skew)[-1]
+    P = [(0.8, 0.0, 0.0)] * 4
+    a, c = cb.simulate(B, P, flat), cb.simulate(B, P, skew)
+    assert np.array_equal(a.debt, c.debt)
+    assert c.charges[:, 0, 2].sum() >= a.charges[:, 0, 2].sum()
+
+
+def test_ambient_alignment_holds_with_skewed_exposure():
+    cfg = cb.CodebaseConfig(n=4, T=8, exposure_skew=1.5)
+    b = cb.make_batch(cfg, "base", "dev", 0, 6)
+    base = [(0.5, 0.0, 0.5)] * 4
+    for i in (0, 3):
+        gaps = []
+        for p in [(0.0, 0.0, 0.0), (0.9, 0.3, 0.1), (0.4, 1.0, 1.0)]:
+            o = cb.simulate(b, base[:i] + [p] + base[i + 1:], cfg)
+            gaps.append(cb.private_cost(o, "ambient", 1.0)[:, i] - o.system_cost)
+        for g in gaps[1:]:
+            assert np.allclose(g, gaps[0])
