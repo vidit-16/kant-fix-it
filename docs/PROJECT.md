@@ -2,11 +2,12 @@
 
 Single source of truth for decisions, evidence, status and open questions.
 Supersedes the handoff of 17 November 2026 where they conflict.
-Last updated: 17 November 2026.
+Last updated: 18 November 2026.
 
 Related files: [PREREGISTRATION.md](PREREGISTRATION.md),
 [PREREGISTRATION_E8.md](PREREGISTRATION_E8.md) and
-[PREREGISTRATION_E9.md](PREREGISTRATION_E9.md) (frozen protocols),
+[PREREGISTRATION_E9.md](PREREGISTRATION_E9.md),
+[PREREGISTRATION_E10.md](PREREGISTRATION_E10.md) (frozen protocols),
 [REPORT.md](REPORT.md) (paper-style write-up), `runs/` (raw records,
 `results.json`, `results_e8.json`, `results_e9.json`). The next-stage working
 notes of 17 November 2026 are folded into §7 and §9; that file is deleted.
@@ -28,14 +29,19 @@ notes of 17 November 2026 are folded into §7 and §9; that file is deleted.
 | Second environment (shared codebase, hidden coupling) | Built, 24 further tests (64 in total) (§5.9) |
 | Pre-registration for E9 | Committed before confirmatory runs (`0b9a282`) |
 | Confirmatory experiment E9 (gates against the best available instrument) | Run, 1 280 runs, analysed (§5.9) |
+| Pre-registration for E10 (unequal exposure) | Committed before confirmatory runs (`f580a13`) |
+| Confirmatory experiment E10 | Run, 1 080 runs, analysed (§5.10). **Strong gates line closed** |
 | Language-model proposers | Not started; needs a model API key and a budget decision (§7) |
 | External replication, peer review | None |
 
-One-sentence state: in the payment environment a delay price beats every gate;
-in a second environment where harm is unattributable, a Kantian gate and a
-budget-breaking ambient tax reach the same outcome (difference 0.4 % of cost,
-inside the registered equivalence margin), while every budget-balanced
-instrument either does little or is gamed; no novelty claim is made.
+One-sentence state: acceptance gates do not beat the best available
+instrument — a delay price beats them in payments, and in a shared codebase
+with unattributable harm a budget-breaking ambient tax ties them when agents
+are alike and beats them when agents are unequally exposed (E10, the
+pre-registered rule closes the line); what survives is narrower: where only
+budget-balanced charges are possible and the harm's carrier can be hidden, an
+own-cost gate does better than those charges, by a margin that shrinks as
+exposure becomes unequal. No novelty claim is made.
 
 ## 2. Direction taken, and why it differs from the handoff
 
@@ -539,6 +545,79 @@ incident process was calibrated on pilot data to produce a dilemma.
 
 ![e9](../runs/fig_e9.png)
 
+### 5.10 E10 — unequal exposure (pre-registered)
+
+Protocol: [PREREGISTRATION_E10.md](PREREGISTRATION_E10.md), frozen in
+`f580a13`; records carry that commit with the dirty flag clear. Run because the
+project owner chose one further test of the strong claim before closing it.
+
+**Design.** E9's primary regime (γ = 0.25, six agents), with incident exposure
+multiplied by `rank ** -skew` (mean 1), skew ∈ {0, 0.75, 1.5}. Central modules
+absorb most incidents; every module still adds coupling in proportion to its
+shortcuts. The Kantian test ("my cost if everyone made my change") then no
+longer equals the harm an agent imposes, so theory predicts the gate fails
+while the ambient tax stays efficient. The optimum is now asymmetric and is
+found by coordinate descent from the symmetric grid optimum.
+
+**Pilot that changed the plan.** The first pilot varied module *size*. It
+preserved symmetry (asymmetric optimum equal to the symmetric one; Kantian gate
+at the optimum) because size scales gain, coupling and exposure alike. It is
+reported as a null (`runs/cbpilot2.jsonl`); exposure was registered instead.
+
+**Reproduction.** At skew 0 all 320 runs shared with E9 are bit-for-bit
+identical to the E9 records.
+
+Holdout cost, 20 seeds (gate = best own-cost gate chosen on development data;
+ambient\* = level 1 at every skew):
+
+| | skew 0 | skew 0.75 | skew 1.5 |
+|---|---|---|---|
+| private gate | 0.2384 | 0.2340 | 0.1951 |
+| κ = 0.5 gate | 0.2342 | 0.2122 | **0.1808** (chosen) |
+| Kantian gate (κ = 1) | **0.2147** (chosen) | **0.2040** (chosen) | 0.1816 |
+| ambient tax\* (= unilateral welfare gate) | 0.2156 | **0.2018** | **0.1747** |
+| best budget-balanced (proxy 0.1) | 0.2385 | 0.2172 | 0.1815 |
+| best symmetric policy | 0.2138 | 0.2123 | 0.2072 |
+| optimum (asymmetric) | 0.2137 | 0.2015 | 0.1749 |
+
+| Hypothesis | Outcome |
+|---|---|
+| D1 dilemma | **Supported** at every skew (+0.025, +0.033, +0.020 over the optimum) |
+| **D2 ambient tax clearly cheaper than the gate at skew 0.75 and 1.5** | **Supported.** −0.0022 (−0.0027 to −0.0016) and −0.0060 (−0.0069 to −0.0052). At skew 0 the gate is ahead by +0.0009, as in E9 |
+| D3 Kantian closure falls with skew | **Supported at skew 1.5**: closure 0.96 → 0.67, change −0.29 (−0.47 to −0.15). At 0.75 (0.92) the change is not clear (−0.04, −0.08 to +0.001) |
+| D4 the predicted Kantian distortion | **Supported at skew 1.5.** Under the Kantian gate shortcut intensity rises from 0.45 (most exposed) to 0.89 (least exposed); the optimum runs from 0.64 to 0.73; spread excess +0.34 (+0.30 to +0.41). The ambient tax shows no such distortion (−0.02, −0.05 to +0.01) |
+| D5 gate clearly cheaper than the best budget-balanced instrument | **Supported at every skew, but shrinking**: +0.024, +0.013, **+0.0007** (+0.0001 to +0.0013; inside the margin at skew 1.5) |
+| D6 identity ambient 1 = unilateral welfare gate | **Holds** in every seed and skew |
+
+**Decision.** The registered rule required the gate to beat the best
+instrument by more than 0.002 at both skews. It loses at both, so **the strong
+line is closed.** This is the outcome the pilot and the theory predicted; the
+test could have gone the other way and did not.
+
+What this shows:
+
+* **The mechanism is the one theory names.** With equal exposure the Kantian
+  question "what if everyone did this?" measures the harm an agent imposes.
+  With unequal exposure it measures the harm the agent would *suffer*: central
+  agents over-restrain, peripheral agents over-shortcut, exactly as observed.
+* **The ambient tax tracks the optimum at every skew** (within 0.0003 at
+  skew 0.75 and 1.5), because it charges what an agent imposes on others,
+  whoever suffers it.
+* **The gate's edge over budget-balanced charges shrinks with skew** and is
+  inside the margin at skew 1.5. At high skew the private gate is less bad
+  (central agents already have strong private reasons to restrain), so every
+  arm crowds together.
+* **Post hoc, not registered:** at skew 1.5 the development data chose κ = 0.5
+  over κ = 1; the Kantian gate is also much more variable across seeds there
+  (interval 0.1789–0.1852). A partly universalizing gate over-corrects less.
+
+Limits specific to E10: one kind of heterogeneity and one functional form; risk-
+neutral agents and no collusion, which favour the ambient tax; the asymmetric
+optimum is a coordinate-descent optimum on a grid (the ambient tax came within
+0.0003 of it).
+
+![e10](../runs/fig_e10.png)
+
 ## 6. Decision log
 
 | ID | Question | Resolution |
@@ -568,40 +647,39 @@ incident process was calibrated on pilot data to produce a dilemma.
 | D23 | Exclude the ambient tax as unrealistic? | No. Included in the kill criterion by advance decision; budget-balanced instruments reported separately |
 | D24 | Do gates beat the best instrument where harm is unattributable? | Practically no: Kantian gate and ambient tax within 0.4 % (E9). The registered rule says the gate wins (+0.0009, CI excludes 0), but this is not robust to n = 12 or to the ambient level |
 | D25 | Do gates beat budget-balanced instruments there? | Yes, by about 95 % of the gap, when the harm's carrier can be concealed; no when it cannot |
-| D26 | Continue the gates-versus-pricing line? | Open; for the project owner (§7) |
+| D26 | Continue the gates-versus-pricing line? | Owner chose one further test (E10, unequal exposure) before deciding |
+| D27 | Do gates beat the best instrument when agents are unequally exposed? | No. Ambient tax clearly cheaper at both skews (−0.0022 and −0.0060); by the stricter rule registered for E10, **the strong line is closed** |
+| D28 | Which heterogeneity tests the Kantian gate? | Exposure, not size: size scales gain, coupling and exposure alike and preserved symmetry (pilot null) |
 
 ## 7. Unresolved questions and next steps
 
-E8 answered the gates-versus-pricing question for payments; E9 answered it for
-an environment without a direct price. The decision that comes first:
+E8, E9 and E10 answered the gates-versus-pricing question. **The strong line
+("acceptance gates beat the best available instrument") is closed** by the
+rule registered for E10 (§5.10). The decision that comes next is the project
+owner's:
 
-0. **Decision for the project owner: close the gates-versus-pricing line or
-   not?** The registered kill rule did not fire, but only on a 0.4 % margin that
-   is inside the equivalence band, fails to replicate at n = 12, and reverses
-   for the second-ranked ambient level (§5.9). Recommendation: **treat the line
-   as closed in its strong form** ("gates beat the best instrument") and keep
-   only the narrow, defensible form: *where the operator cannot break the
-   budget and the harm's carrier can be concealed, an own-cost Kantian gate
-   recovers about 95 % of the loss and every budget-balanced instrument
-   recovers little or makes things worse.* Two ways forward that would each be
-   a new pre-registered study, not a rescue of this one:
-   a. **Heterogeneous agents**, where Kantian optimisation is no longer
-      efficient and an ambient tax at a single level is; this is where the
-      prediction would most plausibly go against gates, and should be tested
-      for that reason.
-   b. **Risk-averse agents or a noisy ambient signal**, the classic objection
-      to ambient taxes, which E9 excludes by construction.
-   Otherwise pivot: the strongest asset is the testbed and the measurement
-   discipline, not a gate result.
+0. **What next for the project?** Options, in the order I would rank them:
+   a. **Write up and stop the gates line.** The four pre-registered studies
+      are a coherent negative-with-conditions result: gates are a
+      consequential design choice, an own-cost Kantian gate is a strong
+      default when no price can be levied, and a well-chosen price (delay
+      surcharge, ambient tax) matches or beats every gate. Plus a reusable,
+      tested testbed with two environments.
+   b. **Pivot to language-model proposers** in the codebase environment, as a
+      study of proposals rather than gates (does a stronger proposer find
+      exploits of the ambient tax or the proxy that mutation search misses?).
+      Needs an API key, a model choice and a spending cap.
+   c. **Risk-averse agents or a noisy ambient signal**, the classic objection
+      to ambient taxes, which E9 and E10 exclude by construction. The only
+      remaining test that could reopen a role for gates against the ambient
+      tax; low prior after E10.
 
 The remaining items, ordered by how much they would change the conclusions:
 
-1. **Second environment.** Done (E9, shared codebase). A shared evaluation
-   harness that agents can overfit remains a candidate, not built.
-2. **Language-model proposers.** Still not started. If the line continues, the
-   codebase environment is the place for them (proposals as policy changes
-   first, code edits only with an agreed sandbox design). Needs an API key, a
-   model choice and a spending cap from the project owner.
+1. **Second environment.** Done (E9, E10, shared codebase). A shared
+   evaluation harness that agents can overfit remains a candidate, not built.
+2. **Language-model proposers.** Still not started; see 0b. Proposals as
+   policy changes first, code edits only with an agreed sandbox design.
 3. **Search quality with rule-level policies.** All arms degrade at fixed
    budget. A better optimiser (for example CMA-ES per bank) would show whether
    the cross-space comparisons hold when search is not the bottleneck.
@@ -623,9 +701,12 @@ uv run python -m evortgs.analysis
 uv run python -m evortgs.analysis_e8
 uv run python -m evortgs.cb_experiments cbpilot E9
 uv run python -m evortgs.analysis_e9
+uv run python -m evortgs.cb_experiments cbpilot2 cbpilot3 E10
+uv run python -m evortgs.analysis_e10
 ```
 
-E1–E8 take about 90 minutes on eight logical cores; E9 took 90 minutes with
+E1–E8 take about 90 minutes on eight logical cores; E9 took 90 minutes and
+E10 46 minutes with
 four workers (`EVO_WORKERS=4 OPENBLAS_NUM_THREADS=1` on a machine with little
 free memory). Records carry the commit hash; results are deterministic given
 the commit.

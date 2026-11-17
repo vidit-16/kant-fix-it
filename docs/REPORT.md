@@ -5,7 +5,8 @@ unreplicated. Full detail, audit trail and decision log are in
 [PROJECT.md](PROJECT.md); the frozen protocols are in
 [PREREGISTRATION.md](PREREGISTRATION.md) and
 [PREREGISTRATION_E8.md](PREREGISTRATION_E8.md) and
-[PREREGISTRATION_E9.md](PREREGISTRATION_E9.md).
+[PREREGISTRATION_E9.md](PREREGISTRATION_E9.md) and
+[PREREGISTRATION_E10.md](PREREGISTRATION_E10.md).
 
 ## Abstract
 
@@ -39,7 +40,16 @@ the Kantian gate and a budget-breaking ambient tax reached practically the same
 outcome (difference 0.4 % of cost; the gate's registered advantage did not
 replicate with twelve agents), while every budget-balanced instrument either
 had no effect or, in the case of a charge on visible coupling, was gamed into
-concealment and made outcomes worse than no charge.
+concealment and made outcomes worse than no charge. A fourth pre-registered
+study (1 080 runs) made incident exposure unequal across agents, the case in
+which Kantian reasoning no longer measures the harm an agent imposes. The
+ambient tax then beat the gate at both levels of inequality (by 0.0022 and
+0.0060), the gate showed the distortion theory predicts (central agents
+over-restrain, peripheral agents over-shortcut), and under a decision rule
+fixed in advance the claim that gates beat the best available instrument is
+closed. What remains is conditional: where only budget-balanced charges are
+possible and the harm's carrier can be hidden, an own-cost gate beats those
+charges, by a margin that shrinks as exposure becomes unequal.
 
 ## 1. Background
 
@@ -181,6 +191,29 @@ number of agents did not appear.
 
 ![e9](../runs/fig_e9.png)
 
+### 3.3 Fourth study: unequal exposure (E10)
+
+Protocol: [PREREGISTRATION_E10.md](PREREGISTRATION_E10.md). E9 used identical
+agents, the case in which Kantian optimisation is known to be efficient. A
+first pilot varied module size and changed nothing (size scales gain,
+coupling and exposure alike); it is reported as a null. The registered study
+varied incident exposure instead (rate multiplied by `rank^-skew`, mean 1), so
+central modules absorb most incidents while every module adds coupling. The
+optimum, now asymmetric, was found by coordinate descent; at skew 0 the study
+reproduced E9 bit for bit.
+
+The ambient tax was clearly cheaper than the best own-cost gate at skew 0.75
+(−0.0022, CI −0.0027 to −0.0016) and skew 1.5 (−0.0060, −0.0069 to −0.0052),
+and stayed within 0.0003 of the optimum. The Kantian gate's share of the
+private-to-optimum gap fell from 0.96 to 0.67. Its policies showed the
+predicted distortion: at skew 1.5 shortcut intensity rose from 0.45 for the
+most exposed agent to 0.89 for the least exposed, against 0.64 to 0.73 at the
+optimum. The gate still beat the best budget-balanced instrument at every
+skew, but by +0.0007 at skew 1.5, inside the equivalence margin. The rule
+registered in advance closes the strong claim.
+
+![e10](../runs/fig_e10.png)
+
 ## 4. Discussion
 
 *Joint moves, not altruism.* The unilateral welfare gate is the textbook
@@ -212,6 +245,15 @@ multitask effect in the sense of Holmström and Milgrom (1991). Whether an
 operator can break the budget, and whether agents are risk-neutral, decide
 which instrument is preferable; E9 holds both fixed.
 
+*Why the gate fails with unequal exposure.* Universalization asks "what would
+it cost me if everyone made this change?". That equals the harm the agent
+imposes on others only if everyone is equally exposed to it. When exposure is
+unequal, the question measures what the agent would suffer, not what it
+causes, so central agents over-restrain and peripheral ones over-reach. The
+ambient tax charges what an agent imposes on others, whoever suffers it, and
+has no such bias. This is a known property of Kantian equilibria rather than a
+new result; E10 confirms it inside a learning loop.
+
 *Failed predictions.* The absence of a heterogeneity effect and of a defector
 gain may reflect the small policy space and noisy search rather than
 properties of the gate. They are reported as registered and not interpreted
@@ -232,8 +274,8 @@ further.
 * Every arm is worse with eight parameters, including the planner, although
   the larger space contains the smaller. Search at fixed budget, not the
   policy space, limits those results.
-* Two environments, both symmetric in E9, where Kantian optimisation is
-  already known to be efficient. No claim of generality, and no claim about
+* Two environments; E9 symmetric, E10 with one kind of heterogeneity
+  (exposure) and one functional form. No claim of generality, and no claim about
   recursive self-improvement.
 * E9 agents are risk-neutral and cannot collude, which removes the classic
   objections to ambient taxes; the incident process was calibrated on pilot
@@ -243,12 +285,13 @@ further.
 
 ## 6. Next
 
-The strong claim, that gates beat the best available instrument, is not
-supported in either environment. Remaining tests that could change that, each
-needing its own pre-registration: heterogeneous agents (where the Kantian rule
-is no longer efficient, so the test is as likely to go against gates), and
-risk-averse agents facing a noisy ambient charge. Language-model proposers
-remain unstarted.
+The strong claim, that gates beat the best available instrument, is closed:
+it fails in payments, ties with identical agents in the codebase, and fails
+with unequally exposed agents. The only remaining test that could reopen it is
+risk-averse agents facing a noisy ambient charge, which these studies exclude
+by construction. Language-model proposers remain unstarted; in this testbed
+they would be a study of proposals (can a stronger proposer exploit the
+ambient tax or the proxy?), not of gates.
 
 ## References
 

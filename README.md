@@ -13,7 +13,8 @@ involved, and results say nothing about any real system.
   prior-art audit, results, open questions.
 * [docs/PREREGISTRATION.md](docs/PREREGISTRATION.md),
   [docs/PREREGISTRATION_E8.md](docs/PREREGISTRATION_E8.md),
-  [docs/PREREGISTRATION_E9.md](docs/PREREGISTRATION_E9.md) — protocols frozen
+  [docs/PREREGISTRATION_E9.md](docs/PREREGISTRATION_E9.md),
+  [docs/PREREGISTRATION_E10.md](docs/PREREGISTRATION_E10.md) — protocols frozen
   before the confirmatory runs.
 * [docs/REPORT.md](docs/REPORT.md) — paper-style report.
 * `runs/` — one JSON line per run, `results.json`, figures.
@@ -32,7 +33,10 @@ A second environment, agents sharing a codebase where harm from hidden
 coupling cannot be attributed, removes the direct price. There the Kantian
 gate and a budget-breaking ambient tax reach practically the same outcome,
 while budget-balanced charges either do nothing or are gamed into
-concealment. Details and caveats are in the project document.
+concealment. When agents are unequally exposed to the harm, the ambient tax
+beats the gate, as theory predicts, and the claim that gates beat the best
+available instrument is closed under a pre-registered rule. Details and
+caveats are in the project document.
 
 ## Run
 
@@ -44,6 +48,8 @@ uv run python -m evortgs.analysis
 uv run python -m evortgs.analysis_e8
 uv run python -m evortgs.cb_experiments cbpilot E9
 uv run python -m evortgs.analysis_e9
+uv run python -m evortgs.cb_experiments cbpilot2 cbpilot3 E10
+uv run python -m evortgs.analysis_e10
 ```
 
 ## Layout
