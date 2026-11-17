@@ -26,10 +26,11 @@ def costs_for(delay_day: float) -> Costs:
 
 
 def spec(name, seed, *, delay_day, n=6, het=0.0, gate="kappa", kappa=0.0, fee=0.0,
-         sequential=False, defector=None, split="holdout", kind="evolve", gens=40, min_t=0.0):
+         sequential=False, defector=None, split="holdout", kind="evolve", gens=40, min_t=0.0,
+         rich=False, tariff=0.0):
     return dict(exp=name, seed=seed, delay_day=delay_day, n=n, het=het, gate=gate,
                 kappa=kappa, fee=fee, sequential=sequential, defector=defector,
-                split=split, kind=kind, gens=gens, min_t=min_t)
+                split=split, kind=kind, gens=gens, min_t=min_t, rich=rich, tariff=tariff)
 
 
 def run_one(sp: dict) -> dict:
@@ -38,13 +39,16 @@ def run_one(sp: dict) -> dict:
     costs = costs_for(sp["delay_day"])
     dev_split = "pilot" if sp["split"] == "pilot" else "dev"
     sampler = DevSampler(world, split=dev_split)
+    rich = sp.get("rich", False)
     if sp["kind"] == "planner":
-        profile, hist, sims = planner_symmetric(sampler, costs, sp["seed"]), [], 300 * 32
+        profile = planner_symmetric(sampler, costs, sp["seed"], dim=8 if rich else 3)
+        hist, sims = [], 300 * 32
     else:
         kb = None
         if sp["defector"] is not None:
             kb = tuple(0.0 if i == sp["defector"] else sp["kappa"] for i in range(sp["n"]))
         ecfg = EvoConfig(generations=sp["gens"], min_t=sp.get("min_t", 0.0), gate=sp["gate"], kappa=sp["kappa"], fee=sp["fee"],
+                         rich=rich, tariff=sp.get("tariff", 0.0),
                          sequential=sp["sequential"], kappa_by_bank=kb)
         r = evolve(sampler, costs, ecfg, sp["seed"])
         profile, sims = r.profile, r.sims
@@ -66,6 +70,19 @@ def experiments(which: str) -> list[dict]:
             S.append(spec("pilot", 1000, delay_day=d, kind="planner", gate="planner", split="pilot"))
         return S
     D = PRIMARY_DELAY_DAY
+    if which == "pilot2":  # rule-level policies: budget and instrument grids
+        for seed in PILOT_SEEDS:
+            for rich in (False, True):
+                for gens in (40, 80):
+                    kw = dict(delay_day=D, split="pilot", rich=rich, gens=gens)
+                    S.append(spec("pilot2", seed, **kw))
+                    S.append(spec("pilot2", seed, kappa=1.0, **kw))
+                    S.append(spec("pilot2", seed, gate="welfare_universal", **kw))
+                    for fee in (4.0, 16.0):
+                        S.append(spec("pilot2", seed, fee=fee, **kw))
+                    for tau in (0.25, 1.0):
+                        S.append(spec("pilot2", seed, tariff=tau, **kw))
+        return S
     for seed in CONFIRM_SEEDS:
         if which == "E1":  # gates, homogeneous banks, primary regime
             for k in (0.0, 0.25, 0.5, 0.75, 1.0):
@@ -103,6 +120,18 @@ def experiments(which: str) -> list[dict]:
             for g, k in (("kappa", 0.0), ("kappa", 1.0), ("welfare", 0.0), ("noharm", 0.0)):
                 S.append(spec("E7", seed, delay_day=D, gate=g, kappa=k, min_t=2.0))
             S.append(spec("E7", seed, delay_day=D, fee=8.0, min_t=2.0))
+        elif which == "E8":  # gates against pricing, simple and rule-level policies
+            for rich in (False, True):
+                kw = dict(delay_day=D, rich=rich)
+                S.append(spec("E8", seed, **kw))
+                S.append(spec("E8", seed, kappa=1.0, **kw))
+                S.append(spec("E8", seed, gate="welfare", **kw))
+                S.append(spec("E8", seed, gate="welfare_universal", **kw))
+                for fee in (4.0, 8.0, 16.0, 32.0):
+                    S.append(spec("E8", seed, fee=fee, **kw))
+                for tau in (0.5, 1.0, 2.0, 4.0):
+                    S.append(spec("E8", seed, tariff=tau, **kw))
+                S.append(spec("E8", seed, kind="planner", gate="planner", **kw))
         else:
             raise SystemExit(f"unknown experiment {which}")
     return S

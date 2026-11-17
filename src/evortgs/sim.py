@@ -1,7 +1,8 @@
 """Deterministic stylized RTGS settlement engine.
 
-This module is the accounting source of truth. Policies only supply three
-bounded numbers per bank; they never touch balances, payments or costs.
+This module is the accounting source of truth. Policies only supply bounded
+numbers per bank (three, or eight for the rule-level form); they never touch
+balances, payments or costs.
 
 Model
 -----
@@ -19,6 +20,22 @@ Model
   no payment settles, so incoming funds can be recycled inside the tick.
 * A bank inside an outage window receives funds but sends nothing.
 
+Rule-level policy (eight numbers in [0, 1]); the three-number policy
+``(liq, buf, hold)`` is the special case ``(liq, buf, buf, hold, 0, ., hold, 1)``:
+
+  0 ``liq``       opening liquidity fraction
+  1 ``buf_am``    buffer fraction before tick ``T // 2``
+  2 ``buf_pm``    buffer fraction from tick ``T // 2``
+  3 ``hold``      hold time for ordinary payments up to the size threshold
+  4 ``open``      no ordinary payment is released before tick ``round(open*(T-1))``
+  5 ``big``       size threshold ``250 * 40**big``; amounts above it are "large"
+  6 ``hold_big``  hold time for large ordinary payments
+  7 ``bilat``     bilateral limit: an ordinary payment to ``j`` is released only
+                  if (sent to j - received from j) stays within
+                  ``bilat/(1-bilat) * E_i/(n-1)``; 1 means no limit
+
+Time-critical payments ignore all of these, and the last tick waives them.
+
 Costs charged to the sender (all proportional to value)
 * liquidity: ``cL * L_i``
 * delay: ``cD * amount * ticks_waited`` (a payment unsettled at close waited
@@ -34,7 +51,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-Policy = tuple[float, float, float]  # (liq, buf, hold), each in [0, 1]
+Policy = tuple[float, ...]  # 3 numbers (liq, buf, hold) or 8 (rule-level), each in [0, 1]
+RICH_DIM = 8
+BIG_BASE, BIG_RANGE = 250.0, 40.0
 Profile = tuple[Policy, ...]
 
 
@@ -68,6 +87,8 @@ class Result:
     unsettled_value: int
     delay_value_ticks: int
     missed_value: int
+    # per bank: value settled at or after tick T // 2, or not settled at all
+    late_value: tuple[int, ...] = ()
 
     @property
     def system_cost(self) -> float:
@@ -79,8 +100,8 @@ class InvariantViolation(AssertionError):
 
 
 def validate_policy(p: Policy) -> None:
-    if len(p) != 3:
-        raise ValueError("policy must have exactly three parameters")
+    if len(p) not in (3, RICH_DIM):
+        raise ValueError("policy must have three or eight parameters")
     for x in p:
         if not isinstance(x, (int, float)) or x != x or not (0.0 <= x <= 1.0):
             raise ValueError(f"policy parameter out of bounds: {x!r}")
@@ -94,8 +115,31 @@ def simulate(scn: Scenario, profile: Profile, costs: Costs, check: bool = False)
         validate_policy(p)
 
     L = [int(round(profile[i][0] * scn.exp_out[i])) for i in range(n)]
-    buf = [profile[i][1] * L[i] for i in range(n)]
-    hold = [int(round(profile[i][2] * (T - 1))) for i in range(n)]
+    half = T // 2
+    inf = float("inf")
+    buf_am, buf_pm, hold, hold_big, open_t, thr, limit = [], [], [], [], [], [], []
+    rich = False
+    for i, p in enumerate(profile):
+        if len(p) == 3:
+            buf_am.append(p[1] * L[i])
+            buf_pm.append(p[1] * L[i])
+            h = int(round(p[2] * (T - 1)))
+            hold.append(h)
+            hold_big.append(h)
+            open_t.append(0)
+            thr.append(inf)
+            limit.append(inf)
+        else:
+            rich = True
+            buf_am.append(p[1] * L[i])
+            buf_pm.append(p[2] * L[i])
+            hold.append(int(round(p[3] * (T - 1))))
+            open_t.append(int(round(p[4] * (T - 1))))
+            thr.append(BIG_BASE * BIG_RANGE ** p[5])
+            hold_big.append(int(round(p[6] * (T - 1))))
+            limit.append(inf if p[7] >= 1.0
+                         else p[7] / (1.0 - p[7]) * scn.exp_out[i] / max(1, n - 1))
+    net = [[0] * n for _ in range(n)] if rich else None  # sent i->j minus received from j
     bal = L[:]
     total_liq = sum(L)
     queues: list[list[int]] = [[] for _ in range(n)]
@@ -129,18 +173,26 @@ def simulate(scn: Scenario, profile: Profile, costs: Costs, check: bool = False)
                 if not q or out_lo[i] <= t < out_hi[i]:
                     continue
                 b = bal[i]
-                floor = 0.0 if last else buf[i]
-                h = hold[i]
+                floor = 0.0 if last else (buf_am[i] if t < half else buf_pm[i])
+                h, hb, th = hold[i], hold_big[i], thr[i]
+                opened = t >= open_t[i]
+                lim = limit[i]
+                ni = net[i] if rich else None
                 keep = []
                 for k in q:
                     _, r, a, arr, dl = pay[k]
-                    if dl >= 0:
+                    if dl >= 0 or last:
                         ok = a <= b
                     else:
-                        ok = (last or t >= arr + h) and (b - a >= floor) and a <= b
+                        ok = (opened and t >= arr + (hb if a > th else h)
+                              and (b - a >= floor) and a <= b
+                              and (lim == inf or ni[r] + a <= lim))
                     if ok:
                         b -= a
                         bal[r] += a
+                        if rich:
+                            ni[r] += a
+                            net[r][i] -= a
                         if check and settle[k] != -1:
                             raise InvariantViolation("duplicate settlement")
                         settle[k] = t
@@ -158,6 +210,7 @@ def simulate(scn: Scenario, profile: Profile, costs: Costs, check: bool = False)
     cost = [costs.cL * L[i] for i in range(n)]
     dcost = [0.0] * n
     total = unsettled = dvt = missed = 0
+    late = [0] * n
     for k, (s, _r, a, arr, dl) in enumerate(pay):
         total += a
         st = settle[k]
@@ -167,6 +220,8 @@ def simulate(scn: Scenario, profile: Profile, costs: Costs, check: bool = False)
             waited = T - arr
         else:
             waited = st - arr
+        if st < 0 or st >= half:
+            late[s] += a
         if waited:
             dvt += a * waited
             d = costs.cD * a * waited
@@ -202,4 +257,5 @@ def simulate(scn: Scenario, profile: Profile, costs: Costs, check: bool = False)
         unsettled_value=unsettled,
         delay_value_ticks=dvt,
         missed_value=missed,
+        late_value=tuple(late),
     )

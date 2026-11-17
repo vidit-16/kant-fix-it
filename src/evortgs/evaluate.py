@@ -27,6 +27,7 @@ def evaluate(cfg: WorldConfig, profile: Profile, costs: Costs, split: str = "hol
         scns = _holdout(cfg, fam, split)
         sysc, unset, delay, liq, miss = [], [], [], [], []
         bank = np.zeros(cfg.n)
+        by_tick = np.zeros(cfg.T + 1)  # value share settled at each tick; last slot = unsettled
         for s in scns:
             r = simulate(s, profile, costs, check=True)
             v = r.total_value
@@ -36,6 +37,8 @@ def evaluate(cfg: WorldConfig, profile: Profile, costs: Costs, split: str = "hol
             liq.append(sum(r.liquidity) / v)
             miss.append(r.missed_value / v)
             bank += np.asarray(r.cost) / v
+            for (_s, _r, a, _arr, _dl), st in zip(s.pay, r.settle_tick):
+                by_tick[st] += a / v
         out[fam] = {
             "system_cost": float(np.mean(sysc)),
             "unsettled": float(np.mean(unset)),
@@ -43,5 +46,6 @@ def evaluate(cfg: WorldConfig, profile: Profile, costs: Costs, split: str = "hol
             "liquidity": float(np.mean(liq)),
             "missed": float(np.mean(miss)),
             "bank_cost": (bank / len(scns)).tolist(),
+            "settle_share": (by_tick / len(scns)).round(5).tolist(),
         }
     return out
