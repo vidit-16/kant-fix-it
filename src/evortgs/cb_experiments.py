@@ -181,6 +181,19 @@ def experiments(which: str) -> list[dict]:
                 S.append(spec("cbpilot3", seed, kind="planner", gate="planner", **kw))
                 S.append(spec("cbpilot3", seed, kind="planner_asym", gate="planner_asym", **kw))
         return S
+    if which == "E10":  # frozen in docs/PREREGISTRATION_E10.md
+        for seed in CONFIRM_SEEDS:
+            for skew in E10_SKEWS:
+                kw = dict(gamma=0.25, skew=skew)
+                for k in (0.0, 0.5, 1.0):
+                    S.append(spec("E10", seed, kappa=k, **kw))
+                S.append(spec("E10", seed, gate="welfare", **kw))
+                for inst, levels in E10_GRIDS.items():
+                    for lev in levels:
+                        S.append(spec("E10", seed, instrument=inst, level=lev, **kw))
+                S.append(spec("E10", seed, kind="planner", gate="planner", **kw))
+                S.append(spec("E10", seed, kind="planner_asym", gate="planner_asym", **kw))
+        return S
     if which == "E9":  # frozen in docs/PREREGISTRATION_E9.md
         for seed in CONFIRM_SEEDS:
             for gamma in (0.25, 1.0):
@@ -203,6 +216,12 @@ def experiments(which: str) -> list[dict]:
 # Frozen after the pilot; see docs/PREREGISTRATION_E9.md.
 E9_GRIDS = {"proxy": (0.1, 0.2, 0.4, 0.8), "activity": (0.25, 0.5, 0.75),
             "surface": (1.0, 2.0, 4.0, 8.0), "ambient": (0.5, 1.0, 1.5, 2.0)}
+
+
+# Frozen after the exposure pilot; see docs/PREREGISTRATION_E10.md.
+E10_SKEWS = (0.0, 0.75, 1.5)
+E10_GRIDS = {"proxy": (0.1, 0.2, 0.4, 0.8), "surface": (1.0, 2.0, 4.0, 8.0),
+             "ambient": (0.5, 1.0, 1.5, 2.0)}
 
 
 def main(argv=None):
@@ -232,3 +251,4 @@ def main(argv=None):
 
 if __name__ == "__main__":
     main()
+
