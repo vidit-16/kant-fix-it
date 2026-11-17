@@ -388,6 +388,13 @@ What this says:
   channel itself and needs no private information. A gate cannot improve on
   that; it can only matter where such a price cannot be levied.
 
+Provenance note: the E8 records carry commit `9729748` with the "dirty" flag
+set. The only uncommitted file under `src/` when the runs started was the new
+analysis script, written while the runs were starting and before any result
+existed; the engine, evolution and experiment code are unchanged between
+`9729748` and the following commit (`git diff 9729748 0547687 -- src` shows
+only `analysis_e8.py`).
+
 Limits specific to E8: eight bounded parameters are not programs; mutation
 search may miss exploits a stronger proposer would find; one cost regime;
 homogeneous banks.
