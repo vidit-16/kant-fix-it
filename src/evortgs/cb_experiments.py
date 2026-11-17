@@ -9,6 +9,7 @@ from __future__ import annotations
 import itertools
 import json
 import multiprocessing as mp
+import os
 import subprocess
 import sys
 import time
@@ -143,7 +144,8 @@ def main(argv=None):
         specs = experiments(which)
         path = out_dir / f"{which}.jsonl"
         t0 = time.time()
-        with mp.Pool() as pool, path.open("w", encoding="utf-8") as f:
+        workers = int(os.environ.get("EVO_WORKERS", "0")) or None
+        with mp.Pool(workers) as pool, path.open("w", encoding="utf-8") as f:
             for i, rec in enumerate(pool.imap_unordered(run_one, specs), 1):
                 rec["commit"], rec["dirty"] = commit, dirty
                 f.write(json.dumps(rec) + "\n")
