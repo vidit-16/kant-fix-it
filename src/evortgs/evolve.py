@@ -46,6 +46,7 @@ class EvoConfig:
     gate: str = "kappa"   # kappa | welfare | welfare_universal | noharm
     kappa: float = 0.0
     fee: float = 0.0
+    min_t: float = 0.0    # accept only if the paired t-statistic of the score is below -min_t
     sequential: bool = False  # banks update one after another instead of simultaneously
     # per-bank kappa override, e.g. a single private defector among Kantian banks
     kappa_by_bank: tuple[float, ...] | None = None
@@ -70,6 +71,13 @@ def _costs(scns: list[Scenario], profile: Profile, costs: Costs, fee: float) -> 
         out[j, :, 0] = r.cost
         out[j, :, 1] = np.asarray(r.cost) + fee * np.asarray(r.delay_cost)
     return out
+
+
+def _t_ok(v: np.ndarray, min_t: float) -> bool:
+    if min_t <= 0.0:
+        return True
+    sd = v.std(ddof=1)
+    return sd > 0 and v.mean() / (sd / np.sqrt(len(v))) < -min_t
 
 
 def random_profile(rng: np.random.Generator, n: int) -> Profile:
@@ -110,12 +118,14 @@ def evolve(sampler: DevSampler, costs: Costs, cfg: EvoConfig, seed: int,
                 if cfg.gate == "kappa":
                     if kappa <= 0.0:
                         c = _costs(scns, uni, costs, cfg.fee)
-                        score = float((c[:, i, 1] - base[:, i, 1]).mean())
+                        sv = c[:, i, 1] - base[:, i, 1]
+                        score = float(sv.mean()) if _t_ok(sv, cfg.min_t) else 0.0
                     elif kappa >= 1.0:
                         allp = tuple(tuple(_clip(cur[j][a] + d[a]) for a in range(3))
                                      for j in range(n))
                         c = _costs(scns, allp, costs, cfg.fee)
-                        score = float((c[:, i, 1] - base[:, i, 1]).mean())
+                        sv = c[:, i, 1] - base[:, i, 1]
+                        score = float(sv.mean()) if _t_ok(sv, cfg.min_t) else 0.0
                     else:
                         h = cfg.M
                         allp = tuple(tuple(_clip(cur[j][a] + d[a]) for a in range(3))
@@ -126,7 +136,8 @@ def evolve(sampler: DevSampler, costs: Costs, cfg: EvoConfig, seed: int,
                                       + kappa * (ck[:, i, 1] - base[h:, i, 1]).mean())
                 elif cfg.gate == "welfare":
                     c = _costs(scns, uni, costs, cfg.fee)
-                    score = float((c[:, :, 0].sum(axis=1) - base[:, :, 0].sum(axis=1)).mean())
+                    sv = c[:, :, 0].sum(axis=1) - base[:, :, 0].sum(axis=1)
+                    score = float(sv.mean()) if _t_ok(sv, cfg.min_t) else 0.0
                 elif cfg.gate == "welfare_universal":
                     allp = tuple(tuple(_clip(cur[j][a] + d[a]) for a in range(3))
                                  for j in range(n))
@@ -134,7 +145,8 @@ def evolve(sampler: DevSampler, costs: Costs, cfg: EvoConfig, seed: int,
                     score = float((c[:, :, 0].sum(axis=1) - base[:, :, 0].sum(axis=1)).mean())
                 elif cfg.gate == "noharm":
                     c = _costs(scns, uni, costs, cfg.fee)
-                    own = float((c[:, i, 1] - base[:, i, 1]).mean())
+                    sv = c[:, i, 1] - base[:, i, 1]
+                    own = float(sv.mean()) if _t_ok(sv, cfg.min_t) else 0.0
                     others = float(((c[:, :, 1].sum(axis=1) - c[:, i, 1])
                                     - (base[:, :, 1].sum(axis=1) - base[:, i, 1])).mean())
                     score = own if others <= 0.0 else 0.0

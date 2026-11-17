@@ -26,10 +26,10 @@ def costs_for(delay_day: float) -> Costs:
 
 
 def spec(name, seed, *, delay_day, n=6, het=0.0, gate="kappa", kappa=0.0, fee=0.0,
-         sequential=False, defector=None, split="holdout", kind="evolve", gens=40):
+         sequential=False, defector=None, split="holdout", kind="evolve", gens=40, min_t=0.0):
     return dict(exp=name, seed=seed, delay_day=delay_day, n=n, het=het, gate=gate,
                 kappa=kappa, fee=fee, sequential=sequential, defector=defector,
-                split=split, kind=kind, gens=gens)
+                split=split, kind=kind, gens=gens, min_t=min_t)
 
 
 def run_one(sp: dict) -> dict:
@@ -44,7 +44,7 @@ def run_one(sp: dict) -> dict:
         kb = None
         if sp["defector"] is not None:
             kb = tuple(0.0 if i == sp["defector"] else sp["kappa"] for i in range(sp["n"]))
-        ecfg = EvoConfig(generations=sp["gens"], gate=sp["gate"], kappa=sp["kappa"], fee=sp["fee"],
+        ecfg = EvoConfig(generations=sp["gens"], min_t=sp.get("min_t", 0.0), gate=sp["gate"], kappa=sp["kappa"], fee=sp["fee"],
                          sequential=sp["sequential"], kappa_by_bank=kb)
         r = evolve(sampler, costs, ecfg, sp["seed"])
         profile, sims = r.profile, r.sims
@@ -99,6 +99,10 @@ def experiments(which: str) -> list[dict]:
             if seed < 10:
                 for g, k in (("kappa", 0.0), ("kappa", 1.0), ("welfare", 0.0)):
                     S.append(spec("E6", seed, delay_day=D, gate=g, kappa=k, gens=120))
+        elif which == "E7":  # post hoc, not pre-registered: significance-thresholded gates
+            for g, k in (("kappa", 0.0), ("kappa", 1.0), ("welfare", 0.0), ("noharm", 0.0)):
+                S.append(spec("E7", seed, delay_day=D, gate=g, kappa=k, min_t=2.0))
+            S.append(spec("E7", seed, delay_day=D, fee=8.0, min_t=2.0))
         else:
             raise SystemExit(f"unknown experiment {which}")
     return S
