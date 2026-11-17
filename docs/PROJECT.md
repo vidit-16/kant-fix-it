@@ -4,9 +4,10 @@ Single source of truth for decisions, evidence, status and open questions.
 Supersedes the handoff of 17 November 2026 where they conflict.
 Last updated: 17 November 2026.
 
-Related files: [PREREGISTRATION.md](PREREGISTRATION.md) (frozen protocol),
-[REPORT.md](REPORT.md) (paper-style write-up), `runs/` (raw records and
-`results.json`).
+Related files: [PREREGISTRATION.md](PREREGISTRATION.md) and
+[PREREGISTRATION_E8.md](PREREGISTRATION_E8.md) (frozen protocols),
+[REPORT.md](REPORT.md) (paper-style write-up), `runs/` (raw records,
+`results.json`, `results_e8.json`).
 
 ---
 
@@ -16,17 +17,21 @@ Related files: [PREREGISTRATION.md](PREREGISTRATION.md) (frozen protocol),
 |---|---|
 | Novelty audit | Done at the level of a targeted review, not a systematic one (§3) |
 | Research question | Narrowed and frozen (§2) |
-| Simulator, evolution loop, evaluator | Built, 25 tests passing |
+| Simulator, evolution loop, evaluator | Built, 40 tests passing |
 | Pre-registration | Committed before confirmatory runs (`4d6ebe9`) |
 | Confirmatory experiments E1–E6 | Run, 950 runs, analysed (§5) |
 | Post hoc ablation E7 | Run, labelled exploratory (§5.7) |
+| Rule-level policies, second pre-registration | Committed before E8 runs (`9729748`) |
+| Confirmatory experiment E8 (gates against pricing) | Run, 520 runs, analysed (§5.8) |
 | Language-model proposers | Not started; needs a model API key and a budget decision (§7) |
 | Transfer to a second domain | Not started |
 | External replication, peer review | None |
 
-One-sentence state: a working, tested, reproducible testbed and one
-pre-registered study exist; the study gives a clear and partly negative answer
-about the project's original method idea; no novelty claim is made yet.
+One-sentence state: a working, tested, reproducible testbed and two
+pre-registered studies exist; together they show that the acceptance gate is a
+consequential design choice but that, in this environment, a delay price beats
+every gate tested, with three-parameter and with rule-level policies alike; no
+novelty claim is made.
 
 ## 2. Direction taken, and why it differs from the handoff
 
@@ -323,13 +328,77 @@ t-statistic of its score is below −2. Same seeds, budget and regime.
   Permissive, noisy acceptance was the better search strategy here. Whether
   that reverses at larger budgets is untested.
 
+### 5.8 E8 — gates against pricing with rule-level policies (pre-registered)
+
+Protocol: [PREREGISTRATION_E8.md](PREREGISTRATION_E8.md), frozen in `9729748`
+after a pilot on separate seeds (`runs/pilot2.jsonl`). Policies become eight
+numbers: opening liquidity, morning and afternoon buffers, hold time, an
+opening tick, a size threshold, a hold time for large payments and a bilateral
+net sending limit. The three-parameter space is exactly nested in it (tested).
+Budget, environment and seeds are those of E1. A second, coarser price was
+added: a two-band tariff charged on value settled in the second half of the
+day. Price levels are chosen on development cost and reported on holdout.
+
+| Arm | Three parameters | Eight parameters |
+|---|---|---|
+| private gate | 1.125 (1.093–1.160) | 1.145 (1.113–1.179) |
+| universalization gate | 0.997 (0.973–1.022) | 1.022 (1.008–1.037) |
+| welfare gate, unilateral | 1.051 (1.010–1.100) | 1.059 (1.033–1.087) |
+| welfare gate, joint | 0.864 (0.851–0.878) | 0.929 (0.911–0.952) |
+| private + delay surcharge (level 16) | 0.815 (0.804–0.829) | 0.863 (0.850–0.876) |
+| private + band tariff (level 4 / 2) | 0.845 (0.835–0.857) | 0.979 (0.952–1.008) |
+| symmetric planner (reference) | 0.874 (0.839–0.910) | 0.934 (0.911–0.958) |
+
+The four gate arms in the three-parameter column reproduce E1 to the last
+digit, which confirms the engine extension did not change existing behaviour.
+
+| Hypothesis | Outcome |
+|---|---|
+| R1 pricing still matches or beats gates | **Supported.** Surcharge vs universalization −0.159 (−0.180 to −0.138); vs joint welfare −0.066 (−0.091 to −0.045) |
+| R2 gates degrade with richness more than pricing | **Not supported.** Interaction +0.017 (−0.013 to +0.049). Joint welfare worsens by 0.065, the surcharge by 0.048 |
+| R3 gate ordering survives | **Supported.** Universalization vs private −0.123 (−0.148 to −0.099); vs unilateral welfare −0.037 (−0.060 to −0.015) |
+| R4 the coarse price is gamed | **Not supported as registered.** The tariff loses far more than the surcharge with rule-level policies (interaction +0.086, +0.050 to +0.123), but the registered mechanism, bunching at the tick before the band, did not occur (tick-9 share lower, −0.008) |
+| R5 richness alone | Private +0.021 (−0.013 to +0.052); surcharge +0.048 (+0.031 to +0.065) |
+
+What this says:
+
+* **The question that decided this stage is answered against gates.** Where an
+  operator can charge for delay, the price beats every gate, and richer
+  policies do not change that. By the registered decision rule, gates are not a
+  competitive alternative to pricing in this environment.
+* **E1 understated the price.** Its grid stopped at level 8. With levels up to
+  32 the surcharge beats the joint-welfare gate already with three parameters
+  (−0.049, −0.068 to −0.029). Level 32 is better still on holdout (0.788 and
+  0.833) but was not the level chosen on development data, so it is not the
+  reported arm.
+* **The coarse price is fragile, for an unregistered reason.** Under the
+  tariff, rule-level banks delay about three times as long as under the
+  surcharge (3.1 against 1.0 value-weighted ticks) and open later (mean
+  opening parameter 0.25 against 0.03). The tariff prices only crossing the
+  band, so delay inside each band is free; richer policies use that. This is an
+  interpretation made after seeing the data. It still beats the private gate
+  with no price (−0.167).
+* **Every arm is worse with eight parameters,** including the planner. The
+  larger space contains the smaller one, so this is a search effect at fixed
+  budget, not a property of what rule-level policies can achieve. It limits
+  every comparison across the two columns.
+* **Why the price is robust here** (stated in the protocol before the runs): a
+  charge proportional to settlement tick equals the delay surcharge plus a term
+  the bank cannot influence. The surcharge therefore prices the externality
+  channel itself and needs no private information. A gate cannot improve on
+  that; it can only matter where such a price cannot be levied.
+
+Limits specific to E8: eight bounded parameters are not programs; mutation
+search may miss exploits a stronger proposer would find; one cost regime;
+homogeneous banks.
+
 ## 6. Decision log
 
 | ID | Question | Resolution |
 |---|---|---|
 | D1 | Is the handoff's mechanism novel? | No as stated. Narrowed to acceptance gates; "not found" in targeted search |
 | D2 | Does local/system divergence occur? | Only with balanced flows; then strongly (+29 %) |
-| D3 | Does adaptive coordination add value? | Reframed. Gates help; a surcharge helps as much |
+| D3 | Does adaptive coordination add value? | Reframed. Gates help; a surcharge helps more (E8) |
 | D4 | Transfer to unseen shocks? | Yes for the gate ranking, across five families |
 | D5 | Is the toy simulator credible? | As a game with the right qualitative structure, yes; as a payment-system model, no (§5.5) |
 | D6 | SimPy or custom loop? | Custom |
@@ -345,28 +414,35 @@ t-statistic of its score is below −2. Same seeds, budget and regime.
 | D16 | Name available? | Not checked |
 | D17 | Planner reference | Weak; replace with joint-welfare search at higher budget in the next study |
 | D18 | Noise in acceptance | Open; see E7 |
+| D19 | Do gates beat pricing once policies are rule-level? | No (E8, R1). Line "gates as an alternative to pricing" closed for this environment |
+| D20 | Is a coarse price robust to richer policies? | No; band tariff loses most of its effect, by within-band delay rather than boundary bunching |
+| D21 | Where could gates still matter? | Only where no party can levy a price on the externality; needs a different environment |
 
 ## 7. Unresolved questions and next steps
 
-Ordered by how much they would change the conclusions.
+E8 closed the question that was first on this list. The remaining ones, ordered
+by how much they would change the conclusions:
 
-1. **Language-model proposers.** The link to self-evolving agents is only by
-   analogy until the proposals come from a model that reads its own
-   trajectories. The gate interface is ready for this. Needs an API key, a
-   model choice and a spending cap from the project owner.
-2. **Does the surcharge still win when policies are richer?** With three
-   parameters a single price can align incentives. With rule- or code-level
-   policies a price may be gameable where a counterfactual gate is not. This
-   is the experiment that decides whether gates are worth studying further.
-3. **Noise-aware gates** as a registered factor (follow-up to E7).
-4. **Stronger reference**: joint-welfare search with a large budget.
+1. **Is there a setting where a gate is the only available instrument?** In the
+   payment game an operator can price the externality directly, so gates lose.
+   Shared resources with no operator and no meter (agents sharing a codebase,
+   a context budget or an evaluation harness) are the natural candidates, and
+   they are closer to the project's stated ambition than payments are. This
+   means a second environment, not more work on this one.
+2. **Language-model proposers.** Still not started. E8 lowers its priority in
+   the payment environment: a stronger proposer would mainly test whether the
+   surcharge can be exploited, which the equivalence argument in §5.8 makes
+   unlikely. It becomes the main step in whichever environment item 1 selects.
+   Needs an API key, a model choice and a spending cap from the project owner.
+3. **Search quality with rule-level policies.** All arms degrade at fixed
+   budget. A better optimiser (for example CMA-ES per bank) would show whether
+   the cross-space comparisons hold when search is not the bottleneck.
+4. **Noise-aware gates** as a registered factor (follow-up to E7).
 5. **Model realism**: liquidity-saving mechanism, intraday credit, calibrated
    turnover; cross-check the engine against PSSimPy on shared scenarios.
-6. **Exploitability**, tested properly: an adversarial proposer against
-   universalizing banks, larger budget, richer policies.
-7. **Second domain** for any claim about generality (a congestion or
-   shared-compute game is the natural choice).
-8. Full-text review of the 2026 preprints before any external claim; venue
+6. **Heterogeneous banks under a uniform price.** A single price level may fit
+   large and small banks differently; E8 used homogeneous banks only.
+7. Full-text review of the 2026 preprints before any external claim; venue
    policy on disclosure of development tooling; name and licence checks.
 
 ## 8. Reproduce
@@ -374,9 +450,10 @@ Ordered by how much they would change the conclusions.
 ```bash
 uv sync
 uv run pytest
-uv run python -m evortgs.experiments E1 E2 E3 E4 E5 E6 E7
+uv run python -m evortgs.experiments E1 E2 E3 E4 E5 E6 E7 E8
 uv run python -m evortgs.analysis
+uv run python -m evortgs.analysis_e8
 ```
 
-About 45 minutes on eight logical cores. Records carry the commit hash;
+About 90 minutes on eight logical cores. Records carry the commit hash;
 results are deterministic given the commit.

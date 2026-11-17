@@ -2,8 +2,9 @@
 
 Research report, 17 November 2026. Status: single-site, unreviewed,
 unreplicated. Full detail, audit trail and decision log are in
-[PROJECT.md](PROJECT.md); the frozen protocol is in
-[PREREGISTRATION.md](PREREGISTRATION.md).
+[PROJECT.md](PROJECT.md); the frozen protocols are in
+[PREREGISTRATION.md](PREREGISTRATION.md) and
+[PREREGISTRATION_E8.md](PREREGISTRATION_E8.md).
 
 ## Abstract
 
@@ -24,9 +25,12 @@ single private defector did not profit. A unilateral welfare gate with full
 cost visibility did worse than universalization, while a joint-move welfare
 gate did best, indicating that evaluating coordinated changes matters more
 than observing others' costs. A conventional delay surcharge with private
-gates matched the best gate. The gate is therefore a consequential design
-choice, but in this low-dimensional setting it offers no advantage over
-pricing.
+gates matched the best gate. A second pre-registered study (520 runs) widened
+the price grid and replaced the three-parameter policy with an eight-parameter
+rule-level one: the surcharge then beat every gate in both policy spaces,
+while a coarser two-band tariff lost most of its effect with rule-level
+policies. The gate is therefore a consequential design choice, but in this
+environment it is dominated by a price on the externality.
 
 ## 1. Background
 
@@ -106,6 +110,33 @@ every arm much worse at this budget.
 
 ![gates](../runs/fig_gates.png)
 
+### 3.1 Second study: rule-level policies (E8)
+
+Policies were extended to eight parameters (morning and afternoon buffers, an
+opening tick, a size threshold with its own hold time, a bilateral net sending
+limit), with the original space exactly nested. Budget and seeds as before.
+Price levels were chosen on development cost.
+
+| Arm | Three parameters | Eight parameters |
+|---|---|---|
+| private | 1.125 | 1.145 |
+| universalization | 0.997 | 1.022 |
+| welfare, unilateral | 1.051 | 1.059 |
+| welfare, joint | 0.864 | 0.929 |
+| private + delay surcharge | 0.815 | 0.863 |
+| private + band tariff | 0.845 | 0.979 |
+| symmetric planner | 0.874 | 0.934 |
+
+Registered hypotheses: R1 supported (surcharge against universalization
+−0.159, CI −0.180 to −0.138; against joint welfare −0.066, CI −0.091 to
+−0.045); R2 not supported (gates do not degrade clearly more than the price,
+interaction +0.017, CI −0.013 to +0.049); R3 supported (gate ordering holds);
+R4 not supported as registered (the tariff degrades much more than the
+surcharge, interaction +0.086, CI +0.050 to +0.123, but without the predicted
+bunching before the band boundary).
+
+![e8](../runs/fig_e8.png)
+
 ## 4. Discussion
 
 *Joint moves, not altruism.* The unilateral welfare gate is the textbook
@@ -115,9 +146,16 @@ shift together; a unilateral probe of a good joint direction looks bad. The
 universalization gate works mainly as a way of evaluating coordinated moves.
 
 *Pricing is enough here.* The surcharge needs no change to the agents and no
-counterfactual simulation of others. With three policy parameters one price
-aligns incentives. Whether that survives richer policy spaces, where a price
-can be gamed, is the question that decides if gates deserve further study.
+counterfactual simulation of others, and E8 shows it stays ahead when policies
+are rule-level. The reason is structural: the externality runs through
+settlement timing, and a charge on settlement time is equivalent to a charge
+on delay, so the price sits on the externality itself. A gate can only matter
+where no such price can be levied.
+
+*Coarse prices are fragile.* The two-band tariff leaves delay inside each band
+free. Rule-level banks under it delay about three times as long as under the
+surcharge. This reading was made after the data and is not a registered
+result.
 
 *Failed predictions.* The absence of a heterogeneity effect and of a defector
 gain may reflect the small policy space and noisy search rather than
@@ -136,6 +174,9 @@ further.
   relative to the best arm.
 * Mutation-based proposals. No language model is involved, so the connection
   to self-evolving language-model agents is an analogy, not a result.
+* Every arm is worse with eight parameters, including the planner, although
+  the larger space contains the smaller. Search at fixed budget, not the
+  policy space, limits those results.
 * One environment. No claim of generality, and no claim about recursive
   self-improvement.
 * Prior-art search was targeted; several 2026 preprints were read at abstract
@@ -143,9 +184,10 @@ further.
 
 ## 6. Next
 
-Language-model proposers behind the same gate interface; rule-level policies
-to test whether pricing still matches gates; noise-aware gates as a registered
-factor; a stronger reference optimum; a second domain.
+A second environment in which no party can price the externality, since that
+is the only setting where these results leave room for gates; language-model
+proposers there; a stronger optimiser for rule-level policies; noise-aware
+gates as a registered factor.
 
 ## References
 
