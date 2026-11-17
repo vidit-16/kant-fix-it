@@ -190,3 +190,34 @@ def test_planner_is_symmetric_and_beats_corners():
     f = lambda x: cb.simulate(b, [x] * CFG.n, CFG).system_cost.mean()
     for corner in [(0, 0, 0), (1, 0, 0), (1, 0, 1), (0.5, 0, 0.5)]:
         assert f(p[0]) <= f(corner) + 1e-9
+
+
+def test_asymmetric_planner_never_worse_than_symmetric():
+    from evortgs.cb_experiments import planner_asym
+    cfg = cb.CodebaseConfig(n=4, T=8, heterogeneity=1.5)
+    s = cb.DevSampler(cfg)
+    sym = planner(s, seed=0, batch=8)
+    asym, sims = planner_asym(s, seed=0, batch=8, sweeps=1)
+    b = s.batch(50_000_000, 8)
+    f = lambda P: (cb.simulate(b, P, cfg).system_cost / cb.simulate(b, P, cfg).nominal).mean()
+    assert f(asym) <= f(sym) + 1e-12 and sims > 0
+
+
+@pytest.mark.parametrize("het", [0.75, 1.5])
+def test_ambient_alignment_holds_with_unequal_agents(het):
+    cfg = cb.CodebaseConfig(n=4, T=8, heterogeneity=het)
+    b = cb.make_batch(cfg, "base", "dev", 0, 6)
+    base = [(0.5, 0.0, 0.5)] * 4
+    for i in (0, 3):
+        gaps = []
+        for p in [(0.0, 0.0, 0.0), (0.9, 0.3, 0.1), (0.4, 1.0, 1.0)]:
+            o = cb.simulate(b, base[:i] + [p] + base[i + 1:], cfg)
+            gaps.append(cb.private_cost(o, "ambient", 1.0)[:, i] - o.system_cost)
+        for g in gaps[1:]:
+            assert np.allclose(g, gaps[0])
+
+
+def test_e9_specification_unchanged():
+    from evortgs.cb_experiments import experiments
+    S = experiments("E9")
+    assert len(S) == 1280 and all("het" not in s for s in S)

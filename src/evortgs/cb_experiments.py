@@ -58,19 +58,62 @@ def planner(sampler: DevSampler, seed: int, batch: int = 64) -> tuple:
     return tuple(tuple(best) for _ in range(cfg.n))
 
 
+def planner_asym(sampler: DevSampler, seed: int, batch: int = 64, sweeps: int = 3):
+    """Reference for unequal agents: the symmetric planner, then coordinate descent.
+
+    Each agent in turn is set to its best (s, q) on a grid, with m = 0 (concealment
+    only lowers output and raises debt, so it never helps the social cost), holding
+    the others fixed; then a finer pass on s. Social cost only, development data.
+    Returns the profile and the number of simulations used.
+    """
+    cfg = sampler.cfg
+    b = sampler.batch(50_000_000 + seed * 1000, batch)
+
+    def f(P):
+        o = simulate(b, P, cfg)
+        return float((o.system_cost / o.nominal).mean())
+
+    P = list(planner(sampler, seed, batch))
+    cur, sims = f(P), (11 ** 3 + 9 ** 3 + 1) * batch
+    grid = [(s, 0.0, q) for s in np.linspace(0, 1, 21) for q in (0.0, 0.25, 0.5, 0.75, 1.0)]
+    for _ in range(sweeps):
+        for i in range(cfg.n):
+            for p in grid:
+                Q = P[:i] + [p] + P[i + 1:]
+                v = f(Q)
+                sims += batch
+                if v < cur - 1e-12:
+                    cur, P = v, Q
+    for i in range(cfg.n):
+        for ds in np.linspace(-0.05, 0.05, 11):
+            s = float(min(1.0, max(0.0, P[i][0] + ds)))
+            Q = P[:i] + [(s, P[i][1], P[i][2])] + P[i + 1:]
+            v = f(Q)
+            sims += batch
+            if v < cur - 1e-12:
+                cur, P = v, Q
+    return tuple(tuple(float(x) for x in p) for p in P), sims
+
+
 def spec(name, seed, *, gamma, n=6, gate="kappa", kappa=0.0, instrument=None, level=0.0,
-         split="holdout", kind="evolve", gens=40):
-    return dict(exp=name, seed=seed, gamma=gamma, n=n, gate=gate, kappa=kappa,
-                instrument=instrument, level=level, split=split, kind=kind, gens=gens)
+         split="holdout", kind="evolve", gens=40, het=None):
+    d = dict(exp=name, seed=seed, gamma=gamma, n=n, gate=gate, kappa=kappa,
+             instrument=instrument, level=level, split=split, kind=kind, gens=gens)
+    if het is not None:
+        d["het"] = het
+    return d
 
 
 def run_one(sp: dict) -> dict:
     t0 = time.perf_counter()
-    cfg = CodebaseConfig(n=sp["n"], conceal_cost=sp["gamma"])
+    cfg = CodebaseConfig(n=sp["n"], conceal_cost=sp["gamma"], heterogeneity=sp.get("het", 0.0))
     sampler = DevSampler(cfg, split="pilot" if sp["split"] == "pilot" else "dev")
     if sp["kind"] == "planner":
         profile = planner(sampler, sp["seed"])
         hist, sims = [], (11 ** 3 + 9 ** 3) * 64
+    elif sp["kind"] == "planner_asym":
+        profile, sims = planner_asym(sampler, sp["seed"])
+        hist = []
     else:
         ecfg = EvoConfig(generations=sp["gens"], gate=sp["gate"], kappa=sp["kappa"])
         r = evolve_env(sampler.batch, make_costs(cfg, sp["instrument"], sp["level"]),
@@ -104,6 +147,21 @@ def experiments(which: str) -> list[dict]:
                         for lev in levels:
                             S.append(spec("cbpilot", seed, instrument=inst, level=lev, **kw))
                     S.append(spec("cbpilot", seed, kind="planner", gate="planner", **kw))
+        return S
+    if which == "cbpilot2":  # heterogeneity pilot, primary concealment regime
+        grids = {"proxy": (0.1, 0.2, 0.4, 0.8), "surface": (1.0, 2.0, 4.0, 8.0),
+                 "ambient": (0.5, 1.0, 1.5, 2.0)}
+        for seed in PILOT_SEEDS:
+            for het in (0.75, 1.5):
+                kw = dict(gamma=0.25, het=het, split="pilot")
+                for k in (0.0, 0.5, 1.0):
+                    S.append(spec("cbpilot2", seed, kappa=k, **kw))
+                S.append(spec("cbpilot2", seed, gate="welfare", **kw))
+                for inst, levels in grids.items():
+                    for lev in levels:
+                        S.append(spec("cbpilot2", seed, instrument=inst, level=lev, **kw))
+                S.append(spec("cbpilot2", seed, kind="planner", gate="planner", **kw))
+                S.append(spec("cbpilot2", seed, kind="planner_asym", gate="planner_asym", **kw))
         return S
     if which == "E9":  # frozen in docs/PREREGISTRATION_E9.md
         for seed in CONFIRM_SEEDS:
