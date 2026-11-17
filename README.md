@@ -12,7 +12,8 @@ involved, and results say nothing about any real system.
 * [docs/PROJECT.md](docs/PROJECT.md) — canonical project document: decisions,
   prior-art audit, results, open questions.
 * [docs/PREREGISTRATION.md](docs/PREREGISTRATION.md),
-  [docs/PREREGISTRATION_E8.md](docs/PREREGISTRATION_E8.md) — protocols frozen
+  [docs/PREREGISTRATION_E8.md](docs/PREREGISTRATION_E8.md),
+  [docs/PREREGISTRATION_E9.md](docs/PREREGISTRATION_E9.md) — protocols frozen
   before the confirmatory runs.
 * [docs/REPORT.md](docs/REPORT.md) — paper-style report.
 * `runs/` — one JSON line per run, `results.json`, figures.
@@ -25,8 +26,13 @@ the counterfactual "everyone makes this same change" recovers about half of the
 loss caused by private gates, and the gain transfers to five unseen shock
 families. A conventional delay surcharge with private gates beats every gate
 tested, with three-parameter and with eight-parameter rule-level policies; a
-coarser two-band tariff does not hold up with the richer policies. Details and
-caveats are in the project document.
+coarser two-band tariff does not hold up with the richer policies.
+
+A second environment, agents sharing a codebase where harm from hidden
+coupling cannot be attributed, removes the direct price. There the Kantian
+gate and a budget-breaking ambient tax reach practically the same outcome,
+while budget-balanced charges either do nothing or are gamed into
+concealment. Details and caveats are in the project document.
 
 ## Run
 
@@ -36,6 +42,8 @@ uv run pytest
 uv run python -m evortgs.experiments E1 E2 E3 E4 E5 E6 E7 E8
 uv run python -m evortgs.analysis
 uv run python -m evortgs.analysis_e8
+uv run python -m evortgs.cb_experiments cbpilot E9
+uv run python -m evortgs.analysis_e9
 ```
 
 ## Layout

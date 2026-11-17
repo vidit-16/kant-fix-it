@@ -1,10 +1,11 @@
-# Acceptance gates for co-evolving agents: a pre-registered study in a stylized payment network
+# Acceptance gates for co-evolving agents: pre-registered studies in a payment network and a shared codebase
 
 Research report, 17 November 2026. Status: single-site, unreviewed,
 unreplicated. Full detail, audit trail and decision log are in
 [PROJECT.md](PROJECT.md); the frozen protocols are in
 [PREREGISTRATION.md](PREREGISTRATION.md) and
-[PREREGISTRATION_E8.md](PREREGISTRATION_E8.md).
+[PREREGISTRATION_E8.md](PREREGISTRATION_E8.md) and
+[PREREGISTRATION_E9.md](PREREGISTRATION_E9.md).
 
 ## Abstract
 
@@ -30,7 +31,15 @@ the price grid and replaced the three-parameter policy with an eight-parameter
 rule-level one: the surcharge then beat every gate in both policy spaces,
 while a coarser two-band tariff lost most of its effect with rule-level
 policies. The gate is therefore a consequential design choice, but in this
-environment it is dominated by a price on the externality.
+environment it is dominated by a price on the externality. A third
+pre-registered study (1 280 runs) moved to a second environment, agents
+sharing a codebase, in which shortcuts add coupling to a shared debt stock and
+incidents surface in random modules, so the harm cannot be attributed. There
+the Kantian gate and a budget-breaking ambient tax reached practically the same
+outcome (difference 0.4 % of cost; the gate's registered advantage did not
+replicate with twelve agents), while every budget-balanced instrument either
+had no effect or, in the case of a charge on visible coupling, was gamed into
+concealment and made outcomes worse than no charge.
 
 ## 1. Background
 
@@ -137,6 +146,41 @@ bunching before the band boundary).
 
 ![e8](../runs/fig_e8.png)
 
+### 3.2 Third study: an environment without a direct price (E9)
+
+Protocol: [PREREGISTRATION_E9.md](PREREGISTRATION_E9.md). Six agents (twelve
+in a secondary regime) own modules in a shared codebase and tune shortcut
+intensity, the concealed share of the resulting coupling, and private
+hardening. Coupling feeds a shared, slowly decaying debt stock; incidents
+arrive in every module at a rate convex in the debt and surface wherever they
+hit. An operator sees visible coupling, output, and where incidents surface;
+not policies or concealed coupling. Four instruments on those observables were
+tuned on development data: a charge on visible coupling, on output, on incident
+loss in the agent's own module, and an ambient tax on incident loss in every
+other module, charged to each agent in full (Segerson 1988; Holmström 1982).
+The optimum is found by exhaustive search. Factor: the productivity cost of
+concealment, γ ∈ {0.25, 1}; at γ = 1 concealment is pointless and the coupling
+charge is a direct price (positive control).
+
+In the primary regime (γ = 0.25, six agents) private gates cost 0.2384 against
+an optimum of 0.2138 (+11 %). The Kantian gate reached 0.2147, closing 96 % of
+the gap, as Kantian theory predicts for symmetric commons. The ambient tax at
+its development-chosen level reached 0.2156, and its runs were identical to
+those of the unilateral welfare gate, as theory implies. Under the registered
+rule the gate is cheaper than the best instrument (+0.0009, 95 % CI +0.0002 to
++0.0016), so the registered kill criterion did not fire, contrary to the
+pilot-based expectation. The difference lies inside the registered equivalence
+margin, is absent with twelve agents (+0.0003, −0.0002 to +0.0009), and
+reverses for the second-ranked ambient level (0.2136 on holdout); we read the
+two as practically equivalent. Budget-balanced instruments fared badly: the
+coupling charge was gamed (99 % of coupling concealed, cost 0.37), the output
+charge had exactly no effect, and the best of them left 94 % of the gap open.
+With γ = 1 the coupling charge matched or beat the gate, reproducing the
+payment-environment result. A predicted advantage of the gate growing with the
+number of agents did not appear.
+
+![e9](../runs/fig_e9.png)
+
 ## 4. Discussion
 
 *Joint moves, not altruism.* The unilateral welfare gate is the textbook
@@ -156,6 +200,17 @@ where no such price can be levied.
 free. Rule-level banks under it delay about three times as long as under the
 surcharge. This reading was made after the data and is not a registered
 result.
+
+*Without a direct price, the gate ties the textbook instrument.* In the
+codebase environment the only instrument that matches the Kantian gate is an
+ambient tax, which charges every agent the full loss it may have caused
+elsewhere; at its natural level it is exactly the unilateral welfare gate. The
+gate's practical edge is therefore not over pricing in general but over
+*budget-balanced* pricing when the harm's carrier can be hidden: there a
+charge on what the operator can see pushes the harm into what it cannot, a
+multitask effect in the sense of Holmström and Milgrom (1991). Whether an
+operator can break the budget, and whether agents are risk-neutral, decide
+which instrument is preferable; E9 holds both fixed.
 
 *Failed predictions.* The absence of a heterogeneity effect and of a defector
 gain may reflect the small policy space and noisy search rather than
@@ -177,23 +232,33 @@ further.
 * Every arm is worse with eight parameters, including the planner, although
   the larger space contains the smaller. Search at fixed budget, not the
   policy space, limits those results.
-* One environment. No claim of generality, and no claim about recursive
-  self-improvement.
+* Two environments, both symmetric in E9, where Kantian optimisation is
+  already known to be efficient. No claim of generality, and no claim about
+  recursive self-improvement.
+* E9 agents are risk-neutral and cannot collude, which removes the classic
+  objections to ambient taxes; the incident process was calibrated on pilot
+  data to produce a dilemma.
 * Prior-art search was targeted; several 2026 preprints were read at abstract
   level only.
 
 ## 6. Next
 
-A second environment in which no party can price the externality, since that
-is the only setting where these results leave room for gates; language-model
-proposers there; a stronger optimiser for rule-level policies; noise-aware
-gates as a registered factor.
+The strong claim, that gates beat the best available instrument, is not
+supported in either environment. Remaining tests that could change that, each
+needing its own pre-registration: heterogeneous agents (where the Kantian rule
+is no longer efficient, so the test is as likely to go against gates), and
+risk-averse agents facing a noisy ambient charge. Language-model proposers
+remain unstarted.
 
 ## References
 
 * Alger, I., Weibull, J. (2013). Homo moralis. *Econometrica* 81(6).
 * Bech, M., Garratt, R. (2003). The intraday liquidity management game. *J. Econ. Theory* 109(2).
 * Castro, P. S., Desai, A., Du, H., Garratt, R., Rivadeneyra, F. (2021). Estimating policy functions in payments systems using reinforcement learning. Bank of Canada SWP 2021-7.
+* Cochard, F., Willinger, M., Xepapadeas, A. (2005). Efficiency of nonpoint source pollution instruments: an experimental study. *Environ. Resour. Econ.* 30(4).
+* Holmström, B. (1982). Moral hazard in teams. *Bell J. Econ.* 13(2).
+* Holmström, B., Milgrom, P. (1991). Multitask principal–agent analyses. *J. Law Econ. Organ.* 7.
+* Segerson, K. (1988). Uncertainty and incentives for nonpoint pollution control. *J. Environ. Econ. Manag.* 15(1).
 * Fu, Z., Xu, R., Ren, Q. (2026). Financial fragility in societies of LLM agents. arXiv:2609.30940.
 * Galbiati, M., Soramäki, K. (2011). An agent-based model of payment systems. *J. Econ. Dyn. Control* 35(6).
 * Piatti, G. et al. (2024). Cooperate or collapse. NeurIPS 2024, arXiv:2404.16698.

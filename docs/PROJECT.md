@@ -4,10 +4,12 @@ Single source of truth for decisions, evidence, status and open questions.
 Supersedes the handoff of 17 November 2026 where they conflict.
 Last updated: 17 November 2026.
 
-Related files: [PREREGISTRATION.md](PREREGISTRATION.md) and
-[PREREGISTRATION_E8.md](PREREGISTRATION_E8.md) (frozen protocols),
+Related files: [PREREGISTRATION.md](PREREGISTRATION.md),
+[PREREGISTRATION_E8.md](PREREGISTRATION_E8.md) and
+[PREREGISTRATION_E9.md](PREREGISTRATION_E9.md) (frozen protocols),
 [REPORT.md](REPORT.md) (paper-style write-up), `runs/` (raw records,
-`results.json`, `results_e8.json`).
+`results.json`, `results_e8.json`, `results_e9.json`). The next-stage working
+notes of 17 November 2026 are folded into §7 and §9; that file is deleted.
 
 ---
 
@@ -23,15 +25,17 @@ Related files: [PREREGISTRATION.md](PREREGISTRATION.md) and
 | Post hoc ablation E7 | Run, labelled exploratory (§5.7) |
 | Rule-level policies, second pre-registration | Committed before E8 runs (`9729748`) |
 | Confirmatory experiment E8 (gates against pricing) | Run, 520 runs, analysed (§5.8) |
+| Second environment (shared codebase, hidden coupling) | Built, 24 further tests (64 in total) (§5.9) |
+| Pre-registration for E9 | Committed before confirmatory runs (`0b9a282`) |
+| Confirmatory experiment E9 (gates against the best available instrument) | Run, 1 280 runs, analysed (§5.9) |
 | Language-model proposers | Not started; needs a model API key and a budget decision (§7) |
-| Transfer to a second domain | Not started |
 | External replication, peer review | None |
 
-One-sentence state: a working, tested, reproducible testbed and two
-pre-registered studies exist; together they show that the acceptance gate is a
-consequential design choice but that, in this environment, a delay price beats
-every gate tested, with three-parameter and with rule-level policies alike; no
-novelty claim is made.
+One-sentence state: in the payment environment a delay price beats every gate;
+in a second environment where harm is unattributable, a Kantian gate and a
+budget-breaking ambient tax reach the same outcome (difference 0.4 % of cost,
+inside the registered equivalence margin), while every budget-balanced
+instrument either does little or is gamed; no novelty claim is made.
 
 ## 2. Direction taken, and why it differs from the handoff
 
@@ -153,6 +157,38 @@ question except as background; cite only after checking.
   held-out shocks and a Pigouvian baseline.
 * **Unknown:** full texts of the 2026 preprints; anything inside Project
   Agenti.
+
+### 3.4 Prior art for the second environment (E9)
+
+Checked 17 November 2026 by web search; abstracts and secondary descriptions,
+not full texts.
+
+* **Moral hazard in teams** (Holmström 1982): with output observed only in
+  aggregate, no budget-balanced sharing rule gives efficient incentives; a
+  budget breaker can.
+* **Ambient taxes for non-point pollution** (Segerson 1988, J. Environ. Econ.
+  Manag. 15): a charge on the aggregate outcome can induce efficient abatement
+  without observing individual emissions. Known objections: agents may not see
+  how they move the aggregate, the measurement is noisy, the result does not
+  survive collusion, and payments are large (Millock and Salanié). Laboratory
+  tests (Cochard, Willinger and Xepapadeas 2005; Vossler et al. 2008) find
+  ambient taxes often work in aggregate, with mixed reliability across designs.
+* **Multitask incentives** (Holmström and Milgrom 1991): paying on a measured
+  dimension moves effort into unmeasured ones. The proxy result below is an
+  instance.
+* **Kantian optimisation** (Roemer 2015, 2019): Kantian equilibria are
+  efficient in symmetric common-pool problems with negative externalities. The
+  Kantian gate reaching the optimum in E9 is therefore expected, not a finding.
+* **Technical debt as a commons**: an informal framing in practitioner
+  writing; one empirical study links non-owner changes to clones and debt
+  (arXiv 2405.15866). No agent-based or game-theoretic simulation of it was
+  found; that is "not found", not "does not exist".
+
+Both sides of the E9 comparison are therefore known: the ambient tax is the
+textbook instrument for this information structure, and Kantian optimisation
+is known to be efficient in symmetric commons. E9 only tests them against each
+other inside a propose–evaluate–accept loop with finite, noisy evaluation, and
+against budget-balanced alternatives.
 
 ## 4. System
 
@@ -399,6 +435,110 @@ Limits specific to E8: eight bounded parameters are not programs; mutation
 search may miss exploits a stronger proposer would find; one cost regime;
 homogeneous banks.
 
+### 5.9 E9 — a second environment without a direct price (pre-registered)
+
+Protocol: [PREREGISTRATION_E9.md](PREREGISTRATION_E9.md), frozen in `0b9a282`
+after a pilot on separate seeds (`runs/cbpilot.jsonl`). The records carry commit
+`7aa8efd` with the dirty flag clear. That commit only adds a worker-count option
+to the runner; a first launch ran out of memory after two records, which were
+discarded.
+
+**Environment** (`src/evortgs/codebase.py`). Agents own modules in a shared
+codebase and tune shortcut intensity `s`, concealed share `m` and hardening
+`q`. Coupling from shortcuts feeds one shared debt stock; incidents surface in
+random modules at a rate convex in the debt, so harm is diffuse, delayed and
+not attributable. Concealed coupling is invisible to the operator, costs its
+author a share γ of the shortcut's gain and adds 50 % more debt. The optimum is
+found by exhaustive search over symmetric profiles; asymmetric search improved
+on it by at most 0.3 % (pilot). The private equilibrium over-shortcuts and
+over-hardens (s ≈ 0.97, q ≈ 0.97); the optimum is s ≈ 0.57, q = 0. The gate loop
+is a generic copy of `evolve.py`, tested to reproduce it exactly on the payment
+environment.
+
+**Instruments**, all on what an operator can observe, each tuned on
+development cost: a charge on visible coupling (*proxy*), on shipped output
+(*activity*), on incident loss surfacing in the agent's own module (*surface*),
+and on incident loss surfacing in every other module, levied on each agent in
+full (*ambient*; the budget-breaking Segerson/Holmström form, included in the
+kill criterion by advance decision).
+
+Primary regime γ = 0.25 (concealment cheap), six agents. Holdout cost, 20 seeds:
+
+| Arm | Cost | 95 % CI | Concealed share |
+|---|---|---|---|
+| ambient tax, level 1.5 (*not* the level chosen on development data) | 0.2136 | 0.2131–0.2141 | 0.00 |
+| optimum (symmetric grid, base-family development data) | 0.2138 | 0.2132–0.2145 | 0.00 |
+| **Kantian gate** | **0.2147** | 0.2142–0.2152 | 0.00 |
+| **ambient tax\*** (level 1, chosen on development data) | **0.2156** | 0.2148–0.2165 | 0.00 |
+| welfare gate, unilateral | 0.2156 | 0.2148–0.2164 | 0.00 |
+| surface charge (level 4) | 0.2287 | 0.2282–0.2292 | 0.00 |
+| welfare gate, joint shift | 0.2348 | 0.2318–0.2383 | 0.00 |
+| private gate | 0.2384 | 0.2376–0.2391 | 0.00 |
+| output charge, any level | 0.2384 | identical to private gate | 0.00 |
+| proxy charge\* (level 0.1, best budget-balanced on development data) | 0.2385 | 0.2373–0.2400 | 0.01 |
+| proxy charge, levels 0.2–0.8 | 0.366–0.369 | | 0.98–1.00 |
+
+| Hypothesis | Outcome |
+|---|---|
+| C1 dilemma | **Supported** in all four regimes; private gate +0.025 over the optimum (+11 %) |
+| C2 Kantian gate closes ≥ 80 % of the gap | **Supported**: 0.96, 0.96, 0.93, 0.97. Expected from Roemer; a validity check |
+| C3 positive control (γ = 1): proxy not clearly worse than the gate | **Supported at n = 6** (proxy better, −0.0027, −0.0044 to −0.0015). **Failed at n = 12** (+0.0006, +0.0001 to +0.0010; inside the margin) |
+| C4 proxy gamed at γ = 0.25 | **Supported.** Proxy\* +0.024 over the gate; at levels ≥ 0.2, 99 % of coupling is concealed and cost is 54 % above the private gate |
+| **C5 gate clearly cheaper than the best instrument (kill criterion)** | **Primary regime: supported under the registered rule**, +0.0009 (+0.0002 to +0.0016), p = 0.027, **and also equivalent within the registered ±0.002 margin.** n = 12: no clear difference (+0.0003, −0.0002 to +0.0009). γ = 1: the proxy beats the gate at n = 6 and loses by 0.0006 at n = 12 |
+| C5b gate clearly cheaper than the best budget-balanced instrument | **Supported at γ = 0.25** (+0.024 at n = 6, +0.020 at n = 12). At γ = 1 the proxy wins at n = 6 and loses by 0.0006 at n = 12 |
+| C6 identities | **Hold.** Ambient level 1 gives exactly the unilateral welfare gate's profiles in every seed and regime; every output-charge level gives exactly the private gate's profiles |
+| C7 ambient tax loses ground as n grows | **Not supported**, as expected after the pilot: −0.0006 (−0.0016 to +0.0004) at γ = 0.25, −0.0004 (−0.0032 to +0.0022) at γ = 1 |
+
+**Kill criterion.** As registered, it does **not** fire: in the primary regime
+the Kantian gate is cheaper than the best instrument and the interval excludes
+zero. The pilot-based expectation that it would fire was wrong, and that is a
+failed prediction. The margin by which the gate wins is small and fragile:
+
+* 0.0009 is 0.4 % of cost and 3.7 % of the private-to-optimum gap, inside the
+  equivalence margin registered alongside the rule;
+* it does not replicate with twelve agents;
+* it depends on level selection. The ambient level chosen on development data
+  (1.0) is the one that equals the unilateral welfare gate; level 1.5, second on
+  development data, is cheaper than the gate on holdout (0.2136 against 0.2147).
+  E8 showed the same pattern: the best holdout surcharge was not the level
+  chosen on development data. Using level 1.5 as the comparator would be a post
+  hoc choice and is not done.
+
+Honest summary: **in this environment the gate and the ambient tax are
+practically equivalent; the gate's registered "win" is a technicality.**
+Whether that keeps the line open is for the project owner to decide (§7).
+
+What else this shows:
+
+* **Every budget-balanced instrument fails when the harm's carrier can be
+  hidden.** The proxy is gamed into concealment and, at any level strong enough
+  to bind, makes things much worse than no charge. The surface charge rewards
+  hardening rather than restraint. The output charge has exactly no effect: an
+  agent's own cost is lost output, so a charge per unit of output only rescales
+  it. Against these, the gate wins by about 95 % of the gap.
+* **When the carrier is observable (γ = 1), the proxy is a direct price and
+  matches or beats the gate.** This reproduces the E8 conclusion in a second
+  environment.
+* **The ambient tax works because it is the unilateral welfare gate in
+  disguise.** At level 1 its private-gate runs are identical to the welfare
+  gate's, as the theory implies. Its drawbacks lie outside the model: the
+  operator collects about (n − 1) times the damage, risk-averse agents would
+  bear noisy charges, and agents could collude against it.
+* **Post hoc, not registered:** the joint-shift welfare gate, the best gate in
+  the payment game, is here the worst cooperative gate (+0.020 over the Kantian
+  gate, with few acceptances). Its score sums every agent's cost, so its noise
+  grows with the number of agents, whereas the Kantian score reads one agent's
+  cost. Not tested further.
+* **The reference is an optimum for the base family only.** Two holdout
+  families (fragile, spike) favour slightly fewer shortcuts, which is why an
+  ambient level that pushes `s` lower can beat the "optimum" on holdout.
+
+Limits specific to E9: symmetric agents, where Kantian optimisation is known to
+be efficient; risk-neutral agents; three parameters; mutation search; the
+incident process was calibrated on pilot data to produce a dilemma.
+
+![e9](../runs/fig_e9.png)
+
 ## 6. Decision log
 
 | ID | Question | Resolution |
@@ -424,23 +564,44 @@ homogeneous banks.
 | D19 | Do gates beat pricing once policies are rule-level? | No (E8, R1). Line "gates as an alternative to pricing" closed for this environment |
 | D20 | Is a coarse price robust to richer policies? | No; band tariff loses most of its effect, by within-band delay rather than boundary bunching |
 | D21 | Where could gates still matter? | Only where no party can levy a price on the externality; needs a different environment |
+| D22 | Which second environment? | Shared codebase with hidden coupling (§5.9). Compute or context budgets rejected (metered, so directly priceable); a shared evaluation harness rejected for now (harm lands on the gate's own evidence; no clean optimum) |
+| D23 | Exclude the ambient tax as unrealistic? | No. Included in the kill criterion by advance decision; budget-balanced instruments reported separately |
+| D24 | Do gates beat the best instrument where harm is unattributable? | Practically no: Kantian gate and ambient tax within 0.4 % (E9). The registered rule says the gate wins (+0.0009, CI excludes 0), but this is not robust to n = 12 or to the ambient level |
+| D25 | Do gates beat budget-balanced instruments there? | Yes, by about 95 % of the gap, when the harm's carrier can be concealed; no when it cannot |
+| D26 | Continue the gates-versus-pricing line? | Open; for the project owner (§7) |
 
 ## 7. Unresolved questions and next steps
 
-E8 closed the question that was first on this list. The remaining ones, ordered
-by how much they would change the conclusions:
+E8 answered the gates-versus-pricing question for payments; E9 answered it for
+an environment without a direct price. The decision that comes first:
 
-1. **Is there a setting where a gate is the only available instrument?** In the
-   payment game an operator can price the externality directly, so gates lose.
-   Shared resources with no operator and no meter (agents sharing a codebase,
-   a context budget or an evaluation harness) are the natural candidates, and
-   they are closer to the project's stated ambition than payments are. This
-   means a second environment, not more work on this one.
-2. **Language-model proposers.** Still not started. E8 lowers its priority in
-   the payment environment: a stronger proposer would mainly test whether the
-   surcharge can be exploited, which the equivalence argument in §5.8 makes
-   unlikely. It becomes the main step in whichever environment item 1 selects.
-   Needs an API key, a model choice and a spending cap from the project owner.
+0. **Decision for the project owner: close the gates-versus-pricing line or
+   not?** The registered kill rule did not fire, but only on a 0.4 % margin that
+   is inside the equivalence band, fails to replicate at n = 12, and reverses
+   for the second-ranked ambient level (§5.9). Recommendation: **treat the line
+   as closed in its strong form** ("gates beat the best instrument") and keep
+   only the narrow, defensible form: *where the operator cannot break the
+   budget and the harm's carrier can be concealed, an own-cost Kantian gate
+   recovers about 95 % of the loss and every budget-balanced instrument
+   recovers little or makes things worse.* Two ways forward that would each be
+   a new pre-registered study, not a rescue of this one:
+   a. **Heterogeneous agents**, where Kantian optimisation is no longer
+      efficient and an ambient tax at a single level is; this is where the
+      prediction would most plausibly go against gates, and should be tested
+      for that reason.
+   b. **Risk-averse agents or a noisy ambient signal**, the classic objection
+      to ambient taxes, which E9 excludes by construction.
+   Otherwise pivot: the strongest asset is the testbed and the measurement
+   discipline, not a gate result.
+
+The remaining items, ordered by how much they would change the conclusions:
+
+1. **Second environment.** Done (E9, shared codebase). A shared evaluation
+   harness that agents can overfit remains a candidate, not built.
+2. **Language-model proposers.** Still not started. If the line continues, the
+   codebase environment is the place for them (proposals as policy changes
+   first, code edits only with an agreed sandbox design). Needs an API key, a
+   model choice and a spending cap from the project owner.
 3. **Search quality with rule-level policies.** All arms degrade at fixed
    budget. A better optimiser (for example CMA-ES per bank) would show whether
    the cross-space comparisons hold when search is not the bottleneck.
@@ -460,7 +621,44 @@ uv run pytest
 uv run python -m evortgs.experiments E1 E2 E3 E4 E5 E6 E7 E8
 uv run python -m evortgs.analysis
 uv run python -m evortgs.analysis_e8
+uv run python -m evortgs.cb_experiments cbpilot E9
+uv run python -m evortgs.analysis_e9
 ```
 
-About 90 minutes on eight logical cores. Records carry the commit hash;
-results are deterministic given the commit.
+E1–E8 take about 90 minutes on eight logical cores; E9 took 90 minutes with
+four workers (`EVO_WORKERS=4 OPENBLAS_NUM_THREADS=1` on a machine with little
+free memory). Records carry the commit hash; results are deterministic given
+the commit.
+
+## 9. Working rules and standing constraints
+
+Folded in from the next-stage notes of 17 November 2026.
+
+Rules that produced trustworthy results so far:
+
+* Pilot seeds 1000–1005 and the `pilot` split for every design choice;
+  confirmatory seeds 0–19; holdout never visible to evolution (tested).
+* Pre-register hypotheses, decision rules and a "what would count against
+  this" section; commit before running; report failed predictions as failed.
+* Same simulation budget for every arm, asserted in tests.
+* Instrument levels chosen on development cost, reported on holdout.
+* Label anything decided after seeing data as post hoc.
+* Check that old records still reproduce after any engine change.
+* Commit `src/` before launching runs so records are not flagged dirty.
+* No novelty, "first" or breakthrough claims; nothing here is evidence about
+  recursive self-improvement.
+* Multi-line Python inside shell heredocs breaks on apostrophes; write a
+  script file instead.
+
+Standing constraints from the project owner:
+
+* No reference to any AI tool or vendor in commits, trailers, code comments,
+  documents or metadata. Commits use the configured Git identity.
+* No live financial APIs, credentials or real money. Agents never modify the
+  evaluator, accounting, manifests or budget. No execution of generated code
+  without a sandbox design agreed first.
+* No language-model proposers without an API key, a model choice and a
+  spending cap from the owner.
+* One canonical document: this one.
+* Work autonomously; ask only for consequential decisions or external
+  authorisation (keys, spending, publication).
