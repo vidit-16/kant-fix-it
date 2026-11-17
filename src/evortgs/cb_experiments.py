@@ -104,7 +104,28 @@ def experiments(which: str) -> list[dict]:
                             S.append(spec("cbpilot", seed, instrument=inst, level=lev, **kw))
                     S.append(spec("cbpilot", seed, kind="planner", gate="planner", **kw))
         return S
+    if which == "E9":  # frozen in docs/PREREGISTRATION_E9.md
+        for seed in CONFIRM_SEEDS:
+            for gamma in (0.25, 1.0):
+                for n in (6, 12):
+                    kw = dict(gamma=gamma, n=n)
+                    for inst, levels in E9_GRIDS.items():
+                        if n == 12 and inst in ("activity", "surface"):
+                            continue
+                        for lev in levels:
+                            S.append(spec("E9", seed, instrument=inst, level=lev, **kw))
+                    for g, k in GATES:
+                        if n == 12 and g == "welfare_universal":
+                            continue
+                        S.append(spec("E9", seed, gate=g, kappa=k, **kw))
+                    S.append(spec("E9", seed, kind="planner", gate="planner", **kw))
+        return S
     raise SystemExit(f"unknown experiment {which}")
+
+
+# Frozen after the pilot; see docs/PREREGISTRATION_E9.md.
+E9_GRIDS = {"proxy": (0.1, 0.2, 0.4, 0.8), "activity": (0.25, 0.5, 0.75),
+            "surface": (1.0, 2.0, 4.0, 8.0), "ambient": (0.5, 1.0, 1.5, 2.0)}
 
 
 def main(argv=None):
