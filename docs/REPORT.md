@@ -72,17 +72,21 @@ attributed.
 
 ## 2. Related work
 
-A literature review covering 118 logged searches is in
-[LITERATURE_REVIEW.md](LITERATURE_REVIEW.md). It is a broad structured review,
-not a formal systematic one, and several sources were seen at abstract level
-only. This section summarises it.
+A literature review is in [LITERATURE_REVIEW.md](LITERATURE_REVIEW.md). It
+combines 118 logged web searches with a second pass through the arXiv,
+Crossref and OpenAlex APIs. It is a broad structured review, not a formal
+systematic one, and several sources were seen at abstract level only. This
+section summarises it.
 
 **Acceptance gates.** In 2026 the acceptance gate of a self-improving loop
 became a research object in its own right, but only for single agents. SAGE
 (arXiv:2609.36043) compares a statistical gate with a greedy one at matched
 proposals and tokens. PACE (arXiv:2606.08106) compares greedy, fixed-sample,
-false-discovery-rate and anytime-valid gates. Both name the multi-agent case
-as open. Single-lineage systems such as the Darwin Gödel Machine and
+false-discovery-rate and anytime-valid gates. So et al. (2026)
+compare ten gate rules across 411 loops. SAGE and PACE
+name the multi-agent case as open. When learning rules themselves are under
+selection, selfish learning is unstable and other-regarding rules are
+favoured (McAvoy et al. 2022, two-player repeated games). Single-lineage systems such as the Darwin Gödel Machine and
 Hyperagents compare archive-based acceptance with keeping only one successor.
 The closest classical analogue is Agogino and Tumer's comparison of local,
 global and difference evaluation for evolving multiagent policies. It is
@@ -94,7 +98,8 @@ agents that impose costs on each other, nor one against a price.
 Kantian equilibria are Pareto efficient, including with heterogeneous agents.
 Only the simple form, in which everyone takes the same action level, is
 generally inefficient with heterogeneity. *Homo moralis* preferences (Alger
-and Weibull 2013) give the degree-of-morality mixture κ. Our κ = 1 gate is the
+and Weibull 2013) give the degree-of-morality mixture κ. Partial Kantian
+equilibria are defined by Kordonis (2020) and Istrate (2020). Our κ = 1 gate is the
 additive form: every agent's policy moves by the same mutation. With unequal
 exposure, the additive Kantian condition gives b′ᵢ = n·eᵢ·D′. The equal-weight
 cost optimum gives b′ᵢ = n·ē·D′. So the Kantian point is the welfare optimum
@@ -110,7 +115,8 @@ Galbiati and Soramäki 2011). Learning agents in it have been studied with
 reinforcement learning (Castro et al. 2025). A single prompted language-model
 agent has been tested on cash-management decisions (Aldasoro and Desai 2025).
 Pricing beating coordination rules has precedent: a time-rising intraday
-tariff beats throughput guidelines in most cases (Ota 2011). Our surcharge
+tariff beats throughput guidelines in most cases (Ota 2011). Late-settlement
+fees have also been studied as a coordination device (Nellen 2019). Our surcharge
 result extends that comparison to agent-level gates. Fu et al. (2026) compare
 stabilising mechanisms for language-model agents in other financial
 coordination games; there paid commitments were never the best mechanism.
@@ -122,13 +128,17 @@ can (Holmström 1982). The ambient tax on non-point pollution is the
 corresponding instrument (Segerson 1988). Known objections include collusion,
 large transfers and information requirements (Millock and Salanié 2005).
 Laboratory evidence is mixed (Spraggon 2002; Cochard, Willinger and
-Xepapadeas 2005; Suter et al. 2008). Charging each agent all damage outside
+Xepapadeas 2005; Suter et al. 2008). In one experiment, heterogeneity in
+farm size and location reduced the effectiveness of an ambient tax/subsidy
+unless peer information was given; an agent-based model calibrated on that
+experiment exists (Wu 2017). Charging each agent all damage outside
 its module makes its payoff equal to private benefit minus total damage, a
 Groves-style transfer. The level-1 identity between the ambient tax and the
 unilateral welfare gate is therefore an observation, not a result. In
 multi-agent reinforcement learning, LOPT (Hua et al. 2025) learns a Pigouvian
 reward shaping toward social welfare where the externality can be
-attributed. Paying on a measured dimension moves effort into unmeasured ones
+attributed. Danassis et al. (2026) use a learning policymaker to set market
+prices against common-pool externalities. Paying on a measured dimension moves effort into unmeasured ones
 (Holmström and Milgrom 1991; not re-read for this review).
 
 **Technical debt.** Gavidia-Calderon et al. (2020) model technical debt as a
@@ -484,7 +494,14 @@ ambient tax's favour.
   * The codebase optimum is a grid and coordinate-descent optimum, possibly
     local; the ambient tax came within 0.0003 of it.
 * **Favourable assumptions for the ambient tax.** Agents are risk-neutral and
-  cannot collude, which removes the classic objections to it.
+  cannot collude, which removes the classic objections to it. In laboratory
+  work, heterogeneity reduced the tax's effectiveness among human subjects
+  (Wu 2017), so E10's result for the tax is a result about these agents.
+* **The Kantian gate depends on units.** It shifts every agent's policy by
+  the same amount in the policy's own units. The Kantian counterfactual is
+  known to depend on how actions are represented (Sloev and Lianos 2026), so a
+  different parameterisation of the same policies could move the gate's
+  outcome.
 * **No language models.** Proposals are random mutations, so the link to
   self-improving language-model systems is an analogy, not a result.
 * **Prior-art review** was broad and structured but not a formal systematic
@@ -529,24 +546,32 @@ Evidence levels for each source are given in
 * Aldasoro, I., Desai, A. (2025). AI agents for cash management in payment systems. BIS Working Paper 1310; Bank of Canada SWP 2025-35.
 * Alger, I., Weibull, J. (2013). Homo moralis. *Econometrica* 81(6).
 * Bech, M., Garratt, R. (2003). The intraday liquidity management game. *J. Econ. Theory* 109(2).
-* Castro, P. S., Desai, A., Du, H., Garratt, R., Rivadeneyra, F. (2025). Estimating policy functions in payments systems using reinforcement learning. *ACM Trans. Econ. Comput.* 13(1). Earlier as Bank of Canada SWP 2021-7.
+* Castro, P. S., Desai, A., Du, H., Garratt, R., Rivadeneyra, F. (2025). Estimating policy functions in payments systems using reinforcement learning. *ACM Trans. Econ. Comput.* 13(1), doi:10.1145/3691326. Earlier as Bank of Canada SWP 2021-7.
 * Cochard, F., Willinger, M., Xepapadeas, A. (2005). Efficiency of nonpoint source pollution instruments: an experimental study. *Environ. Resour. Econ.* 30(4).
+* Danassis, P., Filos-Ratsikas, A., Chen, H. et al. (2026). Rectifying market externalities via AI policymaking. *Auton. Agents Multi-Agent Syst.*
 * Fu, Z., Xu, R., Ren, Q. (2026). Financial fragility in societies of LLM agents. arXiv:2609.30940.
 * Galbiati, M., Soramäki, K. (2011). An agent-based model of payment systems. *J. Econ. Dyn. Control* 35(6).
 * Gavidia-Calderon, C., Sarro, F., Harman, M., Barr, E. T. (2020). Game-theoretic analysis of development practices: challenges and opportunities. *J. Syst. Softw.* 159, 110424.
 * Holmström, B. (1982). Moral hazard in teams. *Bell J. Econ.* 13(2).
 * Holmström, B., Milgrom, P. (1991). Multitask principal–agent analyses. *J. Law Econ. Organ.* 7.
-* Hua, Y. et al. (2025). Learning optimal Pigouvian taxes in multi-agent reinforcement learning (LOPT). NeurIPS 2025.
-* Millock, K., Salanié, F. (2005). Nonpoint source pollution and cooperation. *Topics Econ. Anal. Policy* 5(1).
+* Hua, Y., Gao, S. et al. (2025). LOPT: learning optimal Pigovian tax in sequential social dilemmas. NeurIPS 2025.
+* Istrate, G. (2020). Game-theoretic models of moral and other-regarding agents. arXiv:2012.09759.
+* Kordonis, I. (2020). A model for partial Kantian cooperation. *Annals of the International Society of Dynamic Games*, 319–348.
+* McAvoy, A., Kates-Harbeck, J., Chatterjee, K. et al. (2022). Evolutionary instability of selfish learning in repeated games. *PNAS Nexus*, pgac141.
+* Millock, K., Salanié, F. (2005). Nonpoint source pollution when polluters might cooperate. *Topics Econ. Anal. Policy* 5(1).
+* Nellen, T. (2019). Intraday liquidity facilities, late settlement fee and coordination. *J. Bank. Finance*.
 * Ota, T. (2011). Intraday two-part tariff in payment systems. Bank of England Working Paper 428.
-* PACE (2026). arXiv:2606.08106.
-* Piatti, G. et al. (2024). Cooperate or collapse. arXiv:2404.16698.
+* Piatti, G., Jin, Z., Kleiman-Weiner, M. et al. (2024). Cooperate or collapse: emergence of sustainable cooperation in a society of LLM agents. NeurIPS 2024.
 * Qu, A. et al. (2026). CORAL. arXiv:2604.01658.
 * Roemer, J. (2015). Kantian optimization: a microfoundation for cooperation. *J. Public Econ.* 127, 45–57.
 * Roemer, J. (2019). *How We Cooperate*. Yale University Press.
-* SAGE (2026). arXiv:2609.36043.
 * Segerson, K. (1988). Uncertainty and incentives for nonpoint pollution control. *J. Environ. Econ. Manag.* 15(1).
+* Shawn, Z. (2026). PACE: anytime-valid acceptance tests for self-evolving agents. arXiv:2606.08106.
+* Sloev, I., Lianos, G. (2026). The scale of universalization in multiplicative Kantian equilibrium. arXiv:2610.28180.
+* So, H.-S., Liu, D., Long, W. et al. (2026). Masked erosion: how acceptance gates lose redundant safeguards in self-improving agents. arXiv:2610.38392.
 * Spraggon, J. (2002). Exogenous targeting instruments as a solution to group moral hazards. *J. Public Econ.* 84(3).
 * Srikanth, D. et al. (2026). Recursive self-improvement of AI research agents. arXiv:2609.26457.
-* Suter, J. F., Vossler, C. A., Poe, G. L., Segerson, K. (2008). Experiments on damage-based ambient taxes for nonpoint source polluters. *Am. J. Agric. Econ.* 90(1).
+* Suter, J. F., Vossler, C. A., Poe, G. L., Segerson, K. (2008). Experiments on damage-based ambient taxes for nonpoint source polluters. *Am. J. Agric. Econ.* 90(1), 86–102.
+* Wang, Y., Xia, L., Liu, R., Zhang, Z. et al. (2026). SAGE: a statistical acceptance gate for self-evolving agents. arXiv:2609.36043.
+* Wu, S. (2017). Essays on experiments and agent-based modeling. PhD dissertation, University of Delaware.
 * Zhang, J. et al. (2026). Hyperagents. arXiv:2603.19461.

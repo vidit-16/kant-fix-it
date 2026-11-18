@@ -1,6 +1,6 @@
 # Literature review: prior work for the EvoRTGS claims
 
-Review dated 18 November 2026. Working notes with full search logs are in
+Review dated 18 November 2026, with a second pass through open scholarly APIs the same day. Working notes with full search logs are in
 [literature_notes/](literature_notes/). Changes made to REPORT.md and PROJECT.md
 as a result are recorded in PROJECT.md (D30).
 
@@ -22,7 +22,7 @@ The **co-evolution survey** body (which PROJECT.md records as unread) has now be
 
 Three neighbouring works deserve explicit contrast rather than silence. **"Internal vs External"** compares deliberated with evolved society-wide constitutions in public-goods games, scored on a collective stability score. That is the closest named work on mixed-motive rule adoption, but the factor it varies is who designs the group rule, not per-agent gates ([arXiv:2605.09128](https://arxiv.org/html/2605.09128) [partial]). The **evolved-constitutions** paper from the same group does centralised search with welfare-motivated fitness ([arXiv:2602.00755](https://arxiv.org/html/2602.00755) [full]). **Economy of Minds** puts prices among co-evolving agents through auctions, rent and bankruptcy. Its prices serve cooperative credit assignment, not externality correction, which makes it the nearest relative of the project's price arm ([arXiv:2606.02859](https://arxiv.org/html/2606.02859) [partial]).
 
-Three classical and adjacent lines are also close. The nearest classical analogue is **Agogino and Tumer's local versus global versus difference evaluation** for evolving multiagent policies. It is conceptually private versus joint versus marginal welfare, but in fully cooperative settings and as fitness shaping rather than accept/reject decisions ([GECCO 2005](https://gpbib.cs.ucl.ac.uk/gecco2005/docs/p591.pdf) [abstract]; [AAMAS 2012](https://ifaamas.csc.liv.ac.uk/Proceedings/aamas2012/papers/2C_2.pdf) [abstract]). **Prosocial reward shaping in MARL** varies the objective each agent trains on rather than gating its proposals: SVO reward sharing in McKee et al. and its successors, and the SocialJax benchmarks ([McKee et al., arXiv:2002.02325](https://arxiv.org/pdf/2002.02325.pdf) [abstract] [arXiv ID unverified]; [SocialJax, arXiv:2503.14576](https://arxiv.org/pdf/2503.14576) [abstract] [arXiv ID unverified]). **Red Queen Gödel Machine** co-evolves agents with their evaluators ([arXiv:2606.26294](https://arxiv.org/abs/2606.26294) [abstract] [arXiv ID unverified]).
+Three classical and adjacent lines are also close. The nearest classical analogue is **Agogino and Tumer's local versus global versus difference evaluation** for evolving multiagent policies. It is conceptually private versus joint versus marginal welfare, but in fully cooperative settings and as fitness shaping rather than accept/reject decisions ([GECCO 2005](https://gpbib.cs.ucl.ac.uk/gecco2005/docs/p591.pdf) [abstract]; [AAMAS 2012](https://ifaamas.csc.liv.ac.uk/Proceedings/aamas2012/papers/2C_2.pdf) [abstract]). **Prosocial reward shaping in MARL** varies the objective each agent trains on rather than gating its proposals: SVO reward sharing in McKee et al. and its successors, and the SocialJax benchmarks ([McKee et al., arXiv:2002.02325](https://arxiv.org/pdf/2002.02325.pdf) [abstract] [arXiv ID verified in second pass]; [SocialJax, arXiv:2503.14576](https://arxiv.org/pdf/2503.14576) [abstract] [arXiv ID verified in second pass]). **Red Queen Gödel Machine** co-evolves agents with their evaluators ([arXiv:2606.26294](https://arxiv.org/abs/2606.26294) [abstract] [arXiv ID verified in second pass]).
 
 Two details in PROJECT.md §3.2 are not supported by these notes and should be checked before reuse: the "NeurIPS 2026" venue for Economy of Minds, and AIDE²'s reported fall in reward hacking from 55 % to 32 %. REPORT §1 says such systems "are evaluated one at a time against fixed benchmarks". That is accurate for single lineages, but CORAL runs several agents at once. The sentence should say "single lineages or agents with a common objective".
 
@@ -109,11 +109,11 @@ The laboratory evidence supports "mixed" and is richer than REPORT's single cita
 
 PROJECT.md §3.4 cites "Vossler et al. 2008". The notes support either Vossler et al. in *Economic Inquiry* (working paper 2002; journal year not confirmed) or Suter, Vossler, Poe and Segerson 2008 in AJAE. The reference must be fixed to one of these. One nuance bears on the project's own conclusion that collusion could reopen the line. In the laboratory, communication under ambient taxes often produced **over-abatement, not collusion against the tax**.
 
-**The identity "ambient tax at level 1 = unilateral welfare gate" holds but is known in spirit.** Charging each agent the damage in all other modules turns its payoff into private benefit minus total damage. That is a Groves-form transfer, and Groves mechanisms are generally not budget-balanced ([arXiv:1203.1809](https://arxiv.org/pdf/1203.1809) [abstract] [arXiv ID unverified]). No source found states the identity explicitly. The project should present it as an observation attributed to Segerson and Holmström, not as a result. On the MARL side, **LOPT learns a Pigouvian tax that reshapes each agent's reward toward social welfare**, conceptually the same object, and must be cited ([Hua et al., NeurIPS 2025](https://proceedings.nips.cc/paper_files/paper/2025/hash/34321b2d5c5f5ce3f856df87648b12eb-Abstract-Conference.html) [abstract]; [arXiv:2305.06227](https://arxiv.org/html/2305.06227v2) [abstract] [arXiv ID unverified]). The project's differences from LOPT are that harm is unattributable, the harm's carrier can be concealed, and the instrument is a fixed rule rather than a learned planner. Other MARL incentive work follows a similar pattern:
+**The identity "ambient tax at level 1 = unilateral welfare gate" holds but is known in spirit.** Charging each agent the damage in all other modules turns its payoff into private benefit minus total damage. That is a Groves-form transfer, and Groves mechanisms are generally not budget-balanced ([arXiv:1203.1809](https://arxiv.org/pdf/1203.1809) [abstract] [arXiv ID verified in second pass]). No source found states the identity explicitly. The project should present it as an observation attributed to Segerson and Holmström, not as a result. On the MARL side, **LOPT learns a Pigouvian tax that reshapes each agent's reward toward social welfare**, conceptually the same object, and must be cited ([Hua et al., NeurIPS 2025](https://proceedings.nips.cc/paper_files/paper/2025/hash/34321b2d5c5f5ce3f856df87648b12eb-Abstract-Conference.html) [abstract]; [arXiv:2305.06227](https://arxiv.org/html/2305.06227v2) [abstract] [arXiv ID verified in second pass]). The project's differences from LOPT are that harm is unattributable, the harm's carrier can be concealed, and the instrument is a fixed rule rather than a learned planner. Other MARL incentive work follows a similar pattern:
 
 - Zheng et al.'s two-level tax design ([*Science Advances* 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC9067926) [abstract]);
-- LIO ([arXiv:2006.06051](https://arxiv.org/pdf/2006.06051) [abstract] [arXiv ID unverified]);
-- gifting ([arXiv:2105.06593](https://arxiv.org/pdf/2105.06593) [abstract] [arXiv ID unverified]);
+- LIO ([arXiv:2006.06051](https://arxiv.org/pdf/2006.06051) [abstract] [arXiv ID verified in second pass]);
+- gifting ([arXiv:2105.06593](https://arxiv.org/pdf/2105.06593) [abstract] [arXiv ID verified in second pass]);
 - inequity aversion ([Hughes et al., NeurIPS 2018](https://proceedings.neurips.cc/paper/2018/hash/7fea637fd6d02b8f0adf6f7dc36aed93-Abstract.html) [abstract]).
 
 In all of these, the planner observes individual actions or attributable effects.
@@ -136,16 +136,16 @@ Supporting citations should be adjusted. Sundelin et al.'s "Governing the Common
 
 - **Baldwin and Clark (2006):** the canonical game-theoretic model of modularity reducing free riding in open source ([Management Science 52(7)](https://ideas.repec.org/a/inm/ormnsc/v52y2006i7p1116-1127.html) [abstract]).
 - **MacCormack and Sturtevant (2016):** coupling predicts defect-related effort across more than 20,000 components ([JSS 120 listing](https://core.ac.uk/download/154881372.pdf) [abstract]).
-- **A system-dynamics model of technical-debt management** with no strategic agents ([arXiv:1609.06868](https://arxiv.org/abs/1609.06868) [abstract] [arXiv ID unverified]).
+- **A system-dynamics model of technical-debt management** with no strategic agents ([arXiv:1609.06868](https://arxiv.org/abs/1609.06868) [abstract] [arXiv ID verified in second pass]).
 
 A 2026 empirical literature motivates the multi-agent setting, though none of it treats inter-agent harm as an externality or tests charges:
 
-- **CooperBench:** a coordination penalty of about 30 % for two agents working in one repository ([arXiv:2601.13295](https://arxiv.org/html/2601.13295) [abstract] [arXiv ID unverified]).
+- **CooperBench:** a coordination penalty of about 30 % for two agents working in one repository ([arXiv:2601.13295](https://arxiv.org/html/2601.13295) [abstract] [arXiv ID verified in second pass]).
 - **Agent pull requests:** merge conflicts in 41.7 % of cross-agent pairs against 19.8 % of intra-agent pairs ([arXiv:2607.04697](https://arxiv.org/abs/2607.04697) [abstract]).
 - **NP-Bench**, a scheduling planner for parallel coding agents ([arXiv:2610.07261](https://arxiv.org/abs/2610.07261) [abstract]).
 - **Coherence debt** in single-agent repository-scale tasks ([arXiv:2608.16630](https://arxiv.org/abs/2608.16630) [abstract]).
 - **Cost optimisation of mixed AI-human teams by simulation** ([arXiv:2610.20394](https://arxiv.org/abs/2610.20394) [abstract]).
-- **Adoption studies:** after one AI coding tool was adopted, static-analysis warnings rose about 30 % and complexity about 41 % ([arXiv:2511.04427](https://arxiv.org/html/2511.04427v2) [abstract] [arXiv ID unverified]).
+- **Adoption studies:** after one AI coding tool was adopted, static-analysis warnings rose about 30 % and complexity about 41 % ([arXiv:2511.04427](https://arxiv.org/html/2511.04427v2) [abstract] [arXiv ID verified in second pass]).
 
 One naming hazard: the term **"agentic technical debt" is already taken** by Hydari, Iqbal and Ramasubbu ([arXiv:2605.27320](https://arxiv.org/abs/2605.27320) [abstract]). Formal analysis of internal pricing for software quality is thin. The only sources found are SRE error-budget guidance written for practitioners ([SRE Workbook](https://sre.google/workbook/error-budget-policy/) [abstract]) and the review-detection instrument above.
 
@@ -181,7 +181,89 @@ Most of those arXiv pages were cut at about 100k characters, so some late append
 - **Software engineering:** TechDebt proceedings, real-options models of technical debt, IT chargeback, and specification gaming by coding agents.
 - **Economics and incentives:** Holmström–Milgrom with learning agents; Horan, Shortle and Abler on risk; Aronsson and Johansson-Stenman on moral taxation; and population-based-training interference.
 
-The following arXiv IDs come from search results or mirrors only and are **not verified on arXiv**: 2002.02325, 2503.14576, 2305.00768, 2607.04710, 2205.01447, 2410.18636, 2606.26294, 2610.25858, 2510.08529, 2605.00692, 1609.01921, 2609.24967, 2012.09759, 2410.01639, 2602.24068, 2602.06008, 2006.06051, 2305.06227, 2105.06593, 1203.1809, 2601.13295, 1609.06868, 2511.04427, 2601.13597, 2603.28592 and 2605.09104. Screening was done by one reviewer, with no registered protocol, no formal inclusion criteria and no de-duplicated flow counts. **This is a broad structured review, not a PRISMA systematic review**, and every "not found" below means not found in this review.
+The 26 arXiv IDs first taken from search results or mirrors were all confirmed through the arXiv API in the second pass (§Second pass), with matching titles and authors. Screening was done by one reviewer, with no registered protocol, no formal inclusion criteria and no de-duplicated flow counts. **This is a broad structured review, not a PRISMA systematic review**, and every "not found" below means not found in this review.
+
+## Second pass: open scholarly APIs
+
+The first pass used one general web search engine. A second pass on the same
+day queried scholarly indexes directly; the log is in
+[literature_notes/api_pass.md](literature_notes/api_pass.md).
+
+**Coverage.**
+
+* arXiv API: 40 identifiers checked, all of them confirmed.
+* Crossref: 15 venue and DOI lookups.
+* OpenAlex: 32 keyword searches, and citation tracing for nine of eleven
+  seed papers (three of the nine only partly).
+* Semantic Scholar: all nine searches failed, because its shared rate limit
+  is exhausted without an API key.
+* Screening was by title, then by abstract. No full texts were read in this
+  pass.
+
+**Corrections.**
+
+* The Millock and Salanié title is "Nonpoint source pollution when polluters
+  might cooperate".
+* Castro et al.'s journal DOI is 10.1145/3691326.
+* GovSim (NeurIPS 2024) and LOPT (NeurIPS 2025) venues are confirmed.
+* No venue was found for Economy of Minds.
+
+**What the pass adds.** None of it overturns the central gap.
+
+* **Single-agent gate comparisons are now a small literature.** *Masked
+  Erosion* (arXiv:2610.38392) compares ten gate rules across 411 improvement
+  loops, and SEA (arXiv:2607.00871) uses an anytime-valid admission gate.
+  Both concern single agents, so neither involves externalities between
+  agents. [abstract]
+* **When learning rules themselves are selected, selfish learning is
+  unstable and other-regarding rules are favoured.** This is McAvoy et al.
+  (2022, *PNAS Nexus*), in two-player repeated games. It is the closest
+  theory to comparing gates, without prices. [abstract]
+* **Partial Kantian equilibria are defined in the theory literature.**
+  Kordonis (2020) gives the r-Kant-Nash equilibrium, and Istrate (2020)
+  interpolates between self-regarding and Kantian behaviour. The project's κ
+  mixture should cite both. [abstract]
+* **The Kantian counterfactual depends on the scale in which actions are
+  represented** (Sloev and Lianos 2026, arXiv:2610.28180, building on
+  Sher–Roemer). The project's additive gate shifts every agent by the same
+  amount in its own policy units. A different but equivalent parameterisation
+  could give a different Kantian outcome. This is a limitation that should be
+  stated. [abstract]
+* **Learned prices among learning agents exist outside the LOPT line.**
+  Danassis et al. (2026, *JAAMAS*) is a deep-RL policymaker setting market
+  prices against common-pool externalities. [abstract]
+* **An agent-based model of ambient policies exists.** Wu (2017, Delaware
+  dissertation, ch. 2) calibrates an ABM from lab data. In the lab (ch. 1),
+  size and location heterogeneity reduced the effectiveness of an ambient
+  tax/subsidy unless peer information was given.
+  * The Claim 4 statement that no agent-based simulation of ambient taxes was
+    found is therefore narrowed. What was not found is a simulation with
+    learning agents that compares an ambient tax with a moral acceptance
+    rule.
+  * The lab result also qualifies E10: the ambient tax's robustness to
+    unequal exposure was shown for risk-neutral learning agents, not for
+    human subjects. [abstract]
+* **Late-settlement fees appear as a coordination device in payments**
+  (Nellen 2019, *J. Bank. Finance*). [title only]
+* **The citers of Gavidia-Calderon et al. add nothing new.** None of its 25
+  citers models technical debt as a shared stock with strategic agents.
+
+## Google Scholar queries for the owner
+
+Google Scholar refuses automated clients, so these are for a manual check.
+For each, scan the first two pages and note anything that compares
+acceptance or selection rules among several learning agents, or Kantian
+rules against prices.
+
+1. `"acceptance rule" OR "acceptance gate" multi-agent self-improving externality`
+2. `universalization OR Kantian "learning agents" selection rule`
+3. `"Kantian equilibrium" heterogeneous agents efficiency`
+4. `"Kantian" "Pigouvian" OR "ambient tax" comparison`
+5. `"ambient tax" "agent-based" OR "reinforcement learning"`
+6. `"technical debt" "tragedy of the commons" OR "public good" model`
+7. `"payment system" liquidity "learning agents" OR "reinforcement learning" fee`
+8. `"self-evolving agents" "multi-agent" acceptance social dilemma`
+9. Cited-by lists of Roemer (2015) "Kantian optimization", Segerson (1988), and Gavidia-Calderon et al. (2020), filtered with the words `learning`, `simulation` or `agent`.
 
 ## Conclusion
 

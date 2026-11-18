@@ -240,6 +240,26 @@ What changed:
   agent-level gates is new here. The ambient-tax identity is a Groves-style
   observation, not a result; LOPT (NeurIPS 2025) learns a Pigouvian tax in
   multi-agent reinforcement learning where externalities are attributable.
+* **Second pass, same day (open scholarly APIs; log in
+  [literature_notes/api_pass.md](literature_notes/api_pass.md)).**
+  * All 40 arXiv IDs checked against the arXiv API are real, including the
+    26 that had been unconfirmed. Crossref confirmed most venues and fixed the
+    Millock and Salanié title. Semantic Scholar refused every request (rate
+    limit without a key), and Google Scholar is left to the owner.
+  * New citations:
+    * Kordonis (2020) and Istrate (2020): partial Kantian equilibria, the
+      theory behind κ.
+    * McAvoy et al. (2022): under selection, selfish learning rules are
+      unstable.
+    * So et al. (2026, "Masked Erosion"): ten gate rules, single agent.
+    * Danassis et al. (2026): learned prices against externalities.
+    * Nellen (2019): late-settlement fees.
+    * Wu (2017): an agent-based model of ambient policies, plus a lab result
+      that heterogeneity weakens the ambient tax for humans.
+  * New limitation: the Kantian counterfactual depends on how actions are
+    scaled (Sloev and Lianos 2026), so the gate's outcome is tied to the
+    policy parameterisation.
+  * The central gap still holds.
 
 ## 4. System
 
@@ -703,6 +723,7 @@ optimum is a coordinate-descent optimum on a grid (the ambient tax came within
 | D28 | Which heterogeneity tests the Kantian gate? | Exposure, not size: size scales gain, coupling and exposure alike and preserved symmetry (pilot null) |
 | D29 | What next after E10? | Write up and stop (owner, 18 November 2026). Language-model proposers declined for this testbed: with three-number policies, mutation search already finds every exploit, so a model proposer would add cost, not information. An offered $5 API budget was not used |
 | D30 | Does the project's positioning survive a fuller literature review? | The central gap holds ("not found in this review"). The E10 mechanism was reworded (Pareto efficient, but weighted by 1/exposure), the technical-debt background corrected, and four citations fixed (§3.5). No result changes |
+| D31 | Does a pass through scholarly APIs change that? | No change to the gap or the results. Citations added, one title fixed, two limitations added (unit dependence of the Kantian gate; ambient tax weaker with heterogeneous humans in the lab) (§3.5) |
 
 ## 7. Unresolved questions and next steps
 
