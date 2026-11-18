@@ -2,14 +2,14 @@
 
 Single source of truth for decisions, evidence, status and open questions.
 Supersedes the handoff of 17 November 2026 where they conflict.
-Last updated: 18 November 2026.
+Last updated: 18 November 2026. Status: concluded.
 
 Related files: [PREREGISTRATION.md](PREREGISTRATION.md),
 [PREREGISTRATION_E8.md](PREREGISTRATION_E8.md) and
 [PREREGISTRATION_E9.md](PREREGISTRATION_E9.md),
 [PREREGISTRATION_E10.md](PREREGISTRATION_E10.md) (frozen protocols),
-[REPORT.md](REPORT.md) (paper-style write-up), `runs/` (raw records,
-`results.json`, `results_e8.json`, `results_e9.json`). The next-stage working
+[REPORT.md](REPORT.md) (final paper-style write-up), `runs/` (raw records,
+`results.json`, `results_e8.json`, `results_e9.json`, `results_e10.json`). The next-stage working
 notes of 17 November 2026 are folded into §7 and §9; that file is deleted.
 
 ---
@@ -31,7 +31,9 @@ notes of 17 November 2026 are folded into §7 and §9; that file is deleted.
 | Confirmatory experiment E9 (gates against the best available instrument) | Run, 1 280 runs, analysed (§5.9) |
 | Pre-registration for E10 (unequal exposure) | Committed before confirmatory runs (`f580a13`) |
 | Confirmatory experiment E10 | Run, 1 080 runs, analysed (§5.10). **Strong gates line closed** |
-| Language-model proposers | Not started; needs a model API key and a budget decision (§7) |
+| Final write-up | REPORT.md rewritten as a standalone report; every number re-checked against regenerated results (18 November 2026) |
+| **Project status** | **Concluded.** The owner chose to write up and stop (D29). Nothing pushed or published |
+| Language-model proposers | Not started, by decision (D29, §7) |
 | External replication, peer review | None |
 
 One-sentence state: acceptance gates do not beat the best available
@@ -512,7 +514,7 @@ failed prediction. The margin by which the gate wins is small and fragile:
 
 Honest summary: **in this environment the gate and the ambient tax are
 practically equivalent; the gate's registered "win" is a technicality.**
-Whether that keeps the line open is for the project owner to decide (§7).
+The owner then chose one further test (E10, §5.10), which closed the line.
 
 What else this shows:
 
@@ -521,7 +523,10 @@ What else this shows:
   to bind, makes things much worse than no charge. The surface charge rewards
   hardening rather than restraint. The output charge has exactly no effect: an
   agent's own cost is lost output, so a charge per unit of output only rescales
-  it. Against these, the gate wins by about 95 % of the gap.
+  it. The level chosen on development data (proxy 0.1) leaves the whole gap
+  open. Against these, the gate wins by 0.024, about 97 % of the gap. (The
+  earlier report text said the best of them "left 94 % of the gap open"; that
+  was wrong and was corrected in the final write-up.)
 * **When the carrier is observable (γ = 1), the proxy is a direct price and
   matches or beats the gate.** This reproduces the E8 conclusion in a second
   environment.
@@ -646,39 +651,37 @@ optimum is a coordinate-descent optimum on a grid (the ambient tax came within
 | D22 | Which second environment? | Shared codebase with hidden coupling (§5.9). Compute or context budgets rejected (metered, so directly priceable); a shared evaluation harness rejected for now (harm lands on the gate's own evidence; no clean optimum) |
 | D23 | Exclude the ambient tax as unrealistic? | No. Included in the kill criterion by advance decision; budget-balanced instruments reported separately |
 | D24 | Do gates beat the best instrument where harm is unattributable? | Practically no: Kantian gate and ambient tax within 0.4 % (E9). The registered rule says the gate wins (+0.0009, CI excludes 0), but this is not robust to n = 12 or to the ambient level |
-| D25 | Do gates beat budget-balanced instruments there? | Yes, by about 95 % of the gap, when the harm's carrier can be concealed; no when it cannot |
+| D25 | Do gates beat budget-balanced instruments there? | Yes, by about 97 % of the gap (0.024), when the harm's carrier can be concealed; no when it cannot |
 | D26 | Continue the gates-versus-pricing line? | Owner chose one further test (E10, unequal exposure) before deciding |
 | D27 | Do gates beat the best instrument when agents are unequally exposed? | No. Ambient tax clearly cheaper at both skews (−0.0022 and −0.0060); by the stricter rule registered for E10, **the strong line is closed** |
 | D28 | Which heterogeneity tests the Kantian gate? | Exposure, not size: size scales gain, coupling and exposure alike and preserved symmetry (pilot null) |
+| D29 | What next after E10? | Write up and stop (owner, 18 November 2026). Language-model proposers declined for this testbed: with three-number policies, mutation search already finds every exploit, so a model proposer would add cost, not information. An offered $5 API budget was not used |
 
 ## 7. Unresolved questions and next steps
 
-E8, E9 and E10 answered the gates-versus-pricing question. **The strong line
-("acceptance gates beat the best available instrument") is closed** by the
-rule registered for E10 (§5.10). The decision that comes next is the project
-owner's:
+**The project is concluded** (D29). E8, E9 and E10 answered the
+gates-versus-pricing question, and the strong line ("acceptance gates beat
+the best available instrument") is closed by the rule registered for E10
+(§5.10). The final write-up is [REPORT.md](REPORT.md).
 
-0. **What next for the project?** Options, in the order I would rank them:
-   a. **Write up and stop the gates line.** The four pre-registered studies
-      are a coherent negative-with-conditions result: gates are a
-      consequential design choice, an own-cost Kantian gate is a strong
-      default when no price can be levied, and a well-chosen price (delay
-      surcharge, ambient tax) matches or beats every gate. Plus a reusable,
-      tested testbed with two environments.
-   b. **Pivot to language-model proposers** in the codebase environment, as a
-      study of proposals rather than gates (does a stronger proposer find
-      exploits of the ambient tax or the proxy that mutation search misses?).
-      Needs an API key, a model choice and a spending cap.
-   c. **Risk-averse agents or a noisy ambient signal**, the classic objection
-      to ambient taxes, which E9 and E10 exclude by construction. The only
-      remaining test that could reopen a role for gates against the ambient
-      tax; low prior after E10.
+What would reopen the line, none of it planned:
 
-The remaining items, ordered by how much they would change the conclusions:
+* **Risk-averse agents facing a noisy ambient charge**, or **collusion**
+  against it: the classic objections to ambient taxes, which E9 and E10
+  exclude by construction. The only remaining test that could give gates a
+  role against the ambient tax; low prior after E10.
+* **Open-ended action spaces**: agents that propose real code changes, with
+  language-model proposers. Here a stronger proposer might find exploits of
+  prices that mutation search cannot. This needs a sandbox design agreed with
+  the owner, an API key, a model choice and a spending cap (§9). It would be a
+  new project, not an extension of this testbed.
+
+Items recorded during the project, kept for reference (ordered by how much
+they would have changed the conclusions):
 
 1. **Second environment.** Done (E9, E10, shared codebase). A shared
    evaluation harness that agents can overfit remains a candidate, not built.
-2. **Language-model proposers.** Still not started; see 0b. Proposals as
+2. **Language-model proposers.** Not started, by decision (D29). Proposals as
    policy changes first, code edits only with an agreed sandbox design.
 3. **Search quality with rule-level policies.** All arms degrade at fixed
    budget. A better optimiser (for example CMA-ES per bank) would show whether

@@ -6,7 +6,8 @@ propose–evaluate–accept loop, how much does the **acceptance gate** decide t
 collective outcome?
 
 The environment is a stylized real-time gross settlement (RTGS) payment
-network. It is a simulator only: no real payment system, data or money is
+network; a second environment models agents sharing a codebase. Both are
+simulators only: no real payment system, data or money is
 involved, and results say nothing about any real system.
 
 * [docs/PROJECT.md](docs/PROJECT.md) — canonical project document: decisions,
@@ -16,7 +17,7 @@ involved, and results say nothing about any real system.
   [docs/PREREGISTRATION_E9.md](docs/PREREGISTRATION_E9.md),
   [docs/PREREGISTRATION_E10.md](docs/PREREGISTRATION_E10.md) — protocols frozen
   before the confirmatory runs.
-* [docs/REPORT.md](docs/REPORT.md) — paper-style report.
+* [docs/REPORT.md](docs/REPORT.md) — final report. The project is concluded.
 * `runs/` — one JSON line per run, `results.json`, figures.
 
 ## Headline result
