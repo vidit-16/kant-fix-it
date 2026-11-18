@@ -18,7 +18,7 @@ notes of 17 November 2026 are folded into §7 and §9; that file is deleted.
 
 | Item | Status |
 |---|---|
-| Novelty audit | Done at the level of a targeted review, not a systematic one (§3) |
+| Novelty audit | Targeted review first (§3.1–3.4); then a broad structured literature review, 118 logged searches, not a formal systematic review ([LITERATURE_REVIEW.md](LITERATURE_REVIEW.md), §3.5) |
 | Research question | Narrowed and frozen (§2) |
 | Simulator, evolution loop, evaluator | Built, 40 tests passing |
 | Pre-registration | Committed before confirmatory runs (`4d6ebe9`) |
@@ -131,15 +131,15 @@ weeks, and the full texts of most 2026 preprints.
 | CORAL, arXiv 2604.01658 (v3 Sep 2026) | exists; multi-agent evolution infrastructure with evaluator separation | evolution loop against fixed graders; no strategic interaction between owners |
 | Hyperagents, arXiv 2603.19461 | exists; editable meta-level | single lineage, fixed benchmarks |
 | MASS, arXiv 2610.12176 | exists; workflow search + fine-tuning on own trajectories | same |
-| AIDE², arXiv 2609.26457 | exists; reports reward hacking falling 55 %→32 % (author-reported) | same; shows gate integrity matters |
+| AIDE², arXiv 2609.26457 | exists; keeps a rewrite if its held-out mean grade beats the incumbent (the 55 %→32 % reward-hacking figure recorded earlier was not confirmed by the later review) | same; shows gate integrity matters |
 | Misevolve, arXiv 2509.26354 (ICLR 2026) | exists | single-agent evolution going wrong; not multi-principal externalities |
-| Co-evolution survey, arXiv 2608.10299 | exists; abstract does not mention social dilemmas or multi-principal externalities (body not read) | closest taxonomy |
+| Co-evolution survey, arXiv 2608.10299 | exists; abstract does not mention social dilemmas or multi-principal externalities (body read later: no externalities, commons or welfare-based acceptance) | closest taxonomy |
 | Internal vs. External, arXiv 2605.09128 | exists; evolved vs deliberated constitutions in public-goods games | evolution of *shared rules*, not of per-agent acceptance gates |
-| Economy of Minds, arXiv 2606.02859 (NeurIPS 2026) | exists; auctions and bankruptcy as selection | economic selection inside one system |
+| Economy of Minds, arXiv 2606.02859 (venue not confirmed) | exists; auctions and bankruptcy as selection | economic selection inside one system |
 | FRAIL, arXiv 2609.30940 | exists; bank run, debt rollover, crowdfunding; three commitment mechanisms; agents appear to be fixed-policy LLMs; no payment network | closest on "financial coordination failure + stabilisers"; no policy evolution |
 | FinEvo-Bench, arXiv 2608.06144 | exists; longitudinal single-agent professional tasks | not interactive |
 | BIS Project Agenti | page exists, "ongoing", last updated 14 Oct 2026; describes an RTGS-like agentic simulator that "will be used"; no code, no results | closest institutional overlap; cannot be compared or reused |
-| BIS WP 1310 / BoC SWP 2025-35 | exists; single prompted agent, simple settings | not multi-agent |
+| BIS WP 1310 = BoC SWP 2025-35 (Aldasoro and Desai; one paper, two series) | read in full later; single prompted agent, three scenarios, no fees or collective rules | not multi-agent |
 | GovSim, arXiv 2404.16698 (NeurIPS 2024) | universalization is a sentence injected at decision time | closest on universalization |
 | "Kantian Equilibrium in the Age of Multi-Agent Systems" (ICML 2026 workshop poster) | abstract only: Kantian prompting in a commons game | same; prompting, not selection |
 | Bech & Garratt 2003; Galbiati & Soramäki 2008/2011; Castro et al. 2021/2025 | abstracts and catalogue text | the phenomenon and learning in payment games are established |
@@ -179,7 +179,7 @@ not full texts.
   without observing individual emissions. Known objections: agents may not see
   how they move the aggregate, the measurement is noisy, the result does not
   survive collusion, and payments are large (Millock and Salanié). Laboratory
-  tests (Cochard, Willinger and Xepapadeas 2005; Vossler et al. 2008) find
+  tests (Cochard, Willinger and Xepapadeas 2005; Suter et al. 2008, *Am. J. Agric. Econ.*) find
   ambient taxes often work in aggregate, with mixed reliability across designs.
 * **Multitask incentives** (Holmström and Milgrom 1991): paying on a measured
   dimension moves effort into unmeasured ones. The proxy result below is an
@@ -187,16 +187,59 @@ not full texts.
 * **Kantian optimisation** (Roemer 2015, 2019): Kantian equilibria are
   efficient in symmetric common-pool problems with negative externalities. The
   Kantian gate reaching the optimum in E9 is therefore expected, not a finding.
-* **Technical debt as a commons**: an informal framing in practitioner
-  writing; one empirical study links non-owner changes to clones and debt
-  (arXiv 2405.15866). No agent-based or game-theoretic simulation of it was
-  found; that is "not found", not "does not exist".
+* **Technical debt as a commons** — *corrected after the literature review
+  (§3.5)*. The original text said this was "an informal framing in
+  practitioner writing" and that no agent-based or game-theoretic simulation
+  was found. That was wrong. Gavidia-Calderon, Sarro, Harman and Barr (J.
+  Syst. Softw. 159, 2020) call technical debt a tragedy of the commons and
+  simulate developers choosing between a kludge and a fix, calibrated on
+  Eclipse bug data. The only equilibrium is that both kludge; code review with
+  enough detection restores fixing. What our environment adds: continuous
+  shortcut intensity, concealed coupling, hardening, convex incidents landing
+  in random modules, operator charges and many evolving agents. Sundelin et
+  al. (arXiv 2405.15866) is an empirical study of code ownership and clones;
+  the earlier paraphrase of its finding is unchecked against the full text.
 
 Both sides of the E9 comparison are therefore known: the ambient tax is the
 textbook instrument for this information structure, and Kantian optimisation
 is known to be efficient in symmetric commons. E9 only tests them against each
 other inside a propose–evaluate–accept loop with finite, noisy evaluation, and
 against budget-balanced alternatives.
+
+### 3.5 Literature review (18 November 2026)
+
+A broad structured review was done after the project concluded:
+[LITERATURE_REVIEW.md](LITERATURE_REVIEW.md), with search logs in
+[literature_notes/](literature_notes/). It covers 118 logged searches and
+fetches on five topics. Many sources were read in full; all ambient-tax
+sources were seen at abstract level only. Google Scholar, SSRN, the ACM
+Digital Library and IEEE Xplore were not searched directly, and screening was
+done by one reviewer. It is not a PRISMA systematic review.
+
+What changed:
+
+* **Holds:** no comparison of per-agent acceptance gates among co-evolving
+  agents with mutual externalities, against a price, was found. The closest
+  work is single-agent gate studies (SAGE, arXiv:2609.36043; PACE,
+  arXiv:2606.08106), which name the multi-agent case as open.
+* **Corrected:** the E10 explanation. It is not "a known property of Kantian
+  equilibria". Additive and multiplicative Kantian equilibria are Pareto
+  efficient even with heterogeneous agents (Roemer 2015). Our κ = 1 gate is
+  the additive form (`gates.py`: every agent's policy moves by the same
+  mutation). With unequal exposure it is the welfare optimum with weights
+  1/exposure, which misses the equal-weight cost minimum. The derivation is
+  ours, not a citation.
+* **Corrected:** technical debt as a commons has a prior game-theoretic
+  simulation (Gavidia-Calderon et al. 2020; §3.4).
+* **Corrected citations:** Castro et al. has a journal version (ACM TEAC
+  13(1), 2025). BoC SWP 2025-35 is the same paper as BIS WP 1310 (Aldasoro and
+  Desai). "Vossler et al. 2008" should have been Suter et al. 2008. Venue and
+  figure details in §3.2 that the review could not confirm are marked.
+* **Narrowed:** the delay-surcharge result has precedent for pricing against
+  central throughput rules (Ota 2011, BoE WP 428). Only the comparison with
+  agent-level gates is new here. The ambient-tax identity is a Groves-style
+  observation, not a result; LOPT (NeurIPS 2025) learns a Pigouvian tax in
+  multi-agent reinforcement learning where externalities are attributable.
 
 ## 4. System
 
@@ -605,6 +648,9 @@ What this shows:
   question "what if everyone did this?" measures the harm an agent imposes.
   With unequal exposure it measures the harm the agent would *suffer*: central
   agents over-restrain, peripheral agents over-shortcut, exactly as observed.
+  The Kantian point is still Pareto efficient, weighting agents by 1/exposure;
+  it misses the equal-weight cost minimum (wording corrected after the
+  literature review, §3.5).
 * **The ambient tax tracks the optimum at every skew** (within 0.0003 at
   skew 0.75 and 1.5), because it charges what an agent imposes on others,
   whoever suffers it.
@@ -656,6 +702,7 @@ optimum is a coordinate-descent optimum on a grid (the ambient tax came within
 | D27 | Do gates beat the best instrument when agents are unequally exposed? | No. Ambient tax clearly cheaper at both skews (−0.0022 and −0.0060); by the stricter rule registered for E10, **the strong line is closed** |
 | D28 | Which heterogeneity tests the Kantian gate? | Exposure, not size: size scales gain, coupling and exposure alike and preserved symmetry (pilot null) |
 | D29 | What next after E10? | Write up and stop (owner, 18 November 2026). Language-model proposers declined for this testbed: with three-number policies, mutation search already finds every exploit, so a model proposer would add cost, not information. An offered $5 API budget was not used |
+| D30 | Does the project's positioning survive a fuller literature review? | The central gap holds ("not found in this review"). The E10 mechanism was reworded (Pareto efficient, but weighted by 1/exposure), the technical-debt background corrected, and four citations fixed (§3.5). No result changes |
 
 ## 7. Unresolved questions and next steps
 

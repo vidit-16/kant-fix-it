@@ -18,6 +18,8 @@ involved, and results say nothing about any real system.
   [docs/PREREGISTRATION_E10.md](docs/PREREGISTRATION_E10.md) — protocols frozen
   before the confirmatory runs.
 * [docs/REPORT.md](docs/REPORT.md) — final report. The project is concluded.
+* [docs/LITERATURE_REVIEW.md](docs/LITERATURE_REVIEW.md) — literature review
+  of prior work, with search logs in `docs/literature_notes/`.
 * `runs/` — one JSON line per run, `results.json`, figures.
 
 ## Headline result

@@ -33,7 +33,9 @@ Kantian gate and a budget-breaking ambient tax are practically equivalent
 (difference 0.0009, 0.4 % of cost). Every budget-balanced charge either had no
 effect or was gamed into concealment. When incident exposure is unequal, the
 ambient tax beats the best gate (by 0.0022 and 0.0060 at two levels of
-inequality), and the gate shows the distortion theory predicts. Under a
+inequality). The gate shows the distortion our derivation predicts: a
+Kantian point that is Pareto efficient but weights agents by one over their
+exposure, so it misses the minimum of total cost. Under a
 decision rule fixed in advance, the claim that gates beat the best available
 instrument is therefore rejected.
 
@@ -48,7 +50,8 @@ predictions failed; they are listed in §5.
 Systems that improve themselves by proposing changes, scoring them and keeping
 the ones that score well are now common (for example CORAL, Qu et al. 2026;
 Hyperagents, Zhang et al. 2026; AIDE², Srikanth et al. 2026). They are
-evaluated one at a time against fixed benchmarks. In use, several such systems
+evaluated as single lineages, or as several agents pursuing one common
+objective, against fixed benchmarks. In use, several such systems
 owned by different principals share an environment: banks sharing a payment
 system, teams sharing a codebase. Then a change that lowers its owner's cost
 can raise everyone else's, and a loop that accepts on own cost reproduces a
@@ -69,32 +72,77 @@ attributed.
 
 ## 2. Related work
 
-The payment-timing game is a standard example of privately rational delay
-with collective cost (Bech and Garratt 2003; Galbiati and Soramäki 2011);
-learning agents in it have been studied with reinforcement learning (Castro
-et al. 2021). Stabilising mechanisms for language-model agents in financial
-coordination games are studied by Fu et al. (2026). Universalization has been
-used as a decision-time prompt for language-model agents (Piatti et al. 2024).
-Kantian optimisation (Roemer 2019) and *homo moralis* preferences (Alger and
-Weibull 2013) supply the theory of a gate parameterised by a degree of
-morality κ. In particular, Kantian equilibria are known to be efficient in
-symmetric common-pool problems, so E9's main gate result is expected.
+A literature review covering 118 logged searches is in
+[LITERATURE_REVIEW.md](LITERATURE_REVIEW.md). It is a broad structured review,
+not a formal systematic one, and several sources were seen at abstract level
+only. This section summarises it.
 
-For the codebase environment, the relevant theory is moral hazard in teams
-(Holmström 1982): with aggregate output only, no budget-balanced sharing rule
-is efficient, and a budget breaker can be. The ambient tax on non-point
-pollution (Segerson 1988) is the corresponding instrument, with known
-objections (noise, risk aversion, collusion, large payments) and mixed
-laboratory evidence (Cochard, Willinger and Xepapadeas 2005). Paying on a
-measured dimension moves effort into unmeasured ones (Holmström and Milgrom
-1991).
+**Acceptance gates.** In 2026 the acceptance gate of a self-improving loop
+became a research object in its own right, but only for single agents. SAGE
+(arXiv:2609.36043) compares a statistical gate with a greedy one at matched
+proposals and tokens. PACE (arXiv:2606.08106) compares greedy, fixed-sample,
+false-discovery-rate and anytime-valid gates. Both name the multi-agent case
+as open. Single-lineage systems such as the Darwin Gödel Machine and
+Hyperagents compare archive-based acceptance with keeping only one successor.
+The closest classical analogue is Agogino and Tumer's comparison of local,
+global and difference evaluation for evolving multiagent policies. It is
+fully cooperative, and it shapes fitness rather than accepting or rejecting
+proposals. We did not find a comparison of per-agent gates among co-evolving
+agents that impose costs on each other, nor one against a price.
 
-Both sides of every comparison here are therefore known. What this work adds
-is a matched-budget comparison of the two inside a propose–evaluate–accept
-loop with finite, noisy evaluation. We did not find prior work treating the
-acceptance rule of co-evolving agents as the experimental factor, but the
-search was targeted, not systematic, and several 2026 preprints were read at
-abstract level only.
+**Kantian theory.** Roemer (2015) shows that additive and multiplicative
+Kantian equilibria are Pareto efficient, including with heterogeneous agents.
+Only the simple form, in which everyone takes the same action level, is
+generally inefficient with heterogeneity. *Homo moralis* preferences (Alger
+and Weibull 2013) give the degree-of-morality mixture κ. Our κ = 1 gate is the
+additive form: every agent's policy moves by the same mutation. With unequal
+exposure, the additive Kantian condition gives b′ᵢ = n·eᵢ·D′. The equal-weight
+cost optimum gives b′ᵢ = n·ē·D′. So the Kantian point is the welfare optimum
+with weights proportional to 1/exposure. That is efficient in Pareto's sense,
+but not the minimum of total cost. This derivation is ours. It is not stated
+in the sources we found, and E10 tests its prediction. Universalization has
+been used as a decision-time prompt for language-model agents (Piatti et al.
+2024). We did not find it used as the acceptance rule of a learning loop.
+
+**Payment systems.** The payment-timing game is a standard example of
+privately rational delay with collective cost (Bech and Garratt 2003;
+Galbiati and Soramäki 2011). Learning agents in it have been studied with
+reinforcement learning (Castro et al. 2025). A single prompted language-model
+agent has been tested on cash-management decisions (Aldasoro and Desai 2025).
+Pricing beating coordination rules has precedent: a time-rising intraday
+tariff beats throughput guidelines in most cases (Ota 2011). Our surcharge
+result extends that comparison to agent-level gates. Fu et al. (2026) compare
+stabilising mechanisms for language-model agents in other financial
+coordination games; there paid commitments were never the best mechanism.
+Their agents are prompted, not evolved.
+
+**Unattributable harm.** With output observed only in aggregate, no
+budget-balanced sharing rule gives efficient incentives, and a budget breaker
+can (Holmström 1982). The ambient tax on non-point pollution is the
+corresponding instrument (Segerson 1988). Known objections include collusion,
+large transfers and information requirements (Millock and Salanié 2005).
+Laboratory evidence is mixed (Spraggon 2002; Cochard, Willinger and
+Xepapadeas 2005; Suter et al. 2008). Charging each agent all damage outside
+its module makes its payoff equal to private benefit minus total damage, a
+Groves-style transfer. The level-1 identity between the ambient tax and the
+unilateral welfare gate is therefore an observation, not a result. In
+multi-agent reinforcement learning, LOPT (Hua et al. 2025) learns a Pigouvian
+reward shaping toward social welfare where the externality can be
+attributed. Paying on a measured dimension moves effort into unmeasured ones
+(Holmström and Milgrom 1991; not re-read for this review).
+
+**Technical debt.** Gavidia-Calderon et al. (2020) model technical debt as a
+tragedy of the commons. In their simulation, two developers choose between a
+kludge and a fix, and the only equilibrium is that both kludge. Code review
+with enough detection restores fixing. Our codebase environment adds
+continuous shortcut intensity, concealed coupling, hardening, incidents that
+rise convexly with debt and land in random modules, operator charges, and
+many evolving agents.
+
+Every comparison here therefore builds on known pieces. What we add is a
+matched-budget comparison of per-agent acceptance gates against prices among
+co-evolving agents, in two environments. That comparison was not found in this
+review.
 
 ## 3. Method
 
@@ -183,7 +231,8 @@ incidents surface. It does not see policies or concealed coupling.
 * *surface*: a charge on incident loss in the agent's own module;
 * *ambient tax*: a charge on incident loss in every *other* module, levied on
   each agent in full. This is the budget-breaking Segerson–Holmström form; at
-  level 1 it is identical to the unilateral welfare gate, a tested identity.
+  level 1 it is identical to the unilateral welfare gate (a tested identity;
+  a Groves-style observation, §2).
 
 **Optimum.** E9 finds it by exhaustive search over symmetric profiles. E10
 uses coordinate descent from there over asymmetric profiles.
@@ -403,8 +452,11 @@ charges each agent what it imposes on others, whoever suffers it. The Kantian
 question "what if everyone did this?" equals that harm only when everyone is
 equally exposed. With unequal exposure it measures what the agent would
 *suffer*. Central agents then over-restrain and peripheral agents
-over-shortcut. This is a known property of Kantian equilibria; E10 confirms it
-inside a learning loop.
+over-shortcut. The additive Kantian point is still Pareto efficient: it is the
+optimum for a planner who weights each agent by one over its exposure (§2).
+It is not the minimum of total cost, which is the outcome measured here. The
+derivation is ours, not taken from the literature; E10 confirms its
+prediction inside a learning loop.
 
 **What survives.** The gate's practical role is narrow. Where an operator can
 neither price the carrier of harm (because it can be hidden) nor break the
@@ -435,7 +487,9 @@ ambient tax's favour.
   cannot collude, which removes the classic objections to it.
 * **No language models.** Proposals are random mutations, so the link to
   self-improving language-model systems is an analogy, not a result.
-* **Prior-art search** was targeted, not systematic.
+* **Prior-art review** was broad and structured but not a formal systematic
+  review; several sources were seen at abstract level only
+  ([LITERATURE_REVIEW.md](LITERATURE_REVIEW.md)).
 
 ## 8. Conclusion
 
@@ -468,17 +522,31 @@ records.
 
 ## References
 
+Evidence levels for each source are given in
+[LITERATURE_REVIEW.md](LITERATURE_REVIEW.md).
+
+* Agogino, A., Tumer, K. (2005). Coordinating multi-rover systems: evaluation functions for dynamic and noisy environments. GECCO 2005, 591–598.
+* Aldasoro, I., Desai, A. (2025). AI agents for cash management in payment systems. BIS Working Paper 1310; Bank of Canada SWP 2025-35.
 * Alger, I., Weibull, J. (2013). Homo moralis. *Econometrica* 81(6).
 * Bech, M., Garratt, R. (2003). The intraday liquidity management game. *J. Econ. Theory* 109(2).
-* Castro, P. S., Desai, A., Du, H., Garratt, R., Rivadeneyra, F. (2021). Estimating policy functions in payments systems using reinforcement learning. Bank of Canada SWP 2021-7.
+* Castro, P. S., Desai, A., Du, H., Garratt, R., Rivadeneyra, F. (2025). Estimating policy functions in payments systems using reinforcement learning. *ACM Trans. Econ. Comput.* 13(1). Earlier as Bank of Canada SWP 2021-7.
 * Cochard, F., Willinger, M., Xepapadeas, A. (2005). Efficiency of nonpoint source pollution instruments: an experimental study. *Environ. Resour. Econ.* 30(4).
 * Fu, Z., Xu, R., Ren, Q. (2026). Financial fragility in societies of LLM agents. arXiv:2609.30940.
 * Galbiati, M., Soramäki, K. (2011). An agent-based model of payment systems. *J. Econ. Dyn. Control* 35(6).
+* Gavidia-Calderon, C., Sarro, F., Harman, M., Barr, E. T. (2020). Game-theoretic analysis of development practices: challenges and opportunities. *J. Syst. Softw.* 159, 110424.
 * Holmström, B. (1982). Moral hazard in teams. *Bell J. Econ.* 13(2).
 * Holmström, B., Milgrom, P. (1991). Multitask principal–agent analyses. *J. Law Econ. Organ.* 7.
-* Piatti, G. et al. (2024). Cooperate or collapse. NeurIPS 2024, arXiv:2404.16698.
+* Hua, Y. et al. (2025). Learning optimal Pigouvian taxes in multi-agent reinforcement learning (LOPT). NeurIPS 2025.
+* Millock, K., Salanié, F. (2005). Nonpoint source pollution and cooperation. *Topics Econ. Anal. Policy* 5(1).
+* Ota, T. (2011). Intraday two-part tariff in payment systems. Bank of England Working Paper 428.
+* PACE (2026). arXiv:2606.08106.
+* Piatti, G. et al. (2024). Cooperate or collapse. arXiv:2404.16698.
 * Qu, A. et al. (2026). CORAL. arXiv:2604.01658.
+* Roemer, J. (2015). Kantian optimization: a microfoundation for cooperation. *J. Public Econ.* 127, 45–57.
 * Roemer, J. (2019). *How We Cooperate*. Yale University Press.
+* SAGE (2026). arXiv:2609.36043.
 * Segerson, K. (1988). Uncertainty and incentives for nonpoint pollution control. *J. Environ. Econ. Manag.* 15(1).
+* Spraggon, J. (2002). Exogenous targeting instruments as a solution to group moral hazards. *J. Public Econ.* 84(3).
 * Srikanth, D. et al. (2026). Recursive self-improvement of AI research agents. arXiv:2609.26457.
+* Suter, J. F., Vossler, C. A., Poe, G. L., Segerson, K. (2008). Experiments on damage-based ambient taxes for nonpoint source polluters. *Am. J. Agric. Econ.* 90(1).
 * Zhang, J. et al. (2026). Hyperagents. arXiv:2603.19461.
