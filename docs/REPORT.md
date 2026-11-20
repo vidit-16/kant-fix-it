@@ -74,7 +74,7 @@ attributed.
 
 A literature review is in [LITERATURE_REVIEW.md](LITERATURE_REVIEW.md). It
 combines 118 logged web searches with a second pass through the arXiv,
-Crossref and OpenAlex APIs. It is a broad structured review, not a formal
+Crossref and OpenAlex APIs, and a manual Google Scholar pass. It is a broad structured review, not a formal
 systematic one, and several sources were seen at abstract level only. This
 section summarises it.
 
@@ -118,7 +118,9 @@ been used as a decision-time prompt for language-model agents (Piatti et al.
 privately rational delay with collective cost (Bech and Garratt 2003;
 Galbiati and Soramäki 2011). Learning agents in it have been studied with
 reinforcement learning (Castro et al. 2025). A single prompted language-model
-agent has been tested on cash-management decisions (Aldasoro and Desai 2025).
+agent has been tested on cash-management decisions (Aldasoro and Desai 2025),
+and prompted agents have been made to interact in an intraday-liquidity game
+(Danisman et al. 2026).
 Pricing beating coordination rules has precedent: a time-rising intraday
 tariff beats throughput guidelines in most cases (Ota 2011). Late-settlement
 fees have also been studied as a coordination device (Nellen 2019). Our surcharge
@@ -156,7 +158,9 @@ kludge and a fix, and the only equilibrium is that both kludge. Code review
 with enough detection restores fixing. Our codebase environment adds
 continuous shortcut intensity, concealed coupling, hardening, incidents that
 rise convexly with debt and land in random modules, operator charges, and
-many evolving agents.
+many evolving agents. Developers describe AI-assisted coding in the same terms:
+individual productivity gains push costs onto reviewers and maintainers
+(Baltes et al. 2026).
 
 Every comparison here therefore builds on known pieces. What we add is a
 matched-budget comparison of per-agent acceptance gates against prices among
@@ -557,10 +561,12 @@ Evidence levels for each source are given in
 * Agogino, A., Tumer, K. (2005). Coordinating multi-rover systems: evaluation functions for dynamic and noisy environments. GECCO 2005, 591–598.
 * Aldasoro, I., Desai, A. (2025). AI agents for cash management in payment systems. BIS Working Paper 1310; Bank of Canada SWP 2025-35.
 * Alger, I., Weibull, J. (2013). Homo moralis. *Econometrica* 81(6).
+* Baltes, S., Cheong, M., Treude, C. (2026). "An endless stream of AI slop": how developers discuss the burden of AI-assisted software development. *IEEE Software*.
 * Bech, M., Garratt, R. (2003). The intraday liquidity management game. *J. Econ. Theory* 109(2).
 * Castro, P. S., Desai, A., Du, H., Garratt, R., Rivadeneyra, F. (2025). Estimating policy functions in payments systems using reinforcement learning. *ACM Trans. Econ. Comput.* 13(1), doi:10.1145/3691326. Earlier as Bank of Canada SWP 2021-7.
 * Cochard, F., Willinger, M., Xepapadeas, A. (2005). Efficiency of nonpoint source pollution instruments: an experimental study. *Environ. Resour. Econ.* 30(4).
 * Danassis, P., Filos-Ratsikas, A., Chen, H. et al. (2026). Rectifying market externalities via AI policymaking. *Auton. Agents Multi-Agent Syst.*
+* Danisman, F., Desai, A., Jiang, J., Rivadeneyra, F., Azad, T. (2026). Strategic interaction among AI agents: evidence from payment systems. Seminar paper, Toulouse School of Economics.
 * Fu, Z., Xu, R., Ren, Q. (2026). Financial fragility in societies of LLM agents. arXiv:2609.30940.
 * Galbiati, M., Soramäki, K. (2011). An agent-based model of payment systems. *J. Econ. Dyn. Control* 35(6).
 * Gavidia-Calderon, C., Sarro, F., Harman, M., Barr, E. T. (2020). Game-theoretic analysis of development practices: challenges and opportunities. *J. Syst. Softw.* 159, 110424.

@@ -735,6 +735,7 @@ optimum is a coordinate-descent optimum on a grid (the ambient tax came within
 | D29 | What next after E10? | Write up and stop (owner, 18 November 2026). Language-model proposers declined for this testbed: with three-number policies, mutation search already finds every exploit, so a model proposer would add cost, not information. An offered $5 API budget was not used |
 | D30 | Does the project's positioning survive a fuller literature review? | The central gap holds ("not found in this review"). The E10 mechanism was reworded (Pareto efficient, but weighted by 1/exposure), the technical-debt background corrected, and four citations fixed (§3.5). No result changes |
 | D31 | Does a pass through scholarly APIs change that? | No change to the gap or the results. Citations added, one title fixed, two limitations added (unit dependence of the Kantian gate; ambient tax weaker with heterogeneous humans in the lab) (§3.5) |
+| D32 | Does a manual Google Scholar pass change that? | No. About 110 results screened; the gap holds. Added: prompted AI agents in an RTGS liquidity game (Danisman et al. 2026), AI-assisted coding framed as a tragedy of the commons (Baltes et al. 2026), and more moral-agent tax and ambient-policy work ([scholar_pass.md](literature_notes/scholar_pass.md)) |
 
 ## 7. Unresolved questions and next steps
 

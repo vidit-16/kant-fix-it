@@ -1,6 +1,6 @@
 # Literature review: prior work for the EvoRTGS claims
 
-Review dated 18 November 2026, with a second pass through open scholarly APIs the same day. Working notes with full search logs are in
+Review dated 18 November 2026, with a second pass through open scholarly APIs the same day and a third, manual Google Scholar pass on 20 November. Working notes with full search logs are in
 [literature_notes/](literature_notes/). Changes made to REPORT.md and PROJECT.md
 as a result are recorded in PROJECT.md (D30).
 
@@ -276,6 +276,41 @@ The owner may download these through the library; see PROJECT.md §3.5.
 ambient tax's success in E9 and E10 depends on agents not coordinating
 against it, and human subjects in a closely matching setting did coordinate.
 The report's limitations now say so.
+
+## Third pass: Google Scholar, run by the owner (20 November 2026)
+
+The owner ran the queries below by hand: 9 keyword searches and 3 cited-by
+searches, about 110 results. The screening log is in
+[literature_notes/scholar_pass.md](literature_notes/scholar_pass.md).
+
+**No result compares acceptance rules among several learning agents with
+mutual externalities, or Kantian rules against prices. The central gap still
+holds.**
+
+New items:
+
+* **AI agents in payment systems.** Danisman, Desai, Jiang, Rivadeneyra and
+  Azad (2026) put prompted language-model agents into an RTGS
+  intraday-liquidity game, in three treatments that vary prompts and
+  equilibrium structure. They are the closest multi-agent AI agents in
+  payments, but they are prompted, not evolved, and do not compare gates or
+  prices. [search snippet only]
+* **Moral agents and taxes.** Herweg and Schmidt (2022, *EJ*) and Bierbrauer
+  et al. (2026) extend the "optimal tax given moral agents" line, not a
+  norm-versus-tax comparison. In multi-agent RL, Tennant et al. (2023,
+  IJCAI) put moral theories into rewards, not into acceptance rules.
+* **Ambient policies.** Miao (2017) and Malakpour Estalaki and Hu (2022) add
+  to Wu (2017): agent-based and experimental work on ambient policies
+  exists, but none with learning agents compared with a moral rule.
+* **Technical debt.** Sundelin et al. is now in *Empirical Software
+  Engineering* (2025).
+  * Baltes, Cheong and Treude (2026, *IEEE Software*) frame AI-assisted
+    development as a tragedy of the commons, from 1,154 developer posts.
+    This is empirical support for the premise of the codebase environment.
+  * Fungprasertkul, Bahsoon and Kazman (2024, *TOSEM*) treat technical-debt
+    decisions as a problem of asymmetric payoffs.
+  * No further simulation of a shared debt stock with operator charges
+    turned up.
 
 ## Google Scholar queries for the owner
 
