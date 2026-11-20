@@ -255,3 +255,63 @@ def test_ambient_alignment_holds_with_skewed_exposure():
             gaps.append(cb.private_cost(o, "ambient", 1.0)[:, i] - o.system_cost)
         for g in gaps[1:]:
             assert np.allclose(g, gaps[0])
+
+
+# --- E11: scale of the universalized counterfactual -------------------------
+
+from evortgs.gates import SCALES, _universal  # noqa: E402
+
+
+@pytest.mark.parametrize("scale", [s for s in SCALES if s != "linear"])
+def test_scale_maps_invert_on_policy_range(scale):
+    g, ginv = SCALES[scale]
+    x = np.linspace(0.0, 1.0, 101)
+    assert np.allclose(ginv(g(x)), x, atol=1e-12)
+
+
+@settings(max_examples=30, deadline=None)
+@given(st.lists(st.floats(0.0, 1.0), min_size=3, max_size=3),
+       st.lists(st.floats(-0.3, 0.3), min_size=3, max_size=3),
+       st.sampled_from(sorted(SCALES)))
+def test_universal_keeps_own_candidate_and_bounds(x, d, scale):
+    from evortgs.evolve import _clip
+    cur = (tuple(x), (0.2, 0.5, 0.9), (0.0, 1.0, 0.4))
+    cand = tuple(_clip(x[a] + d[a]) for a in range(3))
+    allp = _universal(cur, 0, cand, d, 3, 3, scale)
+    assert allp[0] == cand
+    assert all(0.0 <= v <= 1.0 for p in allp for v in p)
+
+
+@pytest.mark.parametrize("scale", sorted(SCALES))
+def test_scales_agree_when_agents_are_identical(scale):
+    cur = ((0.4, 0.3, 0.6),) * 4
+    d = (0.05, -0.1, 0.02)
+    cand = tuple(cur[0][a] + d[a] for a in range(3))
+    lin = _universal(cur, 1, cand, d, 4, 3, "linear")
+    other = _universal(cur, 1, cand, d, 4, 3, scale)
+    assert np.allclose(np.array(lin), np.array(other), atol=1e-12)
+
+
+def test_linear_scale_is_the_default_loop():
+    s = cb.DevSampler(CFG)
+    e = EvoConfig(generations=3, K=2, M=2, gate="kappa", kappa=1.0)
+    a = evolve_env(s.batch, make_costs(CFG, None, 0.0), CFG.n, 3, e, seed=3)
+    b = evolve_env(s.batch, make_costs(CFG, None, 0.0), CFG.n, 3, e, seed=3, scale="linear")
+    assert a.profile == b.profile and a.history == b.history
+
+
+def test_scale_changes_kantian_gate_only():
+    s = cb.DevSampler(CFG)
+    for gate, kappa in (("welfare", 0.0), ("kappa", 0.0)):
+        e = EvoConfig(generations=2, K=2, M=2, gate=gate, kappa=kappa)
+        a = evolve_env(s.batch, make_costs(CFG, None, 0.0), CFG.n, 3, e, seed=5)
+        b = evolve_env(s.batch, make_costs(CFG, None, 0.0), CFG.n, 3, e, seed=5, scale="logit")
+        assert a.profile == b.profile
+
+
+def test_e10_specification_unchanged_by_e11():
+    from evortgs.cb_experiments import experiments
+    S = experiments("E10")
+    assert len(S) == 1080 and all("scale" not in s for s in S)
+    E = experiments("E11")
+    assert len(E) == 360 and {s["scale"] for s in E} == {"log", "sqrt", "logit"}

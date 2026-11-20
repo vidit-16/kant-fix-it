@@ -19,9 +19,34 @@ import numpy as np
 
 from .evolve import EvoConfig, EvoResult, _clip, _t_ok, random_profile
 
+# Scales on which the universalized counterfactual applies "the same change" to
+# every agent. "linear" is the original additive shift in policy units; the others
+# apply the same shift in g(x) and map back, x_j' = g^-1(g(x_j) + g(x_i') - g(x_i)).
+_EPS = 0.05
+SCALES = {
+    "linear": None,
+    "log": (lambda x: np.log(x + _EPS), lambda y: np.exp(y) - _EPS),
+    "sqrt": (np.sqrt, np.square),
+    "logit": (lambda x: np.log((x + _EPS) / (1.0 + _EPS - x)),
+              lambda y: ((1.0 + _EPS) * np.exp(y) - _EPS) / (1.0 + np.exp(y))),
+}
+
+
+def _universal(cur, i, cand, d, n, dim, scale):
+    """Profile in which every agent makes agent i's change, measured on ``scale``."""
+    if scale == "linear":
+        return tuple(tuple(_clip(cur[j][a] + d[a]) for a in range(dim)) for j in range(n))
+    g, ginv = SCALES[scale]
+    step = [float(g(cand[a]) - g(cur[i][a])) for a in range(dim)]
+    return tuple(cand if j == i else
+                 tuple(_clip(float(ginv(g(cur[j][a]) + step[a]))) for a in range(dim))
+                 for j in range(n))
+
 
 def evolve_env(batch: Callable, costs: Callable, n: int, dim: int, cfg: EvoConfig,
-               seed: int, init=None) -> EvoResult:
+               seed: int, init=None, scale: str = "linear") -> EvoResult:
+    if scale not in SCALES:
+        raise ValueError(f"unknown scale {scale!r}")
     rng = np.random.default_rng([seed, 7919])
     profile = init if init is not None else random_profile(rng, n, dim)
     res = EvoResult(profile=profile)
@@ -50,8 +75,8 @@ def evolve_env(batch: Callable, costs: Callable, n: int, dim: int, cfg: EvoConfi
                 uni = tuple(cand if j == i else cur[j] for j in range(n))
                 allp = None
                 if cfg.gate in ("welfare_universal",) or (cfg.gate == "kappa" and kappa > 0.0):
-                    allp = tuple(tuple(_clip(cur[j][a] + d[a]) for a in range(dim))
-                                 for j in range(n))
+                    allp = _universal(cur, i, cand, d, n, dim,
+                                      scale if cfg.gate == "kappa" else "linear")
                 if cfg.gate == "kappa":
                     if kappa <= 0.0:
                         c = costs(scns, uni)

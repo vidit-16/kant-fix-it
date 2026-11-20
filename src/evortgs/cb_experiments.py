@@ -96,13 +96,15 @@ def planner_asym(sampler: DevSampler, seed: int, batch: int = 64, sweeps: int = 
 
 
 def spec(name, seed, *, gamma, n=6, gate="kappa", kappa=0.0, instrument=None, level=0.0,
-         split="holdout", kind="evolve", gens=40, het=None, skew=None):
+         split="holdout", kind="evolve", gens=40, het=None, skew=None, scale=None):
     d = dict(exp=name, seed=seed, gamma=gamma, n=n, gate=gate, kappa=kappa,
              instrument=instrument, level=level, split=split, kind=kind, gens=gens)
     if het is not None:
         d["het"] = het
     if skew is not None:
         d["skew"] = skew
+    if scale is not None:
+        d["scale"] = scale
     return d
 
 
@@ -120,7 +122,7 @@ def run_one(sp: dict) -> dict:
     else:
         ecfg = EvoConfig(generations=sp["gens"], gate=sp["gate"], kappa=sp["kappa"])
         r = evolve_env(sampler.batch, make_costs(cfg, sp["instrument"], sp["level"]),
-                       cfg.n, 3, ecfg, sp["seed"])
+                       cfg.n, 3, ecfg, sp["seed"], scale=sp.get("scale", "linear"))
         profile, sims = r.profile, r.sims
         hist = [{"gen": h["gen"], "dev_system_cost": h["dev_system_cost"],
                  "accepted": h["accepted"]} for h in r.history]
@@ -194,6 +196,21 @@ def experiments(which: str) -> list[dict]:
                 S.append(spec("E10", seed, kind="planner", gate="planner", **kw))
                 S.append(spec("E10", seed, kind="planner_asym", gate="planner_asym", **kw))
         return S
+    if which == "unitspilot":  # units-of-universalization pilot (post-review robustness check)
+        for seed in PILOT_SEEDS:
+            for skew in (0.0, 1.5):
+                for scale in E11_SCALES:
+                    for k in (0.5, 1.0):
+                        S.append(spec("unitspilot", seed, kappa=k, gamma=0.25, skew=skew,
+                                      split="pilot", scale=scale))
+        return S
+    if which == "E11":  # frozen in docs/PREREGISTRATION_E11.md
+        for seed in CONFIRM_SEEDS:
+            for skew in E10_SKEWS:
+                for scale in E11_SCALES:
+                    for k in (0.5, 1.0):
+                        S.append(spec("E11", seed, kappa=k, gamma=0.25, skew=skew, scale=scale))
+        return S
     if which == "E9":  # frozen in docs/PREREGISTRATION_E9.md
         for seed in CONFIRM_SEEDS:
             for gamma in (0.25, 1.0):
@@ -222,6 +239,11 @@ E9_GRIDS = {"proxy": (0.1, 0.2, 0.4, 0.8), "activity": (0.25, 0.5, 0.75),
 E10_SKEWS = (0.0, 0.75, 1.5)
 E10_GRIDS = {"proxy": (0.1, 0.2, 0.4, 0.8), "surface": (1.0, 2.0, 4.0, 8.0),
              "ambient": (0.5, 1.0, 1.5, 2.0)}
+
+
+# Rescaled universalization counterfactuals; "linear" is E10's own gate and is
+# taken from the E10 records rather than re-run.
+E11_SCALES = ("log", "sqrt", "logit")
 
 
 def main(argv=None):
