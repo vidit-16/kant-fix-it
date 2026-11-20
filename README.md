@@ -1,49 +1,73 @@
-# EvoRTGS
+# Kant fix it
 
-A small, deterministic testbed for one question: when several agents in a
-shared environment each improve their own policy through a
-propose–evaluate–accept loop, how much does the **acceptance gate** decide the
-collective outcome?
+**Can a conscience stop self-improving AI agents from wrecking a shared system, or does it take a price?**
 
-The environment is a stylized real-time gross settlement (RTGS) payment
-network; a second environment models agents sharing a codebase. Both are
-simulators only: no real payment system, data or money is
-involved, and results say nothing about any real system.
+Six agents share one system. Each one keeps changing its own policy, testing
+each change and keeping the ones that make *it* better off. Changes that help
+their owner can hurt everyone else, so the system drifts somewhere worse than
+anyone wanted.
 
-* [docs/PROJECT.md](docs/PROJECT.md) — canonical project document: decisions,
-  prior-art audit, results, open questions.
-* [docs/PREREGISTRATION.md](docs/PREREGISTRATION.md),
-  [docs/PREREGISTRATION_E8.md](docs/PREREGISTRATION_E8.md),
-  [docs/PREREGISTRATION_E9.md](docs/PREREGISTRATION_E9.md),
-  [docs/PREREGISTRATION_E10.md](docs/PREREGISTRATION_E10.md) — protocols frozen
-  before the confirmatory runs.
-* [docs/REPORT.md](docs/REPORT.md) — final report. The project is concluded.
-* [docs/LITERATURE_REVIEW.md](docs/LITERATURE_REVIEW.md) — literature review
-  of prior work, with search logs in `docs/literature_notes/`.
-* `runs/` — one JSON line per run, `results.json`, figures.
+This project holds everything fixed (the agents, their search budget, the
+environment) and changes one thing: the rule that decides whether an agent
+keeps a change. A selfish rule is compared with a Kantian one ("would I still
+want this if every agent did the same?"), with welfare rules, and with prices
+an operator could charge instead.
 
-## Headline result
+Project page: **[kant-fix-it.vercel.app](https://kant-fix-it.vercel.app)**
 
-With proposals, search budget and environment fixed, the gate alone moves
-holdout system cost by 23 %. A gate that reads only the agent's own cost under
-the counterfactual "everyone makes this same change" recovers about half of the
-loss caused by private gates, and the gain transfers to five unseen shock
-families. A conventional delay surcharge with private gates beats every gate
-tested, with three-parameter and with eight-parameter rule-level policies; a
-coarser two-band tariff does not hold up with the richer policies.
+## What came out
 
-A second environment, agents sharing a codebase where harm from hidden
-coupling cannot be attributed, removes the direct price. There the Kantian
-gate and a budget-breaking ambient tax reach practically the same outcome,
-while budget-balanced charges either do nothing or are gamed into
-concealment. When agents are unequally exposed to the harm, the ambient tax
-beats the gate, as theory predicts, and the claim that gates beat the best
-available instrument is closed under a pre-registered rule. A further
-pre-registered check (E11) found the verdict holds whatever scale the Kantian
-gate uses to measure "the same change". Details and
-caveats are in the project document.
+Five pre-registered studies, 4,190 confirmatory runs, two environments:
 
-## Run
+* **The rule matters.** In a simulated interbank payment network, selfish
+  agents leave the system 29 % costlier than a planner. The Kantian rule
+  closes about half of that gap.
+* **A price matters more.** A simple charge on payment delay beat every rule,
+  including the best one, with simple and with richer agent policies.
+* **When the harm can be hidden, simple prices get gamed.** In a shared
+  codebase, where shortcuts add hidden coupling and incidents land anywhere, a
+  charge on *visible* coupling taught agents to hide it: 99 % of the coupling
+  went underground and costs rose by more than half.
+* **The Kantian rule only works while agents are alike.** With equal exposure
+  it matched a tax on shared damage. When some modules absorb most of the
+  incidents, "what if everyone did this?" measures what an agent would suffer,
+  not what it causes. The exposed agents froze, the sheltered ones ran wild,
+  and the tax won. That held on every scale tested for "the same change".
+
+So: Kant can't fix it, but a well-chosen price can.
+
+![The ambient tax against the Kantian gate as exposure becomes unequal](runs/fig_e10.png)
+
+## How it was kept honest
+
+* Every confirmatory study was **pre-registered**: hypotheses, analysis code
+  and a decision rule were committed before the runs. The commit hashes cited
+  in each protocol are the timestamps.
+* Pilots used separate seeds and a separate scenario split. Results are
+  scored on held-out scenario families never seen during evolution.
+* Failed predictions are reported as failed: 7 of 29 registered predictions
+  failed, six outright and one in part.
+* Analysis scripts regenerate every reported number exactly from the stored
+  records; 82 tests cover accounting, determinism and protocol isolation.
+
+## Read more
+
+* [docs/REPORT.md](docs/REPORT.md): the full report.
+* [docs/PROJECT.md](docs/PROJECT.md): decisions, audit trail and open
+  questions.
+* [docs/LITERATURE_REVIEW.md](docs/LITERATURE_REVIEW.md): prior work, with
+  search logs in `docs/literature_notes/`.
+* Protocols, each frozen before its runs:
+  [E1–E6](docs/PREREGISTRATION.md), [E8](docs/PREREGISTRATION_E8.md),
+  [E9](docs/PREREGISTRATION_E9.md), [E10](docs/PREREGISTRATION_E10.md),
+  [E11](docs/PREREGISTRATION_E11.md).
+
+Both environments are simulators only. No real payment system, codebase,
+data or money is involved, and the results say nothing about any real system.
+
+## Run it
+
+Needs Python 3.12 and [uv](https://docs.astral.sh/uv/).
 
 ```bash
 uv sync
@@ -55,17 +79,32 @@ uv run python -m evortgs.cb_experiments cbpilot E9
 uv run python -m evortgs.analysis_e9
 uv run python -m evortgs.cb_experiments cbpilot2 cbpilot3 E10
 uv run python -m evortgs.analysis_e10
+uv run python -m evortgs.cb_experiments unitspilot E11
+uv run python -m evortgs.analysis_e11
 ```
+
+The full set takes about four hours on a laptop. On a machine with little free
+memory, set `EVO_WORKERS=4 OPENBLAS_NUM_THREADS=1`.
 
 ## Layout
 
 ```
-src/evortgs/sim.py          settlement engine, costs, invariants
-src/evortgs/scenarios.py    scenario families, development/holdout split
-src/evortgs/evolve.py       gated evolution loop
-src/evortgs/evaluate.py     locked holdout evaluation
-src/evortgs/experiments.py  experiment definitions and runner
-src/evortgs/analysis.py     statistics and figures (E1-E6)
-src/evortgs/analysis_e8.py  statistics and figure (E8)
-tests/                      accounting, determinism, protocol isolation
+src/evortgs/sim.py             payment settlement engine, costs, invariants
+src/evortgs/scenarios.py       payment scenario families, development/holdout split
+src/evortgs/evolve.py          gated evolution loop
+src/evortgs/gates.py           the same loop for any environment, with Kantian scales
+src/evortgs/codebase.py        shared-codebase environment and instruments
+src/evortgs/evaluate.py        locked holdout evaluation (payments)
+src/evortgs/cb_evaluate.py     locked holdout evaluation (codebase)
+src/evortgs/experiments.py     payment experiments
+src/evortgs/cb_experiments.py  codebase experiments, planners
+src/evortgs/analysis*.py       pre-registered statistics and figures
+tests/                         accounting, determinism, protocol isolation
+runs/                          one JSON line per run, results and figures
 ```
+
+The Python package keeps its working name, `evortgs`.
+
+## Licence
+
+MIT. See [LICENSE](LICENSE).

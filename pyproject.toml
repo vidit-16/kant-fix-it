@@ -1,7 +1,7 @@
 [project]
 name = "evortgs"
 version = "0.1.0"
-description = "Selection gates for co-evolving agents in a stylized RTGS payment network"
+description = "Acceptance gates versus prices for co-evolving agents, in a payment network and a shared codebase"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

@@ -7,3 +7,4 @@ runs/scratch/
 
 # Licensed full texts from the library; never commit or redistribute
 literature_pdfs/
+.taste-skill/
