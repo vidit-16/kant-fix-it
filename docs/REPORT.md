@@ -99,13 +99,18 @@ Kantian equilibria are Pareto efficient, including with heterogeneous agents.
 Only the simple form, in which everyone takes the same action level, is
 generally inefficient with heterogeneity. *Homo moralis* preferences (Alger
 and Weibull 2013) give the degree-of-morality mixture κ. Partial Kantian
-equilibria are defined by Kordonis (2020) and Istrate (2020). Our κ = 1 gate is the
+equilibria are defined by Kordonis (2020), through imagined groups of co-movers
+who minimise their mean cost, and by Istrate (2020). Our κ mixes two scores of
+the agent's own cost instead. Behind a veil of ignorance, with roles assigned
+at random, universalization implies utilitarian altruism (Laslier 2022). Our κ = 1 gate is the
 additive form: every agent's policy moves by the same mutation. With unequal
 exposure, the additive Kantian condition gives b′ᵢ = n·eᵢ·D′. The equal-weight
 cost optimum gives b′ᵢ = n·ē·D′. So the Kantian point is the welfare optimum
 with weights proportional to 1/exposure. That is efficient in Pareto's sense,
 but not the minimum of total cost. This derivation is ours. It is not stated
-in the sources we found, and E10 tests its prediction. Universalization has
+in the sources we found, and E10 tests its prediction. It is consistent with
+Laslier's result: E10 fixes each agent's exposure rather than randomising it,
+which is exactly when universalization and total-cost minimisation separate. Universalization has
 been used as a decision-time prompt for language-model agents (Piatti et al.
 2024). We did not find it used as the acceptance rule of a learning loop.
 
@@ -128,7 +133,11 @@ can (Holmström 1982). The ambient tax on non-point pollution is the
 corresponding instrument (Segerson 1988). Known objections include collusion,
 large transfers and information requirements (Millock and Salanié 2005).
 Laboratory evidence is mixed (Spraggon 2002; Cochard, Willinger and
-Xepapadeas 2005; Suter et al. 2008). In one experiment, heterogeneity in
+Xepapadeas 2005; Suter et al. 2008). Spraggon found the tax effective for
+groups but not for individuals. Cochard et al. studied polluters who bear the
+damage themselves, as our agents bear incidents. There, subjects under the
+ambient tax cooperated to maximise group payoff, cut input below the optimum,
+and ended worse off than without regulation. In another experiment, heterogeneity in
 farm size and location reduced the effectiveness of an ambient tax/subsidy
 unless peer information was given; an agent-based model calibrated on that
 experiment exists (Wu 2017). Charging each agent all damage outside
@@ -138,7 +147,7 @@ unilateral welfare gate is therefore an observation, not a result. In
 multi-agent reinforcement learning, LOPT (Hua et al. 2025) learns a Pigouvian
 reward shaping toward social welfare where the externality can be
 attributed. Danassis et al. (2026) use a learning policymaker to set market
-prices against common-pool externalities. Paying on a measured dimension moves effort into unmeasured ones
+prices against common-pool externalities, where harvests are observable. Paying on a measured dimension moves effort into unmeasured ones
 (Holmström and Milgrom 1991; not re-read for this review).
 
 **Technical debt.** Gavidia-Calderon et al. (2020) model technical debt as a
@@ -494,9 +503,12 @@ ambient tax's favour.
   * The codebase optimum is a grid and coordinate-descent optimum, possibly
     local; the ambient tax came within 0.0003 of it.
 * **Favourable assumptions for the ambient tax.** Agents are risk-neutral and
-  cannot collude, which removes the classic objections to it. In laboratory
-  work, heterogeneity reduced the tax's effectiveness among human subjects
-  (Wu 2017), so E10's result for the tax is a result about these agents.
+  cannot collude, which removes the classic objections to it. Our agents
+  each accept changes by their own gate and cannot coordinate. Human subjects
+  who bore the damage themselves coordinated under an ambient tax and
+  over-restrained (Cochard et al. 2005). Heterogeneity also reduced the tax's
+  effectiveness among humans (Wu 2017). So E9 and E10's results for the tax
+  hold for these agents, not necessarily for people.
 * **The Kantian gate depends on units.** It shifts every agent's policy by
   the same amount in the policy's own units. The Kantian counterfactual is
   known to depend on how actions are represented (Sloev and Lianos 2026), so a
@@ -557,6 +569,7 @@ Evidence levels for each source are given in
 * Hua, Y., Gao, S. et al. (2025). LOPT: learning optimal Pigovian tax in sequential social dilemmas. NeurIPS 2025.
 * Istrate, G. (2020). Game-theoretic models of moral and other-regarding agents. arXiv:2012.09759.
 * Kordonis, I. (2020). A model for partial Kantian cooperation. *Annals of the International Society of Dynamic Games*, 319–348.
+* Laslier, J.-F. (2022). Universalization and altruism. *Soc. Choice Welf.* Working-paper version: HAL halshs-03227354 (2021).
 * McAvoy, A., Kates-Harbeck, J., Chatterjee, K. et al. (2022). Evolutionary instability of selfish learning in repeated games. *PNAS Nexus*, pgac141.
 * Millock, K., Salanié, F. (2005). Nonpoint source pollution when polluters might cooperate. *Topics Econ. Anal. Policy* 5(1).
 * Nellen, T. (2019). Intraday liquidity facilities, late settlement fee and coordination. *J. Bank. Finance*.

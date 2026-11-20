@@ -248,6 +248,35 @@ day queried scholarly indexes directly; the log is in
 * **The citers of Gavidia-Calderon et al. add nothing new.** None of its 25
   citers models technical debt as a shared stock with strategic agents.
 
+## Full texts read after the second pass (20 November 2026)
+
+Open-access copies were found through OpenAlex and read from free versions:
+an author's working paper, arXiv, HAL, or the publisher's open-access PDF. No
+library subscription was used. Copies are kept locally in a folder that is not
+committed.
+
+| Work | Version read | What it adds |
+|---|---|---|
+| Spraggon (2002) | McMaster working paper 98-01 (1998) [full, earlier version] | Segerson-type instruments work for the group but not for individuals; individuals can incur large fines even when choosing the optimal action |
+| Cochard, Willinger, Xepapadeas (2005) | BETA working paper 2002-20 [full, earlier version] | Polluters bear the damage themselves, as in the codebase model. Under the ambient tax, subjects cooperated to maximise group payoff, over-restrained, and welfare fell *below* no regulation, unreliably. The input tax was almost perfectly efficient. Removing the subsidy part of the ambient tax restored efficiency |
+| Kordonis (2020) | arXiv:1609.01921 v2 [full] | The r-Kant-Nash equilibrium: each player imagines a virtual group of co-movers bound to the same strategy that minimises its mean cost. This differs from the project's κ, which mixes two own-cost scores |
+| Laslier (2022) | HAL halshs-03227354 (2021) [partial: abstract and introduction] | With roles assigned at random behind a veil of ignorance, any equilibrium of the universalized game is an equilibrium with utilitarian-altruistic players, but not the converse. This is consistent with the E10 derivation, because E10 fixes exposure rather than randomising it |
+| Danassis et al. (2026) | Publisher's open-access PDF [partial: abstract, introduction, model] | Both the price-setting policymaker and the harvesters learn, and harvests are observable. This is a learned price on an attributable externality, in the same class as LOPT |
+
+**Not obtained.**
+
+* Gavidia-Calderon et al. (2020): the repository copy is behind a bot check.
+  The thesis chapter, read earlier, remains the source.
+* Eichner and Pethig (2022): the SSRN copy refused automated download.
+* Nellen (2019) and Alger and Weibull (2016): no open copy exists.
+
+The owner may download these through the library; see PROJECT.md §3.5.
+
+**Effect on the project.** Cochard et al. sharpens a stated assumption. The
+ambient tax's success in E9 and E10 depends on agents not coordinating
+against it, and human subjects in a closely matching setting did coordinate.
+The report's limitations now say so.
+
 ## Google Scholar queries for the owner
 
 Google Scholar refuses automated clients, so these are for a manual check.

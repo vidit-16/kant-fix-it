@@ -4,3 +4,6 @@ __pycache__/
 .pytest_cache/
 .hypothesis/
 runs/scratch/
+
+# Licensed full texts from the library; never commit or redistribute
+literature_pdfs/

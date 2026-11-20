@@ -260,6 +260,17 @@ What changed:
     scaled (Sloev and Lianos 2026), so the gate's outcome is tied to the
     policy parameterisation.
   * The central gap still holds.
+* **Full texts read from free copies (20 November 2026).**
+  * Spraggon, Cochard et al. and Kordonis were read in full, from earlier
+    versions; Laslier and Danassis et al. were read in part.
+  * Main effect: in a lab setting where polluters bear the damage themselves,
+    as in our model, subjects coordinated under the ambient tax and ended
+    worse off than with no regulation (Cochard et al. 2005). The ambient-tax
+    results therefore depend on agents being unable to coordinate. This is
+    now a stated limitation.
+  * Still wanted through the library: Gavidia-Calderon et al. (2020), Eichner
+    and Pethig (2022), Nellen (2019), Alger and Weibull (2016). Saved copies
+    go in `literature_pdfs/`, which is not committed.
 
 ## 4. System
 
