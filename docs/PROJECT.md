@@ -31,6 +31,7 @@ notes of 17 November 2026 are folded into §7 and §9; that file is deleted.
 | Confirmatory experiment E9 (gates against the best available instrument) | Run, 1 280 runs, analysed (§5.9) |
 | Pre-registration for E10 (unequal exposure) | Committed before confirmatory runs (`f580a13`) |
 | Confirmatory experiment E10 | Run, 1 080 runs, analysed (§5.10). **Strong gates line closed** |
+| Robustness study E11 (units of universalization) | Pre-registered (`863f0b4`), 360 runs, analysed (§5.11). **Closure robust to scale** |
 | Final write-up | REPORT.md rewritten as a standalone report; every number re-checked against regenerated results (18 November 2026) |
 | **Project status** | **Concluded.** The owner chose to write up and stop (D29). Nothing pushed or published |
 | Language-model proposers | Not started, by decision (D29, §7) |
@@ -700,6 +701,63 @@ optimum is a coordinate-descent optimum on a grid (the ambient tax came within
 
 ![e10](../runs/fig_e10.png)
 
+### 5.11 E11 — units of universalization (pre-registered robustness check)
+
+Protocol: [PREREGISTRATION_E11.md](PREREGISTRATION_E11.md), frozen in
+`863f0b4`. All 360 records carry that commit with the dirty flag clear.
+
+**Why.** Prompted by the literature review (§3.5): the Kantian counterfactual
+depends on the scale on which "the same change" is measured. The check was
+decided after E10; it was registered before its own runs.
+
+**Design.** `gates.evolve_env` takes a `scale` argument. Under it, agent i's
+change is applied to every agent as x_j' = g⁻¹(g(x_j) + g(x_i') − g(x_i)),
+clipped to [0, 1], with g ∈ {log(x + 0.05), √x, logit with offset 0.05}.
+`linear` is the default and is E10's gate; two E10 runs were re-run with the
+modified code and match bit for bit, and tests check the identity.
+
+* κ ∈ {0.5, 1} × three scales × three skews × 20 seeds.
+* Comparators come from E10 on the same seeds.
+* The best own-cost gate is chosen on development cost over nine variants.
+
+**Pilot** (`runs/unitspilot.jsonl`, six pilot seeds): at skew 1.5 the best
+rescaled gate (logit) cost 0.1781, against 0.1761 for the ambient tax. The
+log-scale gate cost 0.2038.
+
+| Kantian gate (κ = 1) | skew 0 | skew 0.75 | skew 1.5 |
+|---|---|---|---|
+| linear (E10) | 0.2147 | 0.2040 | 0.1816 |
+| logit | 0.2148 | 0.2035 | 0.1765 |
+| square root | 0.2151 | 0.2089 | 0.1842 |
+| log | 0.2153 | 0.2267 | 0.2019 |
+| ambient tax, level 1 | 0.2156 | 0.2018 | 0.1747 |
+| optimum | 0.2137 | 0.2015 | 0.1749 |
+
+| Hypothesis | Outcome |
+|---|---|
+| U1 ambient tax clearly cheaper than the best gate over all scales, at skew 0.75 and 1.5 | **Held.** −0.0016 (−0.0022 to −0.0010) and −0.0018 (−0.0025 to −0.0012); the dev-chosen gate was logit κ = 1 at both. The gap is now inside the margin |
+| U2 log-scale gate clearly costlier than linear at skew 1.5 | **Held.** +0.020 (+0.017 to +0.023) |
+| U3 Kantian distortion under every scale at skew 1.5 | **Held.** Spread excess +0.34 linear, +0.19 logit, +0.44 sqrt, +0.75 log |
+| U4 scales agree with identical agents | **Held.** All within 0.0006 of linear |
+
+**Decision.** The registered rule reopens the strong line only if a gate
+beats the ambient tax by more than the margin at both skews. No gate beats
+it at either, so **E10's closure stands and is robust to scale.**
+
+What this adds:
+
+* **The Kantian gate is unit-dependent whenever agents differ.** Its cost at
+  skew 1.5 ranges from 0.1765 to 0.2019 across natural scales. On the log
+  scale the most exposed agent almost stops shortcutting. A deployer would
+  have to choose the scale, and the choice matters more than the gate's gap
+  to the tax.
+* **The best scale narrows the gap to the ambient tax** from 0.0060 to
+  0.0018. *Post hoc:* the logit scale damps changes near the bounds. Tuning
+  the scale to the problem would turn the gate into a different, tuned
+  instrument. This was not pursued.
+
+![e11](../runs/fig_e11.png)
+
 ## 6. Decision log
 
 | ID | Question | Resolution |
@@ -736,6 +794,7 @@ optimum is a coordinate-descent optimum on a grid (the ambient tax came within
 | D30 | Does the project's positioning survive a fuller literature review? | The central gap holds ("not found in this review"). The E10 mechanism was reworded (Pareto efficient, but weighted by 1/exposure), the technical-debt background corrected, and four citations fixed (§3.5). No result changes |
 | D31 | Does a pass through scholarly APIs change that? | No change to the gap or the results. Citations added, one title fixed, two limitations added (unit dependence of the Kantian gate; ambient tax weaker with heterogeneous humans in the lab) (§3.5) |
 | D32 | Does a manual Google Scholar pass change that? | No. About 110 results screened; the gap holds. Added: prompted AI agents in an RTGS liquidity game (Danisman et al. 2026), AI-assisted coding framed as a tragedy of the commons (Baltes et al. 2026), and more moral-agent tax and ambient-policy work ([scholar_pass.md](literature_notes/scholar_pass.md)) |
+| D33 | Is E10's closure an artefact of the units in which the Kantian gate measures "the same change"? | No (E11, pre-registered). Across log, square-root and logit scales the ambient tax still beats the best gate at both unequal skews; the gate's own cost moves by up to 0.02 with the scale |
 
 ## 7. Unresolved questions and next steps
 
@@ -786,10 +845,12 @@ uv run python -m evortgs.cb_experiments cbpilot E9
 uv run python -m evortgs.analysis_e9
 uv run python -m evortgs.cb_experiments cbpilot2 cbpilot3 E10
 uv run python -m evortgs.analysis_e10
+uv run python -m evortgs.cb_experiments unitspilot E11
+uv run python -m evortgs.analysis_e11
 ```
 
 E1–E8 take about 90 minutes on eight logical cores; E9 took 90 minutes and
-E10 46 minutes with
+E10 46 minutes and E11 19 minutes with
 four workers (`EVO_WORKERS=4 OPENBLAS_NUM_THREADS=1` on a machine with little
 free memory). Records carry the commit hash; results are deterministic given
 the commit.

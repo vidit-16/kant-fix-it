@@ -1,4 +1,4 @@
-# Acceptance gates versus prices for co-evolving agents: four pre-registered studies in two environments
+# Acceptance gates versus prices for co-evolving agents: five pre-registered studies in two environments
 
 Final report of the gates line, 18 November 2026. Status: single-site,
 unreviewed, unreplicated. The audit trail, decision log and per-study detail
@@ -17,7 +17,7 @@ their owner can be bad for everyone. We ask whether the *acceptance rule*
 alone can correct this, and whether it can do so better than a charge on the
 externality that an operator could levy instead. Proposals, search budget and
 environment are identical across arms; only the gate, or the price the agents
-face, differs. Four pre-registered studies (3 830 confirmatory runs, 20 paired
+face, differs. Five pre-registered studies (4 190 confirmatory runs, 20 paired
 seeds each, held-out evaluation scenarios) were run in two environments.
 
 In a stylized real-time gross settlement network (E1–E6, E8), private gates
@@ -37,7 +37,10 @@ inequality). The gate shows the distortion our derivation predicts: a
 Kantian point that is Pareto efficient but weights agents by one over their
 exposure, so it misses the minimum of total cost. Under a
 decision rule fixed in advance, the claim that gates beat the best available
-instrument is therefore rejected.
+instrument is therefore rejected. A fifth study (E11) re-ran the Kantian gates
+with "the same change" measured on three other scales. The gate's cost moved
+by up to 0.02 with the choice of scale, but the ambient tax still beat the
+best gate over all scales, so the verdict does not depend on units.
 
 What remains is conditional. Where only budget-balanced charges are possible
 and the harm's carrier can be hidden, an own-cost Kantian gate beats those
@@ -425,6 +428,45 @@ the theory predicted; the test could have gone the other way.
 
 ![e10](../runs/fig_e10.png)
 
+### 4.5 Robustness to the units of universalization (E11)
+
+Protocol: [PREREGISTRATION_E11.md](PREREGISTRATION_E11.md). This check was
+prompted by the literature review and decided after E10's results were known;
+it was registered before its own runs. The Kantian gate must say what "the
+same change" means. E10 adds the same shift to every agent's policy in its
+own units. E11 applies the shift on three other scales (log, square root,
+logit), so x_j' = g⁻¹(g(x_j) + g(x_i') − g(x_i)). The gates at κ = 0.5 and 1
+were re-run for all three skews (360 runs), and the comparators were reused
+from E10. The modified code reproduces E10 runs bit for bit.
+
+| Kantian gate (κ = 1) | skew 0 | skew 0.75 | skew 1.5 |
+|---|---|---|---|
+| linear (E10) | 0.2147 | 0.2040 | 0.1816 |
+| logit | 0.2148 | **0.2035** | **0.1765** |
+| square root | 0.2151 | 0.2089 | 0.1842 |
+| log | 0.2153 | 0.2267 | 0.2019 |
+| ambient tax, level 1 | 0.2156 | **0.2018** | **0.1747** |
+| optimum | 0.2137 | 0.2015 | 0.1749 |
+
+* **The verdict is robust (U1).** Over all nine own-cost gate variants, the
+  one chosen on development data was the logit Kantian gate at both unequal
+  skews. The ambient tax was still clearly cheaper: −0.0016 (−0.0022 to
+  −0.0010) and −0.0018 (−0.0025 to −0.0012). The best scale narrows the gap
+  to inside the equivalence margin, but the gate does not win anywhere, so the
+  line stays closed.
+* **The gate depends strongly on units when agents differ (U2).** On the log
+  scale the most exposed agent almost stops taking shortcuts (s = 0.08 at
+  skew 1.5), and cost rises by 0.020 (0.017 to 0.023) over the linear gate.
+  With identical agents, all scales agree within 0.0006 (U4).
+* **The distortion survives every scale (U3).** At skew 1.5 the spread of
+  shortcut intensity between the least and the most exposed agent exceeds
+  the optimum's under every scale (+0.19 for logit up to +0.75 for log).
+* **Post hoc:** the logit scale, which compresses changes near the policy
+  bounds, gives the best Kantian gate. A gate whose scale is tuned to the
+  problem is, in effect, a different instrument; it was not pursued.
+
+![e11](../runs/fig_e11.png)
+
 ## 5. Registered predictions and outcomes
 
 | Study | Prediction | Outcome |
@@ -454,6 +496,10 @@ the theory predicted; the test could have gone the other way.
 | | D4 Kantian distortion | Held |
 | | D5 gate beats budget-balanced at every skew | Held, shrinking to within margin |
 | | D6 identity | Held |
+| E11 | U1 ambient tax beats the best gate over all scales | Held (gap narrows to within margin) |
+| | U2 log-scale gate costlier than linear at skew 1.5 | Held (+0.020) |
+| | U3 distortion under every scale | Held |
+| | U4 scales agree with identical agents | Held |
 
 ## 6. Discussion
 
@@ -513,11 +559,10 @@ ambient tax's favour.
   over-restrained (Cochard et al. 2005). Heterogeneity also reduced the tax's
   effectiveness among humans (Wu 2017). So E9 and E10's results for the tax
   hold for these agents, not necessarily for people.
-* **The Kantian gate depends on units.** It shifts every agent's policy by
-  the same amount in the policy's own units. The Kantian counterfactual is
-  known to depend on how actions are represented (Sloev and Lianos 2026), so a
-  different parameterisation of the same policies could move the gate's
-  outcome.
+* **The Kantian gate depends on units.** The Kantian counterfactual depends
+  on how actions are represented (Sloev and Lianos 2026). E11 confirms this:
+  the gate's cost moved by up to 0.02 across four scales. The verdict held
+  under all four, but other scales were not tested.
 * **No language models.** Proposals are random mutations, so the link to
   self-improving language-model systems is an analogy, not a result.
 * **Prior-art review** was broad and structured but not a formal systematic
@@ -526,7 +571,7 @@ ambient tax's favour.
 
 ## 8. Conclusion
 
-Across two environments and four pre-registered studies, the acceptance gate
+Across two environments and five pre-registered studies, the acceptance gate
 is a consequential design choice, but it is not a substitute for a
 well-chosen price. A price on the externality matches or beats every gate
 tested:

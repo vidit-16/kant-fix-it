@@ -38,7 +38,9 @@ gate and a budget-breaking ambient tax reach practically the same outcome,
 while budget-balanced charges either do nothing or are gamed into
 concealment. When agents are unequally exposed to the harm, the ambient tax
 beats the gate, as theory predicts, and the claim that gates beat the best
-available instrument is closed under a pre-registered rule. Details and
+available instrument is closed under a pre-registered rule. A further
+pre-registered check (E11) found the verdict holds whatever scale the Kantian
+gate uses to measure "the same change". Details and
 caveats are in the project document.
 
 ## Run
