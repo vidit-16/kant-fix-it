@@ -220,19 +220,24 @@ function sideFit(w, R, size) {
 function dockBelow() {
   S.thinkSide = 0;
   $("#think").classList.remove("right");
-  $("#think").classList.add("below");
-  holdBoard(true);
+  placeThink(true);
 }
-// a docked panel adds to the card's height: the board keeps its size, so the ring
-// does not shrink the moment an agent is opened
-function holdBoard(on) {
-  board.style.minHeight = on ? `${board.offsetHeight}px` : "";
+// Docked, the thinking panel moves into its own row of the layout, between the
+// board row and the controls row, so neither the board nor the column beside it
+// changes height. Otherwise it lives on the board (beside the ring, or as the
+// phone's bottom sheet).
+const thinkHome = $("#think").nextElementSibling;
+function placeThink(docked) {
+  const t = $("#think");
+  t.classList.toggle("below", docked);
+  if (docked && t.parentElement !== $(".thinkrow")) $(".thinkrow").append(t);
+  if (!docked && t.parentElement !== thinkHome.parentElement) thinkHome.before(t);
 }
 function closeThink() {
   S.focus = null;
   $("#think").hidden = true;
-  $("#think").classList.remove("below", "right");
-  holdBoard(false);
+  $("#think").classList.remove("right");
+  placeThink(false);
 }
 function layout(n, w, h, size, shift = 0, k = 1) {
   const g = ring(w, h, size);
@@ -732,10 +737,7 @@ board.addEventListener("click", (e) => {
   const unshifted = S.pos[hit][0] - (S.shift ?? 0);
   S.thinkSide = PHONE.matches || !fits ? 0 : unshifted >= S.w / 2 - 1 ? 1 : -1;
   $("#think").classList.toggle("right", S.thinkSide < 0);
-  const docked = S.thinkSide === 0 && !PHONE.matches;
-  if (docked && !$("#think").classList.contains("below")) holdBoard(true);
-  if (!docked) holdBoard(false);
-  $("#think").classList.toggle("below", docked);
+  placeThink(S.thinkSide === 0 && !PHONE.matches);
   explain(hit);
   if (!S.running) $("#play").click();
 });
@@ -744,6 +746,8 @@ addEventListener("keydown", (e) => { if (e.key === "Escape") closeThink(); });
 const stageEl = $(".stage");
 let belowPx = -1;
 function syncBelow() {
+  // shrunk to phone width with the panel docked: it becomes the bottom sheet again
+  if (PHONE.matches && $("#think").classList.contains("below")) placeThink(false);
   const v = Math.max(0, stageEl.clientHeight - board.offsetHeight);
   if (v !== belowPx) { belowPx = v; stageEl.style.setProperty("--below", `${v}px`); }
 }
