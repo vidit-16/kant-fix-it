@@ -1,0 +1,9 @@
+{
+  "name": "kant-fix-it-engine",
+  "private": true,
+  "type": "module",
+  "description": "Browser port of the shared-codebase model and the gated evolution loop",
+  "scripts": {
+    "test": "node --test \"test/*.test.mjs\""
+  }
+}

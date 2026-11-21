@@ -1,0 +1,263 @@
+{
+ "speed": {
+  "full_run_ms": 470,
+  "sims": 16000,
+  "sims_per_ms": 34
+ },
+ "compare": {
+  "0": {
+   "k0": {
+    "browser": 0.2385,
+    "se": 0.0003,
+    "python": 0.2384,
+    "hidden": 0.001
+   },
+   "k1": {
+    "browser": 0.2144,
+    "se": 0.0002,
+    "python": 0.2147,
+    "hidden": 0.001
+   },
+   "ambient1": {
+    "browser": 0.2154,
+    "se": 0.0004,
+    "python": 0.2156,
+    "hidden": 0.001
+   },
+   "proxy0.2": {
+    "browser": 0.3681,
+    "se": 0.0007,
+    "python": 0.3665,
+    "hidden": 0.996
+   }
+  },
+  "1.5": {
+   "k0": {
+    "browser": 0.1961,
+    "se": 0.0005,
+    "python": 0.1951,
+    "hidden": 0.001
+   },
+   "k1": {
+    "browser": 0.1797,
+    "se": 0.0005,
+    "python": 0.1816,
+    "hidden": 0.001
+   },
+   "ambient1": {
+    "browser": 0.1753,
+    "se": 0.0003,
+    "python": 0.1747,
+    "hidden": 0.001
+   },
+   "proxy0.2": {
+    "browser": 0.3421,
+    "se": 0.0011,
+    "python": 0.3383,
+    "hidden": 0.991
+   }
+  }
+ },
+ "concealment": [
+  {
+   "gen": 0,
+   "mean_m": 0.466,
+   "seeds_over_half": 10
+  },
+  {
+   "gen": 1,
+   "mean_m": 0.507,
+   "seeds_over_half": 11
+  },
+  {
+   "gen": 2,
+   "mean_m": 0.528,
+   "seeds_over_half": 13
+  },
+  {
+   "gen": 3,
+   "mean_m": 0.557,
+   "seeds_over_half": 14
+  },
+  {
+   "gen": 4,
+   "mean_m": 0.595,
+   "seeds_over_half": 16
+  },
+  {
+   "gen": 5,
+   "mean_m": 0.629,
+   "seeds_over_half": 15
+  },
+  {
+   "gen": 6,
+   "mean_m": 0.644,
+   "seeds_over_half": 17
+  },
+  {
+   "gen": 7,
+   "mean_m": 0.674,
+   "seeds_over_half": 18
+  },
+  {
+   "gen": 8,
+   "mean_m": 0.714,
+   "seeds_over_half": 19
+  },
+  {
+   "gen": 9,
+   "mean_m": 0.747,
+   "seeds_over_half": 19
+  },
+  {
+   "gen": 10,
+   "mean_m": 0.779,
+   "seeds_over_half": 19
+  },
+  {
+   "gen": 11,
+   "mean_m": 0.804,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 12,
+   "mean_m": 0.831,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 13,
+   "mean_m": 0.852,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 14,
+   "mean_m": 0.867,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 15,
+   "mean_m": 0.883,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 16,
+   "mean_m": 0.902,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 17,
+   "mean_m": 0.917,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 18,
+   "mean_m": 0.932,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 19,
+   "mean_m": 0.942,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 20,
+   "mean_m": 0.952,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 21,
+   "mean_m": 0.958,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 22,
+   "mean_m": 0.962,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 23,
+   "mean_m": 0.967,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 24,
+   "mean_m": 0.972,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 25,
+   "mean_m": 0.98,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 26,
+   "mean_m": 0.983,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 27,
+   "mean_m": 0.989,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 28,
+   "mean_m": 0.991,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 29,
+   "mean_m": 0.994,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 30,
+   "mean_m": 0.994,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 31,
+   "mean_m": 0.994,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 32,
+   "mean_m": 0.995,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 33,
+   "mean_m": 0.996,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 34,
+   "mean_m": 0.995,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 35,
+   "mean_m": 0.996,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 36,
+   "mean_m": 0.997,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 37,
+   "mean_m": 0.997,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 38,
+   "mean_m": 0.996,
+   "seeds_over_half": 20
+  },
+  {
+   "gen": 39,
+   "mean_m": 0.996,
+   "seeds_over_half": 20
+  }
+ ]
+}
