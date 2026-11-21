@@ -73,13 +73,14 @@ const S = {
   running: false, job: 0, gen: 0, seed: 1, queue: [], pending: false, lastQueued: null,
   from: null, to: null, tStart: 0, m: null, gauge: 0, gaugeV: 0, series: [], said: new Set(),
   sparks: [], ripples: [], shake: [0, 0, 0, 0, 0, 0], ropes: new Map(), chunks: 0,
+  step: null, focus: null, pos: null, size: 0,
 };
 
 const worker = new Worker(new URL("./worker.js", import.meta.url), { type: "module" });
 worker.onmessage = ({ data }) => {
   if (data.job !== S.job) return;
   if (data.chunkDone) { S.pending = false; return; }
-  S.queue.push(data.profile);
+  S.queue.push(data);
   S.lastQueued = data.profile;
 };
 
@@ -286,13 +287,16 @@ function frame() {
   const t = performance.now();
   const dt = Math.min(0.05, (t - lastT) / 1000);
   lastT = t;
-  const genMs = 1000 / S.speed;
+  const genMs = S.focus !== null ? 2800 : 1000 / S.speed;
 
   // advance one generation
   if (S.running && S.queue.length && (!S.to || t - S.tStart >= genMs)) {
-    S.from = S.to || S.queue[0];
-    S.to = S.queue.shift();
+    const step = S.queue.shift();
+    S.from = S.to || step.before;
+    S.to = step.profile;
+    S.step = step;
     S.tStart = t;
+    if (S.focus !== null) explain(S.focus);
     S.gen += 1;
     S.m = measure(S.to, S.skew);
     S.series.push({ cost: S.m.cost, hidden: S.m.hidden });
@@ -321,10 +325,13 @@ function frame() {
 function draw(t, dt, genMs) {
   const { ctx, w, h } = fit(board);
   ctx.clearRect(0, 0, w, h);
-  const P = S.to ? lerpProfile(S.from || S.to, S.to, ease(Math.min(1, (t - S.tStart) / genMs)))
-    : Array(6).fill([0.4, 0, 0.1]);
+  const f = S.to ? Math.min(1, (t - S.tStart) / genMs) : 0;
+  const thinking = !REDUCED && S.step && genMs >= 300;
+  const fMove = thinking ? Math.max(0, Math.min(1, (f - 0.66) / 0.3)) : f;
+  const P = S.to ? lerpProfile(S.from || S.to, S.to, ease(fMove)) : Array(6).fill([0.4, 0, 0.1]);
   const size = Math.min(w, h) * 0.12;
   const pos = layout(6, w, h, size);
+  S.pos = pos; S.size = size;
   const debt = S.m ? S.m.debt : 0.3;
   const tension = Math.min(1, debt / 4);
 
@@ -391,6 +398,8 @@ function draw(t, dt, genMs) {
     return true;
   });
 
+  if (thinking) drawThinking(ctx, t, f, pos, size, w, h);
+
   // modules
   const { expo } = visFor(S.skew);
   P.forEach(([s, m, q], i) => {
@@ -417,6 +426,10 @@ function draw(t, dt, genMs) {
     ctx.globalAlpha = 1;
     const blink = !REDUCED && ((t / 1000 + i * 0.77) % 4.2) < 0.12;
     face(ctx, x, y, sz, mood, blink);
+    if (S.focus === i) {
+      ctx.strokeStyle = COL.ink; ctx.lineWidth = 2; ctx.setLineDash([4, 5]);
+      ctx.beginPath(); ctx.roundRect(x - sz / 2 - 9, y - sz / 2 - 9, sz + 18, sz + 18, sz * 0.3); ctx.stroke(); ctx.setLineDash([]);
+    }
     if (S.skew > 0) {
       ctx.fillStyle = COL.ink; ctx.font = "600 13px Jost, system-ui"; ctx.textAlign = "center";
       ctx.fillText(`${Math.round(expo[i] / 6 * 100)}% of incidents`, x, y - sz / 2 - 10);
@@ -477,6 +490,125 @@ function narrate() {
   if ((v.nothing - m.cost) / (v.nothing - v.best) > 0.9 && S.gen > 8) sayOnce("good", "Close to the best possible. Can you find anything better?");
 }
 
+// ---- watching them think ------------------------------------------------------
+// Each generation every agent tries a few small changes to its own policy.
+// Ghost copies show the candidates; the agent's rule stamps each one kept or
+// rejected; the kept one slides in. Under the conscience rule, the focused
+// agent's imagined board ("what if everyone did this?") fades over the real one.
+
+const KIND = [["cut more corners", "cut fewer corners"], ["hide more coupling", "hide less coupling"], ["test more", "test less"]];
+function describe(before, cand) {
+  const d = cand.map((x, a) => x - before[a]);
+  let a = 0;
+  for (let k = 1; k < 3; k++) if (Math.abs(d[k]) > Math.abs(d[a])) a = k;
+  return KIND[a][d[a] >= 0 ? 0 : 1];
+}
+
+function ghostSpot(pos, i, k, size, w, h) {
+  const [x, y] = pos[i];
+  const out = Math.atan2(y - h / 2, x - w / 2);
+  const a = out + (k - 1.5) * 0.62;
+  const r = size * 1.12;
+  return [x + Math.cos(a) * r, y + Math.sin(a) * r];
+}
+
+function drawThinking(ctx, t, f, pos, size, w, h) {
+  const dec = S.step.decisions;
+  const g = size * 0.42;
+  dec.forEach((d, i) => {
+    if (!d) return;
+    if (S.focus !== null && S.focus !== i) return;
+    d.candidates.forEach((c, k) => {
+      const appear = 0.05 + k * 0.08;
+      if (f < appear) return;
+      const kept = d.chosen === k;
+      let [gx, gy] = ghostSpot(pos, i, k, size * (S.focus === i ? 1.25 : 1), w, h);
+      let alpha = Math.min(1, (f - appear) / 0.08) * 0.85;
+      if (f > 0.62) {
+        const m = Math.min(1, (f - 0.62) / 0.22);
+        if (kept) { gx += (pos[i][0] - gx) * ease(m); gy += (pos[i][1] - gy) * ease(m); alpha *= 1 - m * 0.9; }
+        else alpha *= 1 - m;
+      }
+      if (alpha <= 0.02) return;
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = "#ffffff"; ctx.strokeStyle = COL.ink; ctx.lineWidth = 1.5;
+      if (c.policy[1] > 0.5) ctx.setLineDash([4, 3]);
+      ctx.beginPath(); ctx.roundRect(gx - g / 2, gy - g / 2, g, g, g * 0.26); ctx.fill(); ctx.stroke();
+      ctx.setLineDash([]);
+      face(ctx, gx, gy, g, c.policy[0] > 0.6 ? "smug" : "calm", false);
+      if (f > 0.4) {
+        const st = Math.min(1, (f - 0.4) / 0.08);
+        ctx.globalAlpha = alpha * st;
+        ctx.lineWidth = 3; ctx.lineCap = "round";
+        if (kept) {
+          ctx.strokeStyle = COL.blue;
+          ctx.beginPath(); ctx.roundRect(gx - g / 2 - 4, gy - g / 2 - 4, g + 8, g + 8, g * 0.3); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(gx + g * 0.18, gy - g * 0.62); ctx.lineTo(gx + g * 0.32, gy - g * 0.48); ctx.lineTo(gx + g * 0.6, gy - g * 0.8); ctx.stroke();
+        } else {
+          ctx.strokeStyle = "#8f8c84";
+          ctx.beginPath(); ctx.moveTo(gx + g * 0.28, gy - g * 0.78); ctx.lineTo(gx + g * 0.56, gy - g * 0.5);
+          ctx.moveTo(gx + g * 0.56, gy - g * 0.78); ctx.lineTo(gx + g * 0.28, gy - g * 0.5); ctx.stroke();
+        }
+      }
+      ctx.globalAlpha = 1;
+    });
+  });
+  // the imagined board of the focused agent, under the conscience rule
+  if (S.focus !== null) {
+    const d = dec[S.focus];
+    const k = Math.min(3, Math.floor((f - 0.05) / 0.09));
+    const c = d && k >= 0 && d.candidates[k];
+    if (c && c.imagined && f < 0.62) {
+      const fade = Math.min(1, (f - 0.05) / 0.1) * (f > 0.5 ? (0.62 - f) / 0.12 : 1);
+      ctx.globalAlpha = 0.5 * fade;
+      ctx.strokeStyle = COL.blue; ctx.fillStyle = "rgba(36,86,214,0.10)"; ctx.lineWidth = 2; ctx.setLineDash([6, 5]);
+      c.imagined.forEach(([gs], j) => {
+        const [x, y] = pos[j], z = size * (0.9 + gs * 0.25);
+        ctx.beginPath(); ctx.roundRect(x - z / 2, y - z / 2, z, z, z * 0.24); ctx.fill(); ctx.stroke();
+      });
+      ctx.setLineDash([]); ctx.globalAlpha = fade;
+      ctx.fillStyle = COL.blue; ctx.font = "600 15px Jost, system-ui"; ctx.textAlign = "center";
+      ctx.fillText("Imagining: what if everyone made this change?", w / 2, 28);
+      ctx.globalAlpha = 1;
+    }
+  }
+}
+
+// the focused agent's thinking, in words
+function explain(i) {
+  const box = $("#think");
+  const d = S.step && S.step.decisions[i];
+  if (!d) { box.hidden = true; return; }
+  const before = S.step.before[i];
+  const rule = {
+    none: "My rule: keep a change if it helps me.",
+    conscience: "My rule: keep a change only if it would help me even if everyone made it.",
+    visible: "My rule: keep a change if it helps me, counting the tax on coupling you can see.",
+    damage: "My rule: keep a change if it helps me, counting the charge for damage to others.",
+  }[S.rule];
+  const rows = d.candidates.map((c, k) => {
+    const pct = Math.abs(c.score / d.ownCost) * 100;
+    const eff = c.score < 0 ? `saves me ${pct.toFixed(1)}%` : `costs me ${pct.toFixed(1)}%`;
+    const v = d.chosen === k ? "<b class=kept>kept</b>" : "<b class=rej>rejected</b>";
+    return `<li><span>${describe(before, c.policy)}</span><span>${eff}</span>${v}</li>`;
+  }).join("");
+  box.innerHTML = `<h3>Agent ${i + 1} is thinking</h3><p>${rule}</p><ul>${rows}</ul>
+    <p class="tail">${d.chosen < 0 ? "Nothing helped, so it stays as it is." : "It keeps the change that helps it most."} Click it again to let go.</p>`;
+  box.hidden = false;
+}
+
+board.addEventListener("click", (e) => {
+  if (!S.pos) return;
+  const r = board.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+  const hit = S.pos.findIndex(([px, py]) => Math.hypot(px - x, py - y) < S.size * 0.75);
+  if (hit < 0 || hit === S.focus) { S.focus = null; $("#think").hidden = true; return; }
+  S.focus = hit;
+  explain(hit);
+  if (!S.running) $("#play").click();
+});
+addEventListener("keydown", (e) => { if (e.key === "Escape") { S.focus = null; $("#think").hidden = true; } });
+
 visFor(0);
+window.__S = S;
 window.__debug = () => ({ gen: S.gen, queue: S.queue.length, running: S.running, gauge: S.gauge, m: S.m && { cost: S.m.cost, hidden: S.m.hidden } });
 frame();

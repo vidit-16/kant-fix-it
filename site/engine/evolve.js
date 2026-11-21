@@ -80,7 +80,13 @@ function totalRealDiffMean(c, base) {
   return npMean(d);
 }
 
-export function evolve(batch, costs, n, dim, cfg, seed, { init = null, streams = null, onGeneration = null } = {}) {
+// `onDecision(g, i, info)` (optional) reports what agent i considered in
+// generation g: each candidate policy with its gate score (negative means the
+// agent's rule says it helps), the profile the agent imagined when its rule
+// looks at everyone making the same change, the agent's own private cost
+// before the change, and which candidate it kept (-1 for none). It changes
+// nothing in the loop; the parity tests run without it.
+export function evolve(batch, costs, n, dim, cfg, seed, { init = null, streams = null, onGeneration = null, onDecision = null } = {}) {
   if (!(cfg.scale in SCALES)) throw new Error(`unknown scale ${cfg.scale}`);
   const r = makeRng([seed, 7919]);
   let profile = streams ? streams.init.map((p) => [...p])
@@ -106,7 +112,8 @@ export function evolve(batch, costs, n, dim, cfg, seed, { init = null, streams =
     const next = profile.map((p) => [...p]);
     let accepted = 0;
     for (let i = 0; i < n; i++) {
-      let bestScore = 0, bestPol = null;
+      let bestScore = 0, bestPol = null, bestK = -1;
+      const seen = onDecision ? [] : null;
       for (let k = 0; k < cfg.K; k++) {
         const d = Array.from({ length: dim }, (_, a) => deltas[(i * cfg.K + k) * dim + a]);
         const cand = profile[i].map((x, a) => clip(x + d[a]));
@@ -132,9 +139,15 @@ export function evolve(batch, costs, n, dim, cfg, seed, { init = null, streams =
           throw new Error(`unknown gate ${cfg.gate}`);
         }
         sims += S;
-        if (score < bestScore) { bestScore = score; bestPol = cand; }
+        if (seen) seen.push({ policy: cand, score, imagined: allp });
+        if (score < bestScore) { bestScore = score; bestPol = cand; bestK = k; }
       }
       if (bestPol !== null) { next[i] = bestPol; accepted += 1; }
+      if (onDecision) {
+        const own = new Float64Array(S);
+        for (let sc = 0; sc < S; sc++) own[sc] = base.priv[sc * n + i];
+        onDecision(g, i, { candidates: seen, chosen: bestK, ownCost: npMean(own), gate: cfg.gate, kappa: cfg.kappa });
+      }
     }
     const rec = { gen: g, dev_system_cost: genCost, accepted, profile: profile.map((p) => [...p]) };
     history.push(rec);

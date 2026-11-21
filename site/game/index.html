@@ -87,7 +87,19 @@ button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
 .gaugeno { font: 700 2.4rem/1 var(--display); margin-top: -6px; }
 .gaugelabels { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-top: 6px; }
 
+#think { position: absolute; left: 16px; top: 64px; width: min(340px, calc(100% - 32px)); background: var(--ink); color: var(--paper); border-radius: 18px; padding: 16px 18px; }
+#think h3 { font: 700 1.1rem var(--display); }
+#think p { font-size: 14px; color: #cfcdc5; margin-top: 4px; }
+#think ul { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 6px; }
+#think li { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; font-size: 14px; align-items: baseline; }
+#think li span:nth-child(2) { color: #cfcdc5; }
+#think .kept { color: #8fb0ff; } #think .rej { color: #8f8c84; font-weight: 500; }
+#think .tail { margin-top: 10px; }
+.hint { position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%); font-size: 14px; color: var(--muted); pointer-events: none; }
+#board { cursor: pointer; }
 @media (max-width: 900px) {
+  .hint { position: static; transform: none; text-align: center; padding: 6px 0 0; }
+  #think { position: static; width: auto; margin: 8px 14px 0; }
   .layout { grid-template-columns: 1fr; }
   #board { height: min(110vw, 560px); }
   .lines { position: static; width: auto; padding: 0 14px 14px; }
@@ -106,6 +118,8 @@ button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
   <div class="stage">
     <canvas id="board" aria-label="Six modules joined by coupling wires. Red sparks are incidents; the blue tide is shared debt."></canvas>
     <p id="say" role="status" aria-live="polite"></p>
+    <aside id="think" hidden aria-live="polite"></aside>
+    <p class="hint">Click an agent to see what it is thinking.</p>
     <div id="start"><div><b>These are real learning agents</b><p>The same agents as in the research, running in your browser. Pick a rule on the right, press Run, and change the rule whenever you like.</p><button class="big" type="button" onclick="document.querySelector('#play').click()" style="background:var(--blue);color:#fff;padding:14px 28px">Run</button></div></div>
     <p class="genbadge">Generation <b id="genNo">0</b></p>
     <div class="lines">

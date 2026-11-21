@@ -6,7 +6,7 @@
 <title>Font options</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Jost:wght@400;500;600&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,800&family=Archivo:wdth,wght@100..125,400;100..125,500;100..125,600;100..125,800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Jost:wght@400;500;600&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,800&family=Archivo:wdth,wght@100..125,400;100..125,500;100..125,600;100..125,800&family=Unbounded:wght@500;700;800&family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif&family=Recursive:slnt,wght,CASL@-15..0,300..900,0..1&display=swap" rel="stylesheet">
 <style>
 :root { --bg: #ecebe7; --paper: #f7f5f0; --ink: #1d1c17; --muted: #55534b; --blue: #2456d6; --red: #d8361f; }
 * { box-sizing: border-box; margin: 0; }
@@ -23,7 +23,7 @@ h1 { line-height: .95; letter-spacing: -0.03em; font-size: clamp(2.3rem, 1.4rem 
 .cards .on { background: var(--ink); color: var(--paper); }
 .cards .on span { color: #c9c6bd; }
 .score { display: flex; align-items: baseline; gap: 12px; }
-.score b { font-size: 3rem; line-height: 1; }
+.score b { font-size: 3rem; line-height: 1; white-space: nowrap; }
 .pill { background: var(--ink); color: var(--paper); border-radius: 999px; padding: 10px 18px; justify-self: start; font-size: 15px; }
 .btn { background: var(--blue); color: #fff; border-radius: 999px; padding: 14px 26px; justify-self: start; font-size: 17px; }
 .body { font-size: 16px; color: var(--ink); max-width: 46ch; }
@@ -41,11 +41,22 @@ h1 { line-height: .95; letter-spacing: -0.03em; font-size: clamp(2.3rem, 1.4rem 
 .c .cards div, .c .btn, .c .pill { font-weight: 600; }
 .c .lead { font-stretch: 105%; }
 
+
+.d { font-family: "Instrument Sans", sans-serif; }
+.d h1, .d .score b { font-family: "Unbounded", sans-serif; font-weight: 800; letter-spacing: -0.03em; font-size: clamp(2rem, 1.2rem + 2vw, 3.1rem); }
+.d .cards div, .d .btn, .d .pill { font-weight: 600; }
+.e { font-family: "Instrument Sans", sans-serif; }
+.e h1, .e .score b { font-family: "Instrument Serif", serif; font-weight: 400; letter-spacing: -0.01em; font-size: clamp(2.8rem, 1.8rem + 2.6vw, 4.4rem); }
+.e .cards div, .e .btn, .e .pill { font-weight: 600; }
+.f { font-family: "Recursive", sans-serif; font-variation-settings: "CASL" 0.6; }
+.f h1, .f .score b { font-weight: 900; font-variation-settings: "CASL" 1; letter-spacing: -0.03em; }
+.f .cards div, .f .btn, .f .pill { font-weight: 650; }
+
 @media (max-width: 980px) { .opts { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
-<p class="intro">Three type options for the site, each showing the same real pieces of the game. Pick the one that feels most like the project.</p>
+<p class="intro">Six type options for the site, each showing the same real pieces of the game. Pick the one that feels most like the project.</p>
 <div class="opts">
   <section class="opt a">
     <p class="tag">A · Fraunces with Jost (current)</p>
@@ -69,6 +80,36 @@ h1 { line-height: .95; letter-spacing: -0.03em; font-size: clamp(2.3rem, 1.4rem 
   </section>
   <section class="opt c">
     <p class="tag">C · Archivo</p>
+    <h1>Try to stop them</h1>
+    <p class="lead">Six AI agents, one codebase. Every shortcut helps the agent that takes it and hurts the rest.</p>
+    <div class="cards"><div class="on">Tax visible coupling<span>Charge for the shortcuts you can see.</span></div><div>Tax the damage<span>Charge for harm landing on others.</span></div></div>
+    <div class="score"><b>87 / 100</b><span>of the way to the best possible</span></div>
+    <p class="pill">Tax what you can see, and they stop letting you see it.</p>
+    <span class="btn">Run</span>
+    <p class="body">Each generation, every agent tries four small changes to its own policy and keeps the best one if its rule says yes.</p>
+  </section>
+  <section class="opt d">
+    <p class="tag">D · Unbounded with Instrument Sans</p>
+    <h1>Try to stop them</h1>
+    <p class="lead">Six AI agents, one codebase. Every shortcut helps the agent that takes it and hurts the rest.</p>
+    <div class="cards"><div class="on">Tax visible coupling<span>Charge for the shortcuts you can see.</span></div><div>Tax the damage<span>Charge for harm landing on others.</span></div></div>
+    <div class="score"><b>87 / 100</b><span>of the way to the best possible</span></div>
+    <p class="pill">Tax what you can see, and they stop letting you see it.</p>
+    <span class="btn">Run</span>
+    <p class="body">Each generation, every agent tries four small changes to its own policy and keeps the best one if its rule says yes.</p>
+  </section>
+  <section class="opt e">
+    <p class="tag">E · Instrument Serif with Instrument Sans</p>
+    <h1>Try to stop them</h1>
+    <p class="lead">Six AI agents, one codebase. Every shortcut helps the agent that takes it and hurts the rest.</p>
+    <div class="cards"><div class="on">Tax visible coupling<span>Charge for the shortcuts you can see.</span></div><div>Tax the damage<span>Charge for harm landing on others.</span></div></div>
+    <div class="score"><b>87 / 100</b><span>of the way to the best possible</span></div>
+    <p class="pill">Tax what you can see, and they stop letting you see it.</p>
+    <span class="btn">Run</span>
+    <p class="body">Each generation, every agent tries four small changes to its own policy and keeps the best one if its rule says yes.</p>
+  </section>
+  <section class="opt f">
+    <p class="tag">F · Recursive (casual)</p>
     <h1>Try to stop them</h1>
     <p class="lead">Six AI agents, one codebase. Every shortcut helps the agent that takes it and hurts the rest.</p>
     <div class="cards"><div class="on">Tax visible coupling<span>Charge for the shortcuts you can see.</span></div><div>Tax the damage<span>Charge for harm landing on others.</span></div></div>

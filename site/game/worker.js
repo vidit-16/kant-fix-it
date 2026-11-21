@@ -23,11 +23,16 @@ self.onmessage = ({ data }) => {
   }
   // A chunk is a short run continuing from `start`; mutation size stays at the
   // mid-run level so agents keep adapting however long the page runs.
+  let decisions = [];
   evolve(devSampler(cfg), makeCosts(cfg, r.instrument ?? null, r.instrument ? level : 0),
     cfg.n, 3, evoConfig({ generations: gens, kappa: r.kappa, sigma: 0.09, sigma_end: 0.09 }),
     seed + genOffset, {
       init: start,
-      onGeneration: (_rec, next) => self.postMessage({ job, profile: next }),
+      onDecision: (_g, i, info) => { decisions[i] = info; },
+      onGeneration: (rec, next) => {
+        self.postMessage({ job, profile: next, before: rec.profile, decisions });
+        decisions = [];
+      },
     });
   self.postMessage({ job, chunkDone: true });
 };
