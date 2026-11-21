@@ -91,46 +91,93 @@ function measureOne(mine, everyone) {
   const P = [[mine, 0, 0], ...Array(5).fill([others, 0, 0])];
   const o = simulate(batch, P, cfg);
   let myOut = 0, othersCost = 0, inc = 0;
+  const per = Array(6).fill(0);
   for (let s = 0; s < batch.S; s++) {
     myOut += o.charges[(s * 6) * 4 + 1] / batch.S;
-    for (let i = 1; i < 6; i++) othersCost += o.cost[s * 6 + i] / o.nominal[s] / batch.S;
+    for (let i = 0; i < 6; i++) per[i] += o.cost[s * 6 + i] / o.nominal[s] / batch.S;
     inc += o.incidents[s] * 6 / batch.S;
   }
-  return { myOut, othersCost, inc };
+  for (let i = 1; i < 6; i++) othersCost += per[i];
+  return { myOut, othersCost, inc, per };
 }
 const baseline = measureOne(0.3, false);
 const oneUI = { s: document.querySelector("#mine"), all: document.querySelector("#everyone"), out: document.querySelector("#outMine"),
-  inc: document.querySelector("#outInc"), oth: document.querySelector("#outOthers"), board: document.querySelector("#oneBoard") };
-let oneState = { m: baseline, mine: 0.3, all: false };
+  inc: document.querySelector("#outInc"), oth: document.querySelector("#outOthers"), othLab: document.querySelector("#outOthersLab"),
+  say: document.querySelector("#oneSay"), board: document.querySelector("#oneBoard") };
+let oneState = { m: baseline, mine: 0.3, all: false, sel: null, pos: [], s: 0, sparks: [], next: 0 };
+const signed = (v) => `${v >= 0 ? "+" : ""}${v.toFixed(0)}%`;
 function oneUpdate() {
   const mine = oneUI.s.value / 100, all = oneUI.all.checked;
   const m = measureOne(mine, all);
-  oneState = { m, mine, all };
-  const out = (m.myOut / baseline.myOut - 1) * 100, oth = (m.othersCost / baseline.othersCost - 1) * 100;
-  oneUI.out.textContent = `${out >= 0 ? "+" : ""}${out.toFixed(0)}%`;
+  Object.assign(oneState, { m, mine, all });
+  const sel = oneState.sel;
+  const out = (m.myOut / baseline.myOut - 1) * 100;
+  const oth = sel === null ? (m.othersCost / baseline.othersCost - 1) * 100 : (m.per[sel] / baseline.per[sel] - 1) * 100;
+  oneUI.out.textContent = signed(out);
   oneUI.out.style.color = out > 0 ? C.blue : C.ink;
   oneUI.inc.textContent = m.inc.toFixed(1);
-  oneUI.oth.textContent = `${oth >= 0 ? "+" : ""}${oth.toFixed(0)}%`;
+  oneUI.oth.textContent = signed(oth);
   oneUI.oth.style.color = oth > 2 ? C.red : C.ink;
+  oneUI.othLab.textContent = sel === null ? "cost to the others" : `cost to agent ${sel + 1}`;
+  if (sel === null) { oneUI.say.textContent = "Tap another agent to see what your shortcuts cost it."; return; }
+  const n = `Agent ${sel + 1}`, p = Math.abs(oth).toFixed(0);
+  oneUI.say.textContent = Math.abs(oth) < 1 ? `${n} pays about what it pays when you play fair.`
+    : oth < 0 ? `You cut fewer corners than the rest, so ${n.toLowerCase()} pays ${p}% less.`
+    : all ? `${n} cuts corners too now. It pays ${p}% more, and part of that comes from you.`
+    : `${n} did nothing different. Your shortcuts cost it ${p}% more.`;
 }
 oneUI.s.addEventListener("input", oneUpdate);
 oneUI.all.addEventListener("change", oneUpdate);
 oneUpdate();
+function agentAt(e) {
+  const r = oneUI.board.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, s = oneState.s;
+  return oneState.pos.findIndex(([px, py]) => Math.abs(x - px) < s * .6 && Math.abs(y - py) < s * .6);
+}
+oneUI.board.addEventListener("click", (e) => {
+  const i = agentAt(e);
+  if (i < 0) return;
+  oneState.sel = i === 0 || i === oneState.sel ? null : i;
+  oneState.sparks = []; oneState.next = 0;
+  oneUpdate();
+});
+oneUI.board.addEventListener("pointermove", (e) => { oneUI.board.style.cursor = agentAt(e) > 0 ? "pointer" : ""; });
 function oneFrame(t) {
   const { ctx, w, h } = fit(oneUI.board);
   ctx.clearRect(0, 0, w, h);
-  const s = Math.min(h * .62, w / 8), gap = (w - s * 6) / 7;
-  const { m, mine, all } = oneState;
+  const s = Math.min(h * .55, w / 8), gap = (w - s * 6) / 7;
+  const { m, mine, all, sel } = oneState;
   const heat = Math.max(0, Math.min(.6, (m.inc - 1.2) / 5));
-  for (let i = 0; i < 6; i++) {
-    const x = gap + s / 2 + i * (s + gap), y = h / 2;
-    const shortcut = i === 0 ? mine : all ? mine : .3;
-    const panicky = !REDUCED && heat > .15 && Math.sin(t / 260 + i * 2.1) > 1 - heat * 1.4;
-    const mood = panicky ? "panic" : shortcut > .6 ? "smug" : "calm";
-    module(ctx, x, y + (REDUCED ? 0 : Math.sin(t / 700 + i) * 2), s, mood, panicky ? heat : heat * .3, ((t / 1000 + i * .8) % 4) < .12, i === 0 ? C.blue : null);
+  const y0 = h / 2 - 8;
+  oneState.s = s;
+  oneState.pos = Array.from({ length: 6 }, (_, i) => [gap + s / 2 + i * (s + gap), y0]);
+  // sparks run from you to the agent you picked, faster the more corners you cut
+  if (sel !== null && !REDUCED && mine > .05 && t > oneState.next) {
+    oneState.sparks.push({ t0: t }); oneState.next = t + 1500 - 1200 * mine;
   }
-  ctx.fillStyle = C.blue; ctx.font = "700 13px 'Bricolage Grotesque', system-ui"; ctx.textAlign = "center";
-  ctx.fillText("you", gap + s / 2, h / 2 + s / 2 + 18);
+  const hitAt = oneState.sparks.reduce((a, sp) => (t - sp.t0 > 520 ? Math.max(a, sp.t0 + 520) : a), -1e9);
+  oneState.sparks = oneState.sparks.filter((sp) => t - sp.t0 < 1300);
+  for (let i = 0; i < 6; i++) {
+    const [x, y] = oneState.pos[i];
+    const shortcut = i === 0 ? mine : all ? mine : .3;
+    const struck = i === sel && t - hitAt < 600;
+    const panicky = struck || (!REDUCED && heat > .15 && Math.sin(t / 260 + i * 2.1) > 1 - heat * 1.4);
+    const mood = panicky ? "panic" : shortcut > .6 ? "smug" : "calm";
+    const ring = i === 0 ? C.blue : i === sel ? C.red : null;
+    module(ctx, x, y + (REDUCED ? 0 : Math.sin(t / 700 + i) * 2), s, mood, struck ? .45 * (1 - (t - hitAt) / 600) : panicky ? heat : heat * .3, ((t / 1000 + i * .8) % 4) < .12, ring);
+  }
+  if (sel !== null) {
+    const a = oneState.pos[0], b = oneState.pos[sel];
+    for (const sp of oneState.sparks) {
+      const p = (t - sp.t0) / 520;
+      if (p > 1) continue;
+      const x = a[0] + (b[0] - a[0]) * p, y = a[1] - Math.sin(p * Math.PI) * s * .9;
+      ctx.fillStyle = C.red; ctx.beginPath(); ctx.arc(x, y, 5, 0, 7); ctx.fill();
+      ctx.globalAlpha = .25; ctx.beginPath(); ctx.arc(x, y, 11, 0, 7); ctx.fill(); ctx.globalAlpha = 1;
+    }
+  }
+  ctx.font = "700 13px 'Bricolage Grotesque', system-ui"; ctx.textAlign = "center";
+  ctx.fillStyle = C.blue; ctx.fillText("you", oneState.pos[0][0], y0 + s / 2 + 18);
+  if (sel !== null) { ctx.fillStyle = "#b62a16"; ctx.fillText(`agent ${sel + 1}`, oneState.pos[sel][0], y0 + s / 2 + 18); }
   requestAnimationFrame(oneFrame);
 }
 requestAnimationFrame(oneFrame);
@@ -142,14 +189,44 @@ requestAnimationFrame(oneFrame);
 const pct = (v) => `${Math.round(v * 100)}%`;
 const dec3 = (v) => v.toFixed(3);
 
+// the view switch, with a nudge until someone uses it
+function ctlHTML(cfg, view) {
+  if (Object.keys(cfg.views).length < 2) return "";
+  return `<div class="ctlbar"><div class="ctl" role="group" aria-label="${cfg.ctlLabel}">${Object.entries(cfg.views).map(([k, v]) =>
+    `<button type="button" data-view="${k}" aria-pressed="${k === view}">${v.name}</button>`).join("")}</div><span class="hint">Tap to compare</span></div>`;
+}
+function wireCtl(el, st, paint) {
+  el.querySelectorAll("[data-view]").forEach((b) => b.addEventListener("click", () => {
+    st.view = b.dataset.view;
+    el.querySelectorAll("[data-view]").forEach((x) => x.setAttribute("aria-pressed", x === b));
+    el.querySelector(".ctlbar")?.classList.add("used");
+    paint();
+  }));
+}
+// hover (mouse) previews a bar's meaning; a tap or Enter pins it
+function explainer(el, items, labels, why) {
+  const box = el.querySelector(".why");
+  let pinned = null;
+  const show = (i) => {
+    items.forEach((r, k) => { r.classList.toggle("dim", i !== null && k !== i); r.setAttribute("aria-pressed", k === i); });
+    box.classList.toggle("on", i !== null);
+    box.innerHTML = i === null ? "Tap a bar to see what it means." : `<b>${labels[i]}.</b> ${why[i]}`;
+  };
+  items.forEach((r, i) => {
+    r.tabIndex = 0; r.setAttribute("role", "button");
+    r.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") show(i); });
+    r.addEventListener("pointerleave", (e) => { if (e.pointerType === "mouse") show(pinned); });
+    r.addEventListener("click", () => { pinned = pinned === i ? null : i; show(pinned); });
+    r.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); r.click(); } });
+  });
+  show(null);
+}
+
 function barChart(el, cfg) {
   const st = { view: Object.keys(cfg.views)[0], shown: false };
-  const ctl = Object.keys(cfg.views).length > 1
-    ? `<div class="ctl" role="group" aria-label="${cfg.ctlLabel}">${Object.entries(cfg.views).map(([k, v]) =>
-        `<button type="button" data-view="${k}" aria-pressed="${k === st.view}">${v.name}</button>`).join("")}</div>` : "";
-  el.innerHTML = `${ctl}<div class="rows">${cfg.labels.map((l, i) =>
+  el.innerHTML = `${ctlHTML(cfg, st.view)}<div class="rows">${cfg.labels.map((l, i) =>
     `<div class="row" data-i="${i}"><span class="lab">${l}</span><div class="track"><i class="zero"></i><i class="fill"></i></div><b class="val"></b></div>`).join("")}</div>
-    <p class="note"></p>`;
+    <p class="why" aria-live="polite"></p><p class="note"></p>`;
   const rows = [...el.querySelectorAll(".row")];
   function paint() {
     const v = cfg.views[st.view], lo = Math.min(0, v.min ?? 0), span = v.max - lo, zero = (-lo / span) * 100;
@@ -165,22 +242,18 @@ function barChart(el, cfg) {
     });
     el.querySelector(".note").textContent = v.note;
   }
-  el.querySelectorAll("[data-view]").forEach((b) => b.addEventListener("click", () => {
-    st.view = b.dataset.view;
-    el.querySelectorAll("[data-view]").forEach((x) => x.setAttribute("aria-pressed", x === b));
-    paint();
-  }));
+  wireCtl(el, st, paint);
+  explainer(el, rows, cfg.labels, cfg.why);
   el._show = () => { st.shown = true; paint(); };
   paint();
 }
 
 function columnChart(el, cfg) {
   const st = { view: Object.keys(cfg.views)[0], shown: false };
-  el.innerHTML = `<div class="ctl" role="group" aria-label="${cfg.ctlLabel}">${Object.entries(cfg.views).map(([k, v]) =>
-      `<button type="button" data-view="${k}" aria-pressed="${k === st.view}">${v.name}</button>`).join("")}</div>
+  el.innerHTML = `${ctlHTML(cfg, st.view)}
     <div class="cols"><i class="best"><span>Best possible</span></i>${cfg.labels.map((l, i) =>
       `<div class="col"><b class="val"></b><div class="ctrack"><i class="fill" style="background:${cfg.colors[i]}"></i></div><span class="lab">${l}</span></div>`).join("")}</div>
-    <p class="note">${cfg.note}</p>`;
+    <p class="why" aria-live="polite"></p><p class="note">${cfg.note}</p>`;
   const cols = [...el.querySelectorAll(".col")];
   function paint() {
     const v = cfg.views[st.view].values;
@@ -189,11 +262,8 @@ function columnChart(el, cfg) {
       c.querySelector(".val").textContent = pct(v[i]);
     });
   }
-  el.querySelectorAll("[data-view]").forEach((b) => b.addEventListener("click", () => {
-    st.view = b.dataset.view;
-    el.querySelectorAll("[data-view]").forEach((x) => x.setAttribute("aria-pressed", x === b));
-    paint();
-  }));
+  wireCtl(el, st, paint);
+  explainer(el, cols, cfg.labels, cfg.why);
   el._show = () => { st.shown = true; paint(); };
   paint();
 }
@@ -201,6 +271,12 @@ function columnChart(el, cfg) {
 barChart(document.querySelector("#chartPay"), {
   ctlLabel: "Agent policies", labels: ["Selfish", "A conscience", "Joint welfare", "A price on delay"],
   colors: [C.grey, C.ink, C.ink, C.blue],
+  why: [
+    "No rule. Each bank holds back payments to save its own cash, everyone ends up waiting, and the network costs the most.",
+    "Before keeping a change, each bank asks “what if every bank did this?”. Clearly better than selfish, but well short of the price.",
+    "Each bank counts every other bank’s costs as if they were its own. Close to the price, still behind it.",
+    "A plain charge for every period a payment waits, tuned on separate development data. The cheapest network of all.",
+  ],
   views: {
     simple: { name: "Simple policies", max: 1.2, fmt: dec3, values: [1.125, 0.997, 0.864, 0.815],
       note: "System cost per unit of payments, held-out scenarios, 20 seeds. Lower is better." },
@@ -212,6 +288,12 @@ barChart(document.querySelector("#chartPay"), {
 barChart(document.querySelector("#chartHide"), {
   ctlLabel: "What to show", labels: ["Selfish", "A conscience", "Tax the damage", "Tax visible coupling"],
   colors: [C.grey, C.ink, C.blue, C.red],
+  why: [
+    "No rule. Agents add coupling whenever it helps them ship, and the incidents land on everyone.",
+    "Agents ask “what if everyone made this change?” before keeping it. Cuts the damage, and hides nothing.",
+    "Agents pay for the incidents they cause, wherever those land. There is nothing to gain by hiding.",
+    "Agents pay for the coupling anyone can see. They learned to hide it instead: 98% went out of sight and costs rose by more than half.",
+  ],
   views: {
     cost: { name: "System cost", max: 0.4, fmt: dec3, values: [0.2384, 0.2147, 0.2156, 0.3665],
       note: "System cost per unit of output, shared codebase, 20 seeds. Lower is better." },
@@ -222,6 +304,10 @@ barChart(document.querySelector("#chartHide"), {
 
 columnChart(document.querySelector("#chartUnequal"), {
   ctlLabel: "Who gets hit", labels: ["A conscience", "Tax the damage"], colors: [C.ink, C.blue],
+  why: [
+    "“What if everyone did this?” measures what an agent would suffer, not what it causes. As exposure gets unequal, the exposed agent freezes and the sheltered ones run wild.",
+    "Each agent pays for the damage it causes. It holds near the best possible however unevenly the incidents fall.",
+  ],
   note: "Share of the damage fixed, where 100% is the best possible. 20 seeds per bar.",
   views: {
     equal: { name: "All equal", values: [0.96, 0.92] },
@@ -233,6 +319,13 @@ columnChart(document.querySelector("#chartUnequal"), {
 barChart(document.querySelector("#chartUnits"), {
   ctlLabel: "", labels: ["Conscience, linear", "Conscience, logit", "Conscience, square root", "Conscience, log", "Tax the damage"],
   colors: [C.ink, C.ink, C.ink, C.red, C.blue],
+  why: [
+    "The original rule: “the same change” means the same amount added for everyone.",
+    "The same change measured on a logit scale. The best of the four, still short of the tax.",
+    "The same change measured on a square-root scale. Worse than the original.",
+    "The same change measured in proportion, on a log scale. Here the conscience leaves the system worse than having no rule at all.",
+    "The damage tax, for comparison. No scale to choose: an agent pays for what it causes.",
+  ],
   views: {
     one: { name: "", min: -0.5, max: 1.05, fmt: pct, values: [0.67, 0.92, 0.54, -0.34, 1.0], tags: ["", "", "", "worse than nothing", ""],
       note: "Share of the damage fixed when one module takes most incidents, for four ways of measuring “the same change”. Below zero is worse than doing nothing. 20 seeds each." },
@@ -241,9 +334,18 @@ barChart(document.querySelector("#chartUnits"), {
 
 // grow charts in as they arrive
 const chartIO = "IntersectionObserver" in window && !REDUCED
-  ? new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target._show(); chartIO.unobserve(e.target); } }), { threshold: 0.35 })
+  ? new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target._show(); e.target.classList.add("live"); chartIO.unobserve(e.target); } }), { threshold: 0.35 })
   : null;
 document.querySelectorAll(".chart").forEach((c) => (chartIO ? chartIO.observe(c) : c._show()));
+
+// "try it in the game": load that level, then scroll to the board
+document.querySelectorAll("[data-goto]").forEach((a) => a.addEventListener("click", (e) => {
+  if (!window.kfiGame) return;
+  e.preventDefault();
+  window.kfiGame.loadLevel(Number(a.dataset.goto));
+  document.querySelector("#game").scrollIntoView({ behavior: REDUCED ? "auto" : "smooth" });
+  history.replaceState(null, "", "#game");
+}));
 
 // numbers count up once
 document.querySelectorAll("[data-count]").forEach((el) => {

@@ -754,6 +754,7 @@ function finishLevel(won) {
 }
 
 loadLevel(Math.max(0, LEVELS.findIndex((_, k) => !done.has(k))));
+window.kfiGame = { loadLevel };
 window.__S = S;
 window.__debug = () => ({ gen: S.gen, queue: S.queue.length, running: S.running, gauge: S.gauge, m: S.m && { cost: S.m.cost, hidden: S.m.hidden } });
 frame();

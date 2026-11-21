@@ -44,10 +44,11 @@
       <div class="text rise">
         <p>Six AI agents each own a module of one codebase. Each keeps improving itself and keeps any change that helps it.</p>
         <p>Shortcuts make an agent ship more. They also add coupling to the shared code, and the incidents that follow land on anyone.</p>
-        <p>Move the slider. Then let everyone do what you did.</p>
+        <p>Move the slider. Tap another agent to see what you cost it. Then let everyone do what you did.</p>
       </div>
       <div class="card rise">
-        <canvas id="oneBoard" aria-hidden="true"></canvas>
+        <canvas id="oneBoard" aria-label="Six agents. Tap one of the other five to see what your shortcuts cost it."></canvas>
+        <p class="say" id="oneSay" aria-live="polite">Tap another agent to see what your shortcuts cost it.</p>
         <label for="mine">Your shortcuts
           <input id="mine" type="range" min="0" max="100" value="30">
         </label>
@@ -55,7 +56,7 @@
         <div class="readouts" aria-live="polite">
           <div><b id="outMine">0%</b><span>your output</span></div>
           <div><b id="outInc">0</b><span>incidents per sprint</span></div>
-          <div><b id="outOthers">0%</b><span>cost to the others</span></div>
+          <div><b id="outOthers">0%</b><span id="outOthersLab">cost to the others</span></div>
         </div>
       </div>
     </div>
@@ -147,6 +148,7 @@
       <div>
         <h3>A price beats a conscience</h3>
         <p>In a simulated interbank payment network, selfish banks left the system 29% costlier than a planner would. A conscience closed about half of that gap. A plain charge on delay did better than every rule.</p>
+        <a class="try" href="#game" data-goto="0">Pit a conscience against a price</a>
       </div>
       <figure class="chart" id="chartPay" data-title="Payment network: system cost under each rule"></figure>
     </article>
@@ -155,6 +157,7 @@
       <div>
         <h3>Charge what you can see, and they hide it</h3>
         <p>In a shared codebase, a charge on visible coupling taught the agents to conceal it, and costs rose by more than half. A tax on the damage itself, wherever it lands, could not be dodged that way.</p>
+        <a class="try" href="#game" data-goto="1">Make them stop hiding</a>
       </div>
       <figure class="chart" id="chartHide" data-title="Shared codebase: system cost under each rule"></figure>
     </article>
@@ -163,6 +166,7 @@
       <div>
         <h3>The conscience fails when agents are unequal</h3>
         <p>When one module takes most of the incidents, "what if everyone did this?" measures what an agent would suffer, not what it causes. The exposed agent freezes and the sheltered ones run wild. The damage tax holds.</p>
+        <a class="try" href="#game" data-goto="2">Try it with one module taking the hits</a>
       </div>
       <figure class="chart" id="chartUnequal" data-title="Share of the damage fixed by each rule as exposure becomes unequal"></figure>
     </article>
@@ -171,6 +175,7 @@
       <div>
         <h3>It holds whatever you call "the same change"</h3>
         <p>A conscience needs a scale on which to compare changes. On four different scales its result moved a lot, but none of them beat the damage tax.</p>
+        <a class="try" href="#game" data-goto="3">Tune the damage tax yourself</a>
       </div>
       <figure class="chart" id="chartUnits" data-title="Share of the damage fixed by the conscience on four scales, against the damage tax"></figure>
     </article>
