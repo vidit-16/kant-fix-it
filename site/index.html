@@ -110,8 +110,9 @@
     <section class="block gaugebox" aria-labelledby="gauge-h">
       <h2 id="gauge-h">How you are doing</h2>
       <canvas id="gauge" aria-hidden="true"></canvas>
-      <div class="gaugeno" id="gaugeNo">–</div>
       <div class="gaugelabels"><span>Worse than nothing</span><span>Nothing</span><span>Best possible</span></div>
+      <div class="gaugeno" id="gaugeNo">–</div>
+      <p class="gaugesay" id="gaugeSay" aria-live="polite"></p>
       <div class="lines">
         <div>System cost<canvas id="costLine"></canvas></div>
         <div>Hidden coupling<canvas id="hidLine"></canvas></div>

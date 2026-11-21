@@ -520,7 +520,10 @@ function drawGauge(dt) {
   }
   S.gaugeV += (60 * (target - S.gauge) - 9 * S.gaugeV) * dt;
   S.gauge += S.gaugeV * dt;
-  const cx = w / 2, cy = h * 0.92, R = Math.min(w / 2 - 12, h * 0.82);
+  // the pivot sits 14px above the bottom edge, so even a flat needle (and its
+  // 7px hub) stays clear of the number underneath
+  const cx = w / 2, cy = h - 14, R = Math.min(w / 2 - 12, cy - 10);
+  S.gaugeHub = cy + 7; // lowest pixel the needle can reach, for the layout check
   const ang = (g) => Math.PI + ((g + 1) / 2.05) * Math.PI;
   const arc = (a0, a1, col) => { ctx.strokeStyle = col; ctx.lineWidth = 14; ctx.beginPath(); ctx.arc(cx, cy, R, ang(a0), ang(a1)); ctx.stroke(); };
   arc(-1, 0, "rgba(216,54,31,0.35)"); arc(0, 1.05, "rgba(36,86,214,0.35)");
@@ -528,14 +531,24 @@ function drawGauge(dt) {
   ctx.strokeStyle = COL.ink; ctx.lineWidth = 4; ctx.lineCap = "round";
   ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a) * (R - 6), cy + Math.sin(a) * (R - 6)); ctx.stroke();
   ctx.fillStyle = COL.ink; ctx.beginPath(); ctx.arc(cx, cy, 7, 0, 7); ctx.fill();
-  let label = "–";
+  // One scale for the needle and the number: 0 is doing nothing, 100 the best
+  // possible. The line underneath says it in words; when a rule backfires it
+  // also gives the cost against doing nothing, since the score can fall far
+  // past the end of the dial (hidden coupling reaches about -300).
+  let label = "–", words = "";
   if (S.m) {
-    const v = REF[S.skew];
-    label = S.m.cost > v.nothing
-      ? `${Math.round(((S.m.cost - v.nothing) / v.nothing) * 100)}% worse`
-      : `${Math.round(Math.min(1, Math.max(0, S.gauge)) * 100)} / 100`;
+    const v = REF[S.skew], score = scoreOf(S.m.cost, S.skew);
+    const shown = Math.round(Math.max(-100, Math.min(100, S.gauge * 100)));
+    label = score < -100 ? "below −100" : `${shown < 0 ? "−" : ""}${Math.abs(shown)} / 100`;
+    const more = Math.round(((S.m.cost - v.nothing) / v.nothing) * 100);
+    words = score >= 90 ? "Close to the best possible"
+      : score >= 60 ? "Most of the way to the best"
+      : score >= 20 ? "Better than doing nothing"
+      : score > -10 ? "About the same as doing nothing"
+      : `Worse than doing nothing: costs ${more}% more`;
   }
   $("#gaugeNo").textContent = label;
+  $("#gaugeSay").textContent = words;
 }
 
 function drawSpark(c, vals, col, lo, hi) {

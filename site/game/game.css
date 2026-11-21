@@ -81,7 +81,8 @@ button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
 
 .gaugebox { text-align: center; }
 #gauge { width: 100%; height: 130px; display: block; }
-.gaugeno { font: 800 2.4rem/1 var(--display); margin-top: -6px; }
+.gaugeno { font: 800 2.4rem/1 var(--display); margin-top: 10px; font-variant-numeric: tabular-nums; }
+.gaugesay { font-size: 14px; font-weight: 600; color: var(--muted); margin-top: 6px; min-height: 1.4em; }
 .gaugelabels { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-top: 6px; }
 
 #think { position: absolute; left: 16px; top: 64px; width: min(320px, calc(100% - 32px)); z-index: 3; background: var(--ink); color: var(--paper); border-radius: 18px; padding: 16px 18px; }
@@ -174,6 +175,7 @@ button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
   #xray, .speed button { min-height: 44px; }
   #gauge { height: 96px; }
   .gaugeno { font-size: 1.7rem; margin-top: 8px; }
+  .gaugesay { font-size: 13px; }
   .hint { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
@@ -192,6 +194,6 @@ button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
   #knob::after { top: 16px; height: 20px; transform-origin: 3px 28px; }
   .dialval { font-size: 1.8rem; }
   #gauge { height: 92px; }
-  .gaugeno { font-size: 1.8rem; }
+  .gaugeno { font-size: 1.8rem; margin-top: 8px; }
   .lines { margin-top: 10px; padding-top: 10px; }
 }
