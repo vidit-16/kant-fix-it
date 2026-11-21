@@ -4,228 +4,239 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kant fix it</title>
-<meta name="description" content="Can a conscience stop self-improving AI agents from wrecking a shared system, or does it take a price? Five pre-registered studies, 4,190 runs.">
+<meta name="description" content="Can a conscience stop self-improving AI agents from wrecking a shared system, or does it take a price? Play against the real agents from five pre-registered studies.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kant-fix-it-web.vercel.app/">
+<meta property="og:image" content="https://kant-fix-it-web.vercel.app/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Kant fix it. A price can. Six agents joined by shared wires.">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:title" content="Kant fix it">
-<meta property="og:description" content="Can a conscience stop self-improving AI agents from wrecking a shared system, or does it take a price? Five pre-registered studies, 4,190 runs.">
-<meta property="og:image" content="figures/fig_e10.png">
+<meta property="og:description" content="Can a conscience stop self-improving AI agents from wrecking a shared system, or does it take a price? Play against the real agents.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Jost:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg: #dfdedb; --surface: #d3d2ce; --paper: #ffffff; --ink: #26251e; --muted: #4f4d46;
-  --blue: #2456d6; --blue-ink: #ffffff; --red: #d8361f;
-  --display: "Fraunces", Georgia, serif;
-  --text: "Jost", system-ui, sans-serif;
-  --margin: clamp(16px, 4vw, 56px);
-  --step-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
-  --step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
-  --step-lead: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
-  --step-head: clamp(2.2rem, 1.3rem + 3.4vw, 4.4rem);
-}
-* { box-sizing: border-box; margin: 0; }
-html { scroll-behavior: smooth; }
-body { background: var(--bg); color: var(--ink); font: 400 var(--step-body)/1.6 var(--text); -webkit-font-smoothing: antialiased; }
-.finding p, .setup p, .honest li, .nums p { font-weight: 500; }
-a { color: inherit; }
-img { display: block; max-width: 100%; }
-main, footer { overflow-x: clip; }
-.plate img, .print img { max-width: 100%; }
-h1, h2, .num { font-family: var(--display); font-weight: 600; letter-spacing: -0.02em; line-height: 1; font-optical-sizing: auto; }
-p { max-width: 62ch; }
-.wrap { padding-inline: var(--margin); }
-
-/* bar */
-header.bar { display: flex; justify-content: space-between; align-items: center; padding-block: 22px; }
-header.bar b { font: 700 1.35rem/1 var(--display); }
-header.bar nav { display: flex; gap: 24px; font-weight: 500; }
-header.bar nav a { text-decoration: none; }
-header.bar nav a:hover { color: var(--blue); }
-
-/* hero */
-.hero { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); align-items: end; padding-block: 6vh 0; min-height: calc(100svh - 80px); }
-.hero h1 { font-size: clamp(3.4rem, 0.4rem + 10vw, 9.5rem); white-space: nowrap; }
-.punch { font: 600 clamp(1.75rem, 1.1rem + 1.9vw, 2.25rem)/1.1 var(--display); color: var(--blue); margin-top: 14px; }
-.hero .lead { font-size: var(--step-lead); line-height: 1.35; margin-top: 22px; max-width: 30ch; }
-.actions { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: center; margin-top: 30px; padding-bottom: 6vh; }
-.btn { background: var(--blue); color: var(--blue-ink); text-decoration: none; padding: 16px 30px; border-radius: 999px; font-weight: 500; }
-.btn:hover { background: var(--ink); }
-.actions a:not(.btn) { font-weight: 500; }
-a:focus-visible, .btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; border-radius: 4px; }
-.print { background: var(--blue); align-self: stretch; overflow: clip; min-height: 360px; }
-.print img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.15); mix-blend-mode: screen; }
-
-/* setup */
-section { padding-block: clamp(110px, 14vw, 200px) 0; }
-h2 { font-size: var(--step-head); margin-bottom: 28px; }
-.setup { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); align-items: center; }
-.setup .statement { font: 600 clamp(1.375rem, 1.1rem + 1vw, 2.25rem)/1.15 var(--display); max-width: 30ch; margin-bottom: 22px; }
-.setup .print { min-height: 0; aspect-ratio: 4 / 3; }
-
-/* findings */
-.finding { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(24px, 4vw, 64px); align-items: center; }
-.finding + .finding { margin-top: clamp(72px, 9vw, 130px); }
-.finding:nth-of-type(even) .plate { order: -1; }
-.finding h3 { font: 600 clamp(1.75rem, 1.1rem + 1.9vw, 2.25rem)/1.05 var(--display); letter-spacing: -0.02em; margin-bottom: 16px; }
-.plate { background: var(--paper); padding: clamp(10px, 1.5vw, 22px); }
-.plate figcaption { font-size: var(--step-small); color: var(--muted); margin-top: 10px; }
-.verdict { margin-top: clamp(90px, 11vw, 160px); font: 600 clamp(3.4rem, 0.4rem + 10vw, 9.5rem)/0.95 var(--display); max-width: none; letter-spacing: -0.02em; max-width: 16ch; }
-.verdict span { color: var(--blue); display: block; }
-
-/* honest */
-.honest { background: var(--ink); color: var(--bg); padding: clamp(80px, 10vw, 140px) var(--margin); margin-top: clamp(110px, 14vw, 200px); }
-.honest h2 { color: var(--bg); }
-.nums { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; margin-top: 40px; }
-.num { font-size: var(--step-head); color: #8fb0ff; }
-.nums p { margin-top: 8px; }
-.honest ul { margin-top: 56px; padding-left: 1.1em; display: grid; grid-template-columns: 1fr 1fr; gap: 14px 48px; }
-.honest li { max-width: 52ch; }
-
-/* next + footer */
-.next { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); align-items: end; padding-bottom: clamp(110px, 14vw, 200px); }
-.next p { font-size: var(--step-lead); line-height: 1.4; }
-footer { background: var(--blue); color: var(--blue-ink); padding: 56px var(--margin) 36px; }
-footer .name { font: 700 clamp(3.4rem, 0.4rem + 10vw, 9.5rem)/.9 var(--display); letter-spacing: -0.02em; }
-footer .links { display: flex; flex-wrap: wrap; gap: 14px 28px; margin-top: 28px; font-weight: 500; }
-footer .credits { margin-top: 36px; font-size: var(--step-small); max-width: 90ch; opacity: .9; }
-
-@media (max-width: 860px) {
-  .hero, .setup, .finding, .next { grid-template-columns: 1fr; }
-  .finding:nth-of-type(even) .plate { order: 0; }
-  .hero { min-height: 0; }
-  .hero .print { min-height: 260px; }
-  .nums { grid-template-columns: 1fr 1fr; }
-  .honest ul { grid-template-columns: 1fr; }
-  header.bar nav a:first-child { display: none; }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .rise { opacity: 0; transform: translateY(24px); transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
-  .rise.in { opacity: 1; transform: none; }
-  .hero h1, .hero h1 span { animation: up 1s cubic-bezier(.2,.7,.2,1) both; }
-  .hero h1 span { animation-delay: .12s; }
-  .print img { animation: settle 18s ease-out both; }
-  .btn, header.bar nav a { transition: background .18s, color .18s; }
-  @keyframes up { from { opacity: 0; transform: translateY(30px); } }
-  @keyframes settle { from { transform: scale(1.07); } }
-}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="game/game.css">
+<link rel="stylesheet" href="site.css">
 </head>
 <body>
 <header class="bar wrap">
   <b>Kant fix it</b>
-  <nav aria-label="Main">
+  <nav aria-label="Sections">
+    <a href="#one">The problem</a>
+    <a href="#game">Play</a>
     <a href="#findings">Findings</a>
-    <a href="https://github.com/vidit-16/kant-fix-it/blob/main/docs/REPORT.md">Report</a>
+    <a href="#honest">Method</a>
     <a href="https://github.com/vidit-16/kant-fix-it">Code</a>
   </nav>
 </header>
 
 <main>
-  <div class="hero wrap">
+  <section class="hero wrap" aria-labelledby="top-h">
     <div>
-      <h1>Kant fix it</h1>
-      <p class="punch">But a price can.</p>
-      <p class="lead">Can a conscience stop self-improving AI agents from wrecking a shared system, or does it take a price? Five pre-registered studies, 4,190 runs.</p>
-      <div class="actions">
-        <a class="btn" href="#findings">See what came out</a>
-        <a href="https://github.com/vidit-16/kant-fix-it/blob/main/docs/REPORT.md">Read the report</a>
+      <h1 id="top-h">Kant fix it.<span>A price can.</span></h1>
+      <p class="lead">Can a conscience stop self-improving AI agents from wrecking a shared system? Five pre-registered studies, 4,190 runs, and a game you can play against the real agents.</p>
+      <div class="cta">
+        <a class="btn" href="#game">Play against them</a>
+        <a href="report/">Read the research</a>
       </div>
     </div>
-    <figure class="print"><img src="figures/computer-room-oak-ridge-1960s.webp" alt="A 1960s computer room shared by many jobs: tape drives, a line printer and an operator at the console"></figure>
-  </div>
-
-  <section class="setup wrap" aria-labelledby="setup-h">
-    <div>
-      <h2 id="setup-h">Six agents, one system</h2>
-      <p class="statement">Each agent keeps whatever helps it. What helps one can quietly hurt the rest.</p>
-      <p>Everything else was held fixed: the agents, how hard they search, the world they share. Only one thing changed between runs: the rule that decides whether an agent keeps a change. A selfish rule, a Kantian rule ("would I still want this if everyone did it?"), welfare rules, and prices an operator could charge instead.</p>
-      <p style="margin-top:14px">Two worlds were simulated: an interbank payment network, where delaying payments saves you money and costs everyone else; and a shared codebase, where shortcuts add hidden coupling and the incidents land anywhere.</p>
-    </div>
-    <figure class="print"><img src="figures/marine-field-telephone-switchboard-operator-guadalcanal-circ.jpg" alt="A field telephone operator in 1942 at a switchboard tangled with cables"></figure>
+    <canvas id="heroBoard" aria-label="Six agents joined by shared wires; when one cuts a corner, an incident lands on another."></canvas>
   </section>
 
-  <section class="wrap" id="findings" aria-labelledby="find-h">
-    <h2 id="find-h">What came out</h2>
+  <section class="chapter wrap" id="one" aria-labelledby="one-h">
+    <h2 id="one-h" class="rise">Try being one agent</h2>
+    <div class="one">
+      <div class="text rise">
+        <p>Six AI agents each own a module of one codebase. Each keeps improving itself and keeps any change that helps it.</p>
+        <p>Shortcuts make an agent ship more. They also add coupling to the shared code, and the incidents that follow land on anyone.</p>
+        <p>Move the slider. Tap another agent to see what you cost it. Then let everyone do what you did.</p>
+      </div>
+      <div class="card rise">
+        <canvas id="oneBoard" aria-label="Six agents. Tap one of the other five to see what your shortcuts cost it."></canvas>
+        <p class="say" id="oneSay" aria-live="polite">Tap another agent to see what your shortcuts cost it.</p>
+        <label for="mine">Your shortcuts
+          <input id="mine" type="range" min="0" max="100" value="30">
+        </label>
+        <label class="toggle"><input id="everyone" type="checkbox"> Everyone does what you did</label>
+        <div class="readouts" aria-live="polite">
+          <div><b id="outMine">0%</b><span>your output</span></div>
+          <div><b id="outInc">0</b><span>incidents per sprint</span></div>
+          <div><b id="outOthers">0%</b><span id="outOthersLab">cost to the others</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter wrap" id="game" aria-labelledby="play-h">
+    <h2 id="play-h" class="rise">Try to stop them</h2>
+    <p class="lead rise">Pick a rule and watch the agents evolve against it. Four levels, each one a finding from the research. Click an agent to see what it is thinking.</p>
+    <div class="gamewrap">
+<nav id="levels" aria-label="Levels"></nav>
+
+<div class="layout">
+  <div class="stage">
+    <canvas id="board" aria-label="Six modules joined by coupling wires. Red sparks are incidents; the blue tide is shared debt."></canvas>
+    <p id="say" role="status" aria-live="polite"></p>
+    <aside id="think" hidden aria-live="polite"></aside>
+    <p class="hint">Click an agent to see what it is thinking.</p>
+    <div id="start"><div id="brief"><h3></h3><p></p><p class="goal"></p><button class="big go" type="button" onclick="document.querySelector('#play').click()">Start</button><small>These are the real learning agents from the research, running in your browser.</small></div></div>
+    <div id="tracker" aria-live="polite"></div>
+    <div id="result" hidden></div>
+    <p class="genbadge">Generation <b id="genNo">0</b></p>
+  </div>
+
+  <aside class="panel">
+    <section class="block" aria-labelledby="rules-h">
+      <h2 id="rules-h">Your rule</h2>
+      <div class="rules">
+        <button data-rule="none" aria-pressed="false">Do nothing<span>Let them be selfish.</span></button>
+        <button data-rule="conscience" aria-pressed="false">A conscience<span>What if everyone did this?</span></button>
+        <button data-rule="visible" aria-pressed="true">Tax visible coupling<span>Charge for the shortcuts you can see.</span></button>
+        <button data-rule="damage" aria-pressed="false">Tax the damage<span>Charge for harm landing on others.</span></button>
+      </div>
+    </section>
+
+    <section class="block" id="dial" aria-labelledby="dial-h">
+      <h2 id="dial-h">How hard</h2>
+      <div class="dialrow">
+        <div id="knob" role="slider" tabindex="0" aria-labelledby="dial-h"></div>
+        <div><div class="dialval" id="dialVal"></div><p>Twist to set the tax. Takes effect at once.</p></div>
+      </div>
+    </section>
+
+    <section class="block gaugebox" aria-labelledby="gauge-h">
+      <h2 id="gauge-h">How you are doing</h2>
+      <div class="dial">
+        <canvas id="gauge" aria-hidden="true"></canvas>
+        <span class="gl" data-at="-1">Worse</span><span class="gl gl-zero" data-at="0">Nothing</span><span class="gl" data-at="1.05">Best</span>
+      </div>
+      <div class="gaugeno" id="gaugeNo">–</div>
+      <p class="gaugesay" id="gaugeSay" aria-live="polite"></p>
+      <div class="lines">
+        <div>System cost<canvas id="costLine"></canvas></div>
+        <div>Hidden coupling<canvas id="hidLine"></canvas></div>
+      </div>
+    </section>
+  </aside>
+  <div class="thinkrow"></div>
+    <div class="under">
+  
+      <section class="block" aria-labelledby="skew-h">
+        <h2 id="skew-h">Who gets hit</h2>
+        <div class="seg">
+          <button data-skew="0" aria-pressed="true">Everyone equally</button>
+          <button data-skew="0.75" aria-pressed="false">Some more</button>
+          <button data-skew="1.5" aria-pressed="false">One module most</button>
+        </div>
+      </section>
+  
+      <section class="block">
+        <div class="actions">
+          <button class="big" id="play" aria-pressed="false">Run</button>
+          <button class="big" id="reset">New agents</button>
+        </div>
+        <div class="toggles">
+          <button id="xray" aria-pressed="false">X-ray</button>
+          <div class="speed" aria-label="Speed">
+            <button data-speed="1" aria-pressed="false">1x</button>
+            <button data-speed="3" aria-pressed="true">3x</button>
+            <button data-speed="8" aria-pressed="false">8x</button>
+          </div>
+        </div>
+      </section>
+    </div>
+</div>
+    </div>
+  </section>
+
+  <section class="chapter wrap" id="findings" aria-labelledby="find-h">
+    <h2 id="find-h" class="rise">What the research found</h2>
+    <p class="lead rise">Everything else was held fixed: the agents, how hard they search, the world they share. Only the rule changed.</p>
 
     <article class="finding rise">
       <div>
-        <h3>The rule matters</h3>
-        <p>In the payment network, selfish agents left the system 29 % costlier than a planner would. The Kantian rule, which only ever looks at the agent's own costs, closed about half of that gap, and the gain carried over to shocks the agents never trained on.</p>
+        <h3>A price beats a conscience</h3>
+        <p>In a simulated interbank payment network, selfish banks left the system 29% costlier than a planner would. A conscience closed about half of that gap. A plain charge on delay did better than every rule.</p>
+        <a class="try" href="#game" data-goto="0">Pit a conscience against a price</a>
       </div>
-      <figure class="plate"><img src="figures/fig_gates.png" alt="Chart: system cost under each acceptance rule in the payment network; the Kantian rule sits between the selfish rule and the planner"><figcaption>Payment network, 20 seeds, held-out scenarios.</figcaption></figure>
-    </article>
-
-    <article class="finding rise">
-      <div>
-        <h3>A price matters more</h3>
-        <p>A plain charge on payment delay beat every rule, including the best one, with simple agent policies and with richer, rule-level ones.</p>
-      </div>
-      <figure class="plate"><img src="figures/fig_e8.png" alt="Chart: the delay surcharge beats every acceptance rule with three-parameter and eight-parameter policies"><figcaption>Prices against rules, two policy spaces.</figcaption></figure>
+      <figure class="chart" id="chartPay" data-title="Payment network: system cost under each rule"></figure>
     </article>
 
     <article class="finding rise">
       <div>
         <h3>Charge what you can see, and they hide it</h3>
-        <p>In the shared codebase, a charge on visible coupling taught the agents to conceal it. 99 % of the coupling went underground and the system cost rose by more than half. A tax on the damage itself, wherever it lands, could not be dodged that way.</p>
+        <p>In a shared codebase, a charge on visible coupling taught the agents to conceal it, and costs rose by more than half. A tax on the damage itself, wherever it lands, could not be dodged that way.</p>
+        <a class="try" href="#game" data-goto="1">Make them stop hiding</a>
       </div>
-      <figure class="plate"><img src="figures/fig_e9.png" alt="Chart: in the shared codebase, the charge on visible coupling is gamed while the Kantian rule and the shared-damage tax come close to the optimum"><figcaption>Shared codebase, identical agents.</figcaption></figure>
+      <figure class="chart" id="chartHide" data-title="Shared codebase: system cost under each rule"></figure>
     </article>
 
     <article class="finding rise">
       <div>
         <h3>The conscience fails when agents are unequal</h3>
-        <p>When some modules absorb most of the incidents, "what if everyone did this?" measures what an agent would suffer, not what it causes. The exposed agents froze, the sheltered ones ran wild, and the shared-damage tax won. A follow-up study showed the result holds whatever scale "the same change" is measured on.</p>
+        <p>When one module takes most of the incidents, "what if everyone did this?" measures what an agent would suffer, not what it causes. The exposed agent freezes and the sheltered ones run wild. The damage tax holds.</p>
+        <a class="try" href="#game" data-goto="2">Try it with one module taking the hits</a>
       </div>
-      <figure class="plate"><img src="figures/fig_e10.png" alt="Chart: as exposure becomes unequal the Kantian rule falls behind the shared-damage tax, and its agents' shortcut levels spread far from the optimum"><figcaption>Unequal exposure, 20 seeds.</figcaption></figure>
+      <figure class="chart" id="chartUnequal" data-title="Share of the damage fixed by each rule as exposure becomes unequal"></figure>
     </article>
 
-    <p class="verdict rise">Kant can't. <span>A price can.</span></p>
+    <article class="finding rise">
+      <div>
+        <h3>It holds whatever you call "the same change"</h3>
+        <p>A conscience needs a scale on which to compare changes. On four different scales its result moved a lot, but none of them beat the damage tax.</p>
+        <a class="try" href="#game" data-goto="3">Tune the damage tax yourself</a>
+      </div>
+      <figure class="chart" id="chartUnits" data-title="Share of the damage fixed by the conscience on four scales, against the damage tax"></figure>
+    </article>
   </section>
 
-  <section class="honest" aria-labelledby="honest-h">
-    <h2 id="honest-h">How it was kept honest</h2>
-    <div class="nums">
-      <div class="rise"><div class="num">5</div><p>studies, each pre-registered before its runs</p></div>
-      <div class="rise"><div class="num">4,190</div><p>confirmatory runs on held-out scenarios</p></div>
-      <div class="rise"><div class="num">7 of 29</div><p>registered predictions failed, and are reported as failed</p></div>
-      <div class="rise"><div class="num">82</div><p>tests on accounting, determinism and isolation</p></div>
+  <section class="honest" id="honest" aria-labelledby="honest-h">
+    <div class="wrap">
+      <h2 id="honest-h" class="rise">How it was kept honest</h2>
+      <p class="lead rise">Every study was written down and committed before it ran, including the rule that would decide whether the idea survived. It did not.</p>
+      <div class="nums">
+        <div class="rise"><b data-count="5">5</b><span>studies, each pre-registered</span></div>
+        <div class="rise"><b data-count="4190">4,190</b><span>runs on scenarios the agents never trained on</span></div>
+        <div class="rise"><b>7 of 29</b><span>predictions failed, reported as failed</span></div>
+        <div class="rise"><b data-count="82">82</b><span>tests, and a browser engine checked against them</span></div>
+      </div>
+      <ol class="timeline" aria-label="Pre-registrations, each committed before its runs">
+        <li class="rise"><b>Studies 1 to 6</b><small>Gates in a payment network</small><a href="https://github.com/vidit-16/kant-fix-it/commit/4d6ebe9">Frozen in 4d6ebe9</a></li>
+        <li class="rise"><b>Study 8</b><small>Gates against a price</small><a href="https://github.com/vidit-16/kant-fix-it/commit/9729748">Frozen in 9729748</a></li>
+        <li class="rise"><b>Study 9</b><small>A codebase with hidden harm</small><a href="https://github.com/vidit-16/kant-fix-it/commit/0b9a282">Frozen in 0b9a282</a></li>
+        <li class="rise"><b>Study 10</b><small>Unequal exposure</small><a href="https://github.com/vidit-16/kant-fix-it/commit/f580a13">Frozen in f580a13</a></li>
+        <li class="rise"><b>Study 11</b><small>Units of "the same change"</small><a href="https://github.com/vidit-16/kant-fix-it/commit/863f0b4">Frozen in 863f0b4</a></li>
+      </ol>
+      <div class="failed">
+        <h3 class="rise">Predictions that failed</h3>
+        <ul class="rise">
+          <li><b>Failed</b>Banks of different sizes would weaken the conscience. They did not.</li>
+          <li><b>Failed</b>One selfish bank among conscientious ones would profit. It did not.</li>
+          <li><b>Failed</b>Richer policies would hurt rules more than prices. No clear difference.</li>
+          <li><b>Failed</b>A coarse price would be gamed by bunching. It failed another way.</li>
+          <li><b>Failed</b>The codebase study was expected to kill the gate idea outright. The gate edged ahead by a margin too small to matter.</li>
+          <li><b>Failed</b>The gate's edge would grow with more agents. It did not.</li>
+          <li><b>In part</b>A price on visible coupling would match the gate when hiding is pointless. True for six agents, not twelve.</li>
+        </ul>
+      </div>
     </div>
-    <ul>
-      <li>Hypotheses, analysis code and a decision rule were committed before every confirmatory study; the commit hashes are the timestamps.</li>
-      <li>Pilots ran on separate seeds and a separate scenario split. Results come from scenario families never seen during evolution.</li>
-      <li>Rerunning the analysis scripts regenerates every reported number exactly from the stored records.</li>
-      <li>A literature review in three passes checked each claim against prior work, and corrected the ones that did not hold.</li>
-    </ul>
-  </section>
-
-  <section class="next wrap" aria-labelledby="next-h">
-    <h2 id="next-h">Coming next</h2>
-    <p>An interactive version is being built: you will set the rules yourself and watch real learning agents find their way around them, live in the browser.</p>
   </section>
 </main>
 
-<footer>
-  <div class="name">Kant fix it</div>
+<footer class="end wrap">
+  <div class="name">Kant fix it.<br><span>A price can.</span></div>
   <div class="links">
     <a href="https://github.com/vidit-16/kant-fix-it">Code on GitHub</a>
-    <a href="https://github.com/vidit-16/kant-fix-it/blob/main/docs/REPORT.md">Full report</a>
-    <a href="https://github.com/vidit-16/kant-fix-it/blob/main/docs/LITERATURE_REVIEW.md">Literature review</a>
-    <a href="https://github.com/vidit-16">Vidit Choudhary</a>
+    <a href="report/">Full report</a>
   </div>
-  <p class="credits">Simulations only: no real payment system, codebase, data or money is involved. Pictures: "Computer Room Oak Ridge 1960s", US Department of Energy, CC0, via rawpixel; "Marine Field Telephone Switchboard Operator, Guadalcanal, circa 1942", Archives Branch, USMC History Division, CC BY 2.0, via Wikimedia Commons.</p>
+  <p class="credit">&copy; 2026 <a href="https://www.linkedin.com/in/vidit-choudhary">Vidit Choudhary</a> &middot; MIT licence</p>
+  <p class="small">Simulations only: no real payment system, codebase, data or money is involved. The game runs a JavaScript port of the research model, tested against the original code.</p>
 </footer>
 
-<script>
-(() => {
-  const els = document.querySelectorAll(".rise");
-  if (!("IntersectionObserver" in window) || matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    els.forEach(e => e.classList.add("in")); return;
-  }
-  const io = new IntersectionObserver(entries => entries.forEach(en => {
-    if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
-  }), { rootMargin: "0px 0px -10% 0px" });
-  els.forEach((e, i) => { e.style.transitionDelay = (i % 4) * 70 + "ms"; io.observe(e); });
-})();
-</script>
+<script type="module" src="game/game.js"></script>
+<script type="module" src="site.js"></script>
 </body>
 </html>

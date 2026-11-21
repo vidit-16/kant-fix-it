@@ -13,7 +13,7 @@ keeps a change. A selfish rule is compared with a Kantian one ("would I still
 want this if every agent did the same?"), with welfare rules, and with prices
 an operator could charge instead.
 
-Project page: **[kant-fix-it.vercel.app](https://kant-fix-it-web.vercel.app)**
+Project page: **[kant-fix-it-web.vercel.app](https://kant-fix-it-web.vercel.app)**
 
 ## What came out
 

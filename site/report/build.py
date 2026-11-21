@@ -54,7 +54,7 @@ page = f"""<!doctype html>
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <meta property="og:title" content="Acceptance gates versus prices: full report">
 <meta property="og:description" content="Five pre-registered studies of whether a conscience or a price keeps self-improving agents from wrecking a shared system.">
-<meta property="og:image" content="https://kant-fix-it.vercel.app/og.png">
+<meta property="og:image" content="https://kant-fix-it-web.vercel.app/og.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
