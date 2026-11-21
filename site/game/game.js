@@ -14,6 +14,11 @@ const board = $("#board");
 
 // ---- the model on a small fixed batch, for what the board shows --------------
 
+// "Doing nothing" and "best possible" on the board's 12 scenarios, from
+// `node site/game/calibrate.mjs --refs` (selfish agents' settling cost, and the
+// best profile found from every rule's runs, polished by coordinate descent).
+const REF = {"0": {"nothing": 0.21592, "best": 0.16997}, "0.75": {"nothing": 0.19458, "best": 0.16385}, "1.5": {"nothing": 0.16342, "best": 0.14541}};
+
 const vis = {};
 function visFor(skew) {
   if (!vis[skew]) {
@@ -25,26 +30,7 @@ function visFor(skew) {
       for (let s = 0; s < b.S; s++) { let x = 0; for (let i = 0; i < cfg.n; i++) x += o.cost[s * cfg.n + i]; c += x / o.nominal[s]; }
       return c / b.S;
     };
-    // Reference points on the same scenarios: agents left alone settle near
-    // s = 0.97, q = 0.97 (E9); the best outcome is searched on a grid, then
-    // per agent when exposure is unequal.
-    const nothing = cost(Array(cfg.n).fill([0.97, 0, 0.97]));
-    let best = [0.5, 0, 0], bc = Infinity;
-    for (let si = 0; si <= 20; si++) for (const q of [0, 0.25, 0.5]) {
-      const s = si / 20;
-      const c = cost(Array(cfg.n).fill([s, 0, q]));
-      if (c < bc) { bc = c; best = [s, 0, q]; }
-    }
-    let P = Array(cfg.n).fill(best);
-    if (skew > 0) for (let sweep = 0; sweep < 2; sweep++) for (let i = 0; i < cfg.n; i++) {
-      for (let si = 0; si <= 20; si++) for (const q of [0, 0.25, 0.5, 0.75]) {
-        const s = si / 20;
-        const Q = P.map((p, j) => (j === i ? [s, 0, q] : p));
-        const c = cost(Q);
-        if (c < bc) { bc = c; P = Q; }
-      }
-    }
-    vis[skew] = { cfg, b, nothing, best: bc, expo: exposure(cfg) };
+        vis[skew] = { cfg, b, cost, expo: exposure(cfg) };
   }
   return vis[skew];
 }
@@ -73,7 +59,7 @@ const S = {
   running: false, job: 0, gen: 0, seed: 1, queue: [], pending: false, lastQueued: null,
   from: null, to: null, tStart: 0, m: null, gauge: 0, gaugeV: 0, series: [], said: new Set(),
   sparks: [], ripples: [], shake: [0, 0, 0, 0, 0, 0], ropes: new Map(), chunks: 0,
-  step: null, focus: null, pos: null, size: 0,
+  step: null, focus: null, pos: null, size: 0, lvl: 0, hold: 0, lvlGen: 0, won: false, lost: false, hinted: false, celebrate: 0,
 };
 
 const worker = new Worker(new URL("./worker.js", import.meta.url), { type: "module" });
@@ -91,10 +77,10 @@ function request(init) {
     honest: S.honest, init, gens: 8, genOffset: S.chunks * 101 });
 }
 
-function freshAgents() {
+function freshAgents(init = null) {
   S.job += 1; S.queue = []; S.gen = 0; S.series = []; S.said.clear(); S.seed = Math.floor(Math.random() * 1e6);
-  S.from = S.to = null; S.lastQueued = null; S.sparks = []; S.ripples = [];
-  request(null);
+  S.from = S.to = null; S.lastQueued = null; S.sparks = []; S.ripples = []; S.step = null;
+  request(init);
 }
 
 // a rule change keeps the agents where they are and lets them adapt
@@ -115,7 +101,7 @@ const RULE_TEXT = {
 };
 
 document.querySelectorAll("[data-rule]").forEach((btn) => btn.addEventListener("click", () => {
-  if (S.rule === btn.dataset.rule) return;
+  if (btn.disabled || S.rule === btn.dataset.rule) return;
   S.rule = btn.dataset.rule;
   document.querySelectorAll("[data-rule]").forEach((b) => b.setAttribute("aria-pressed", b === btn));
   const d = DIAL[S.rule];
@@ -135,10 +121,11 @@ $("#play").addEventListener("click", () => {
   S.running = !S.running;
   $("#play").textContent = S.running ? "Pause" : "Run";
   $("#play").setAttribute("aria-pressed", S.running);
-  if (S.running && !S.to && !S.pending) freshAgents();
+  if (S.running && !S.to && !S.pending) freshAgents(LEVELS[S.lvl].init ?? null);
+  if (S.running && (S.won || S.lost) && !LEVELS[S.lvl].free && $("#result").hidden === false) $("#result").hidden = true;
   $("#start").classList.add("gone");
 });
-$("#reset").addEventListener("click", () => { freshAgents(); say("Six new agents. Honest, for now."); });
+$("#reset").addEventListener("click", () => loadLevel(S.lvl));
 $("#xray").addEventListener("click", () => {
   S.xray = !S.xray;
   $("#xray").setAttribute("aria-pressed", S.xray);
@@ -311,6 +298,7 @@ function frame() {
       for (let e = 0; e < k; e++) S.sparks.push({ at: t + Math.random() * genMs * 0.9, i, src: (i + 1 + Math.floor(Math.random() * 5)) % 6 });
     });
     narrate();
+    levelTick();
   }
   if (S.running && !S.pending && S.queue.length < 4 && S.lastQueued) request(S.lastQueued);
 
@@ -387,6 +375,18 @@ function draw(t, dt, genMs) {
     return true;
   });
 
+  if (S.celebrate && t - S.celebrate < 1800) {
+    const p = (t - S.celebrate) / 1800;
+    pos.forEach(([x, y]) => {
+      for (const lag of [0, 0.18, 0.36]) {
+        const q = p - lag; if (q <= 0 || q >= 1) continue;
+        ctx.strokeStyle = COL.blue; ctx.globalAlpha = 0.6 * (1 - q); ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.arc(x, y, size * (0.7 + q * 1.6), 0, 7); ctx.stroke();
+      }
+    });
+    ctx.globalAlpha = 1;
+  }
+
   // ripples
   S.ripples = S.ripples.filter((rp) => {
     const p = (t - rp.t0) / 520;
@@ -444,8 +444,7 @@ function drawGauge(dt) {
   ctx.clearRect(0, 0, w, h);
   let target = 0;
   if (S.m) {
-    const v = visFor(S.skew);
-    target = Math.max(-1, Math.min(1.05, (v.nothing - S.m.cost) / (v.nothing - v.best)));
+    target = Math.max(-1, Math.min(1.05, scoreOf(S.m.cost, S.skew) / 100));
   }
   S.gaugeV += (60 * (target - S.gauge) - 9 * S.gaugeV) * dt;
   S.gauge += S.gaugeV * dt;
@@ -459,7 +458,7 @@ function drawGauge(dt) {
   ctx.fillStyle = COL.ink; ctx.beginPath(); ctx.arc(cx, cy, 7, 0, 7); ctx.fill();
   let label = "–";
   if (S.m) {
-    const v = visFor(S.skew);
+    const v = REF[S.skew];
     label = S.m.cost > v.nothing
       ? `${Math.round(((S.m.cost - v.nothing) / v.nothing) * 100)}% worse`
       : `${Math.round(Math.min(1, Math.max(0, S.gauge)) * 100)} / 100`;
@@ -486,8 +485,7 @@ function narrate() {
   if (m.hidden > 0.5 && !S.xray) sayOnce("hide", "They are hiding their coupling. Switch on X-ray.");
   if (S.rule === "visible" && m.hidden > 0.8) sayOnce("hide2", "Tax what you can see, and they stop letting you see it.");
   if (S.rule === "conscience" && S.skew > 0 && S.gen > 12) sayOnce("cons", "Watch the busiest module: its conscience makes it freeze while the quiet ones run wild.");
-  const v = visFor(S.skew);
-  if ((v.nothing - m.cost) / (v.nothing - v.best) > 0.9 && S.gen > 8) sayOnce("good", "Close to the best possible. Can you find anything better?");
+  if (scoreOf(m.cost, S.skew) > 90 && S.gen > 8) sayOnce("good", "Close to the best possible. Can you find anything better?");
 }
 
 // ---- watching them think ------------------------------------------------------
@@ -608,7 +606,123 @@ board.addEventListener("click", (e) => {
 });
 addEventListener("keydown", (e) => { if (e.key === "Escape") { S.focus = null; $("#think").hidden = true; } });
 
-visFor(0);
+// ---- levels -------------------------------------------------------------------
+// Goals were calibrated with calibrate.mjs on the board's own scenarios: the
+// intended rule meets each goal in (nearly) every run, the others do not.
+
+const LEVELS = [
+  { title: "Stop them", skew: 0, rules: ["none", "conscience", "visible", "damage"], start: "none",
+    goal: { min: 80, hold: 8 }, gens: 60,
+    brief: "Six agents are cutting corners. Pick a rule that gets the system to 80 or better, and keep it there for 8 generations.",
+    lesson: "When every module is equally exposed, both a conscience and a tax on the damage work. In the research, the Kantian rule closed 96% of the gap here." },
+  { title: "They are hiding", skew: 0, rules: ["none", "conscience", "visible", "damage"], start: "visible",
+    init: Array(6).fill([0.92, 0.9, 0.6]), goal: { min: 70, hold: 6, hiddenMax: 0.15 }, gens: 60,
+    brief: "Someone taxed the coupling they could see, so the agents learned to hide it. Get hidden coupling under 15% and the score above 70.",
+    lesson: "Charging for what you can see pushes the harm out of sight. In the research, 99% of the coupling went underground and costs rose by more than half." },
+  { title: "One module takes the hits", skew: 1.5, rules: ["none", "conscience", "damage"], start: "conscience",
+    goal: { min: 85, hold: 6 }, gens: 80,
+    brief: "The top module now takes more than half of all incidents. Get the system to 85.",
+    hint: { after: 30, rule: "conscience", text: "The conscience asks what an agent would suffer, not what it causes. The busy module freezes; the quiet ones run wild." },
+    lesson: "This is the paper's twist. With unequal exposure the conscience gets stuck around 60, while a tax on the damage an agent causes holds near the best possible." },
+  { title: "The price is wrong", skew: 0.75, rules: ["damage"], start: "damage", startLevel: 2,
+    goal: { min: 85, hold: 8 }, gens: 80,
+    brief: "The damage tax is set far too high and the agents are frozen. Twist the dial and find the price that works.",
+    hint: { after: 20, text: "Too high and they over-restrain; too low and they ignore it. Try somewhere in the middle." },
+    lesson: "A price has to be tuned. In the research, each tax level was chosen on separate development data before the real test." },
+  { title: "Free play", free: true, skew: 0, rules: ["none", "conscience", "visible", "damage"], start: "damage",
+    brief: "Everything unlocked. Try anything; the research says nothing beats a well-tuned price on the damage." },
+];
+
+let done = new Set();
+try { done = new Set(JSON.parse(localStorage.getItem("kfi-levels") || "[]")); } catch { /* private mode */ }
+function saveDone() { try { localStorage.setItem("kfi-levels", JSON.stringify([...done])); } catch { /* ignore */ } }
+
+const scoreOf = (cost, skew) => ((REF[skew].nothing - cost) / (REF[skew].nothing - REF[skew].best)) * 100;
+
+function renderLevelStrip() {
+  $("#levels").innerHTML = LEVELS.map((L, k) =>
+    `<button data-level="${k}" aria-pressed="${S.lvl === k}">${L.free ? "" : `<i>${k + 1}</i>`}${L.title}${done.has(k) ? "<em>done</em>" : ""}</button>`).join("");
+  document.querySelectorAll("[data-level]").forEach((b) => b.addEventListener("click", () => loadLevel(Number(b.dataset.level))));
+}
+
+function setRuleButtons(L) {
+  document.querySelectorAll("[data-rule]").forEach((b) => {
+    const ok = L.rules.includes(b.dataset.rule);
+    b.disabled = !ok;
+    b.setAttribute("aria-pressed", b.dataset.rule === S.rule);
+  });
+  document.querySelectorAll("[data-skew]").forEach((b) => {
+    b.setAttribute("aria-pressed", Number(b.dataset.skew) === S.skew);
+    b.disabled = !L.free;
+  });
+}
+
+function loadLevel(k) {
+  const L = LEVELS[k];
+  S.lvl = k; S.hold = 0; S.lvlGen = 0; S.won = false; S.lost = false; S.hinted = false;
+  S.running = false; $("#play").textContent = "Run"; $("#play").setAttribute("aria-pressed", false);
+  S.skew = L.skew; S.rule = L.start;
+  visFor(S.skew);
+  const d = DIAL[S.rule];
+  $("#dial").classList.toggle("off", !d);
+  if (d) setLevel(L.startLevel ?? d.def);
+  setRuleButtons(L);
+  renderLevelStrip();
+  $("#result").hidden = true;
+  $("#brief h3").textContent = L.free ? L.title : `Level ${k + 1}: ${L.title}`;
+  $("#brief p").textContent = L.brief;
+  $("#brief .goal").textContent = L.free ? "No goal. Just play." : goalText(L);
+  $("#start").classList.remove("gone");
+  $("#tracker").hidden = !!L.free;
+  freshAgents(L.init ?? null);
+  updateTracker();
+}
+
+function goalText(L) {
+  const g = L.goal;
+  return `Goal: ${g.min}+${g.hiddenMax !== undefined ? ` with under ${Math.round(g.hiddenMax * 100)}% hidden` : ""} for ${g.hold} generations, within ${L.gens}.`;
+}
+
+function updateTracker() {
+  const L = LEVELS[S.lvl];
+  if (L.free) return;
+  const segs = Array.from({ length: L.goal.hold }, (_, k) => `<span class="${k < S.hold ? "on" : ""}"></span>`).join("");
+  $("#tracker").innerHTML = `<b>${L.goal.min}+</b><div class="segs">${segs}</div><small>${Math.max(0, L.gens - S.lvlGen)} generations left</small>`;
+}
+
+// called once per generation shown on the board
+function levelTick() {
+  const L = LEVELS[S.lvl];
+  if (L.free || S.won || S.lost) return;
+  S.lvlGen += 1;
+  const sc = scoreOf(S.m.cost, S.skew);
+  const ok = sc >= L.goal.min && (L.goal.hiddenMax === undefined || S.m.hidden < L.goal.hiddenMax);
+  S.hold = ok ? S.hold + 1 : 0;
+  if (L.hint && !S.hinted && S.lvlGen >= L.hint.after && (!L.hint.rule || L.hint.rule === S.rule) && !ok) {
+    S.hinted = true; say(L.hint.text);
+  }
+  updateTracker();
+  if (S.hold >= L.goal.hold) finishLevel(true);
+  else if (S.lvlGen >= L.gens) finishLevel(false);
+}
+
+function finishLevel(won) {
+  const L = LEVELS[S.lvl];
+  S.won = won; S.lost = !won;
+  S.running = false; $("#play").textContent = "Run"; $("#play").setAttribute("aria-pressed", false);
+  if (won) { done.add(S.lvl); saveDone(); renderLevelStrip(); S.celebrate = performance.now(); }
+  const next = S.lvl + 1 < LEVELS.length ? S.lvl + 1 : null;
+  $("#result").innerHTML = won
+    ? `<div><h3>Level complete</h3><p>${L.lesson}</p><div class="row">${next !== null ? `<button class="big go" data-next>Next: ${LEVELS[next].title}</button>` : ""}<button class="big" data-stay>Keep playing</button></div></div>`
+    : `<div><h3>Out of generations</h3><p>${L.hint ? L.hint.text : "Try a different rule."}</p><div class="row"><button class="big go" data-retry>Try again</button></div></div>`;
+  $("#result").hidden = false;
+  const q = (s) => $("#result").querySelector(s);
+  q("[data-next]")?.addEventListener("click", () => loadLevel(next));
+  q("[data-retry]")?.addEventListener("click", () => loadLevel(S.lvl));
+  q("[data-stay]")?.addEventListener("click", () => { $("#result").hidden = true; S.won = true; });
+}
+
+loadLevel(Math.max(0, LEVELS.findIndex((_, k) => !done.has(k))));
 window.__S = S;
 window.__debug = () => ({ gen: S.gen, queue: S.queue.length, running: S.running, gauge: S.gauge, m: S.m && { cost: S.m.cost, hidden: S.m.hidden } });
 frame();
