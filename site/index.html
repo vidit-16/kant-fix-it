@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kant fix it</title>
+<meta name="description" content="Can a conscience stop self-improving AI agents from wrecking a shared system, or does it take a price? Play against the real agents from five pre-registered studies.">
+<meta property="og:title" content="Kant fix it">
+<meta property="og:description" content="Can a conscience stop self-improving AI agents from wrecking a shared system, or does it take a price? Play against the real agents.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="game/game.css">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<header class="bar wrap">
+  <b>Kant fix it</b>
+  <nav aria-label="Sections">
+    <a href="#one">The problem</a>
+    <a href="#game">Play</a>
+    <a href="#findings">Findings</a>
+    <a href="#honest">Method</a>
+    <a href="https://github.com/vidit-16/kant-fix-it">Code</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero wrap" aria-labelledby="top-h">
+    <div>
+      <h1 id="top-h">Kant fix it.<span>A price can.</span></h1>
+      <p class="lead">Can a conscience stop self-improving AI agents from wrecking a shared system? Five pre-registered studies, 4,190 runs, and a game you can play against the real agents.</p>
+      <div class="cta">
+        <a class="btn" href="#game">Play against them</a>
+        <a href="https://github.com/vidit-16/kant-fix-it/blob/main/docs/REPORT.md">Read the research</a>
+      </div>
+    </div>
+    <canvas id="heroBoard" aria-label="Six agents joined by shared wires; when one cuts a corner, an incident lands on another."></canvas>
+  </section>
+
+  <section class="chapter wrap" id="one" aria-labelledby="one-h">
+    <h2 id="one-h" class="rise">Try being one agent</h2>
+    <div class="one">
+      <div class="text rise">
+        <p>Six AI agents each own a module of one codebase. Each keeps improving itself and keeps any change that helps it.</p>
+        <p>Shortcuts make an agent ship more. They also add coupling to the shared code, and the incidents that follow land on anyone.</p>
+        <p>Move the slider. Then let everyone do what you did.</p>
+      </div>
+      <div class="card rise">
+        <canvas id="oneBoard" aria-hidden="true"></canvas>
+        <label for="mine">Your shortcuts
+          <input id="mine" type="range" min="0" max="100" value="30">
+        </label>
+        <label class="toggle"><input id="everyone" type="checkbox"> Everyone does what you did</label>
+        <div class="readouts" aria-live="polite">
+          <div><b id="outMine">0%</b><span>your output</span></div>
+          <div><b id="outInc">0</b><span>incidents per sprint</span></div>
+          <div><b id="outOthers">0%</b><span>cost to the others</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter wrap" id="game" aria-labelledby="play-h">
+    <h2 id="play-h" class="rise">Try to stop them</h2>
+    <p class="lead rise">Pick a rule and watch the agents evolve against it. Four levels, each one a finding from the research. Click an agent to see what it is thinking.</p>
+    <div class="gamewrap">
+<nav id="levels" aria-label="Levels"></nav>
+
+<div class="layout">
+  <div class="stage">
+    <canvas id="board" aria-label="Six modules joined by coupling wires. Red sparks are incidents; the blue tide is shared debt."></canvas>
+    <p id="say" role="status" aria-live="polite"></p>
+    <aside id="think" hidden aria-live="polite"></aside>
+    <p class="hint">Click an agent to see what it is thinking.</p>
+    <div id="start"><div id="brief"><h3></h3><p></p><p class="goal"></p><button class="big go" type="button" onclick="document.querySelector('#play').click()">Start</button><small>These are the real learning agents from the research, running in your browser.</small></div></div>
+    <div id="tracker" aria-live="polite"></div>
+    <div id="result" hidden></div>
+    <p class="genbadge">Generation <b id="genNo">0</b></p>
+    <div class="lines">
+      <div>System cost<canvas id="costLine"></canvas></div>
+      <div>Hidden coupling<canvas id="hidLine"></canvas></div>
+    </div>
+  </div>
+
+  <aside class="panel">
+    <section class="block" aria-labelledby="rules-h">
+      <h2 id="rules-h">Your rule</h2>
+      <div class="rules">
+        <button data-rule="none" aria-pressed="false">Do nothing<span>Let them be selfish.</span></button>
+        <button data-rule="conscience" aria-pressed="false">A conscience<span>What if everyone did this?</span></button>
+        <button data-rule="visible" aria-pressed="true">Tax visible coupling<span>Charge for the shortcuts you can see.</span></button>
+        <button data-rule="damage" aria-pressed="false">Tax the damage<span>Charge for harm landing on others.</span></button>
+      </div>
+    </section>
+
+    <section class="block" id="dial" aria-labelledby="dial-h">
+      <h2 id="dial-h">How hard</h2>
+      <div class="dialrow">
+        <div id="knob" role="slider" tabindex="0" aria-labelledby="dial-h"></div>
+        <div><div class="dialval" id="dialVal"></div><p>Twist to set the tax. Takes effect at once.</p></div>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="skew-h">
+      <h2 id="skew-h">Who gets hit</h2>
+      <div class="seg">
+        <button data-skew="0" aria-pressed="true">Everyone equally</button>
+        <button data-skew="0.75" aria-pressed="false">Some more</button>
+        <button data-skew="1.5" aria-pressed="false">One module most</button>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="actions">
+        <button class="big" id="play" aria-pressed="false">Run</button>
+        <button class="big" id="reset">New agents</button>
+      </div>
+      <div class="toggles">
+        <button id="xray" aria-pressed="false">X-ray</button>
+        <div class="speed" aria-label="Speed">
+          <button data-speed="1" aria-pressed="false">1x</button>
+          <button data-speed="3" aria-pressed="true">3x</button>
+          <button data-speed="8" aria-pressed="false">8x</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="block gaugebox" aria-labelledby="gauge-h">
+      <h2 id="gauge-h">How you are doing</h2>
+      <canvas id="gauge" aria-hidden="true"></canvas>
+      <div class="gaugeno" id="gaugeNo">–</div>
+      <div class="gaugelabels"><span>Worse than nothing</span><span>Nothing</span><span>Best possible</span></div>
+    </section>
+  </aside>
+</div>
+    </div>
+  </section>
+
+  <section class="chapter wrap" id="findings" aria-labelledby="find-h">
+    <h2 id="find-h" class="rise">What the research found</h2>
+    <p class="lead rise">Everything else was held fixed: the agents, how hard they search, the world they share. Only the rule changed.</p>
+
+    <article class="finding rise">
+      <div>
+        <h3>A price beats a conscience</h3>
+        <p>In a simulated interbank payment network, selfish banks left the system 29% costlier than a planner would. A conscience closed about half of that gap. A plain charge on delay did better than every rule.</p>
+      </div>
+      <figure class="chart" id="chartPay" data-title="Payment network: system cost under each rule"></figure>
+    </article>
+
+    <article class="finding rise">
+      <div>
+        <h3>Charge what you can see, and they hide it</h3>
+        <p>In a shared codebase, a charge on visible coupling taught the agents to conceal it, and costs rose by more than half. A tax on the damage itself, wherever it lands, could not be dodged that way.</p>
+      </div>
+      <figure class="chart" id="chartHide" data-title="Shared codebase: system cost under each rule"></figure>
+    </article>
+
+    <article class="finding rise">
+      <div>
+        <h3>The conscience fails when agents are unequal</h3>
+        <p>When one module takes most of the incidents, "what if everyone did this?" measures what an agent would suffer, not what it causes. The exposed agent freezes and the sheltered ones run wild. The damage tax holds.</p>
+      </div>
+      <figure class="chart" id="chartUnequal" data-title="Share of the damage fixed by each rule as exposure becomes unequal"></figure>
+    </article>
+
+    <article class="finding rise">
+      <div>
+        <h3>It holds whatever you call "the same change"</h3>
+        <p>A conscience needs a scale on which to compare changes. On four different scales its result moved a lot, but none of them beat the damage tax.</p>
+      </div>
+      <figure class="chart" id="chartUnits" data-title="Share of the damage fixed by the conscience on four scales, against the damage tax"></figure>
+    </article>
+  </section>
+
+  <section class="honest" id="honest" aria-labelledby="honest-h">
+    <div class="wrap">
+      <h2 id="honest-h" class="rise">How it was kept honest</h2>
+      <p class="lead rise">Every study was written down and committed before it ran, including the rule that would decide whether the idea survived. It did not.</p>
+      <div class="nums">
+        <div class="rise"><b>5</b><span>studies, each pre-registered</span></div>
+        <div class="rise"><b>4,190</b><span>runs on scenarios the agents never trained on</span></div>
+        <div class="rise"><b>7 of 29</b><span>predictions failed, reported as failed</span></div>
+        <div class="rise"><b>82</b><span>tests, and a browser engine checked against them</span></div>
+      </div>
+      <ol class="timeline" aria-label="Pre-registrations, each committed before its runs">
+        <li class="rise"><b>Studies 1 to 6</b><small>Gates in a payment network</small><a href="https://github.com/vidit-16/kant-fix-it/commit/4d6ebe9">Frozen in 4d6ebe9</a></li>
+        <li class="rise"><b>Study 8</b><small>Gates against a price</small><a href="https://github.com/vidit-16/kant-fix-it/commit/9729748">Frozen in 9729748</a></li>
+        <li class="rise"><b>Study 9</b><small>A codebase with hidden harm</small><a href="https://github.com/vidit-16/kant-fix-it/commit/0b9a282">Frozen in 0b9a282</a></li>
+        <li class="rise"><b>Study 10</b><small>Unequal exposure</small><a href="https://github.com/vidit-16/kant-fix-it/commit/f580a13">Frozen in f580a13</a></li>
+        <li class="rise"><b>Study 11</b><small>Units of "the same change"</small><a href="https://github.com/vidit-16/kant-fix-it/commit/863f0b4">Frozen in 863f0b4</a></li>
+      </ol>
+      <div class="failed">
+        <h3 class="rise">Predictions that failed</h3>
+        <ul class="rise">
+          <li><b>Failed</b>Banks of different sizes would weaken the conscience. They did not.</li>
+          <li><b>Failed</b>One selfish bank among conscientious ones would profit. It did not.</li>
+          <li><b>Failed</b>Richer policies would hurt rules more than prices. No clear difference.</li>
+          <li><b>Failed</b>A coarse price would be gamed by bunching. It failed another way.</li>
+          <li><b>Failed</b>The codebase study was expected to kill the gate idea outright. The gate edged ahead by a margin too small to matter.</li>
+          <li><b>Failed</b>The gate's edge would grow with more agents. It did not.</li>
+          <li><b>In part</b>A price on visible coupling would match the gate when hiding is pointless. True for six agents, not twelve.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="end wrap">
+  <div class="name">Kant fix it.<br><span>A price can.</span></div>
+  <div class="links">
+    <a href="https://github.com/vidit-16/kant-fix-it">Code on GitHub</a>
+    <a href="https://github.com/vidit-16/kant-fix-it/blob/main/docs/REPORT.md">Full report</a>
+    <a href="https://github.com/vidit-16/kant-fix-it/blob/main/docs/LITERATURE_REVIEW.md">Literature review</a>
+    <a href="https://github.com/vidit-16">Vidit Choudhary</a>
+  </div>
+  <p class="small">Simulations only: no real payment system, codebase, data or money is involved. The game runs a JavaScript port of the research model, tested against the original code.</p>
+</footer>
+
+<script type="module" src="game/game.js"></script>
+<script type="module" src="site.js"></script>
+</body>
+</html>

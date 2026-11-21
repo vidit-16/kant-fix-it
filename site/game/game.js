@@ -5,7 +5,7 @@
 import { config, simulate, exposure } from "../engine/model.js";
 import { makeBatch } from "../engine/scenarios.js";
 
-const COL = { ink: "#1d1c17", paper: "#f7f5f0", card: "#ecebe7", blue: "#2456d6", red: "#d8361f",
+const COL = { ink: "#1d1c17", paper: "#f8f8f7", card: "#e9e9e6", blue: "#2456d6", red: "#d8361f",
   tide: "#2456d6", shadow: "rgba(29,28,23,0.10)" };
 const DIAL = { visible: { lo: 0.05, hi: 0.8, def: 0.4 }, damage: { lo: 0.25, hi: 2, def: 1 } };
 const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
