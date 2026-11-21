@@ -24,8 +24,13 @@ img { display: block; max-width: 100%; height: auto; }
 .toc ul { list-style: none; padding: 0; }
 .toc ul ul { padding-left: 12px; margin: 4px 0 6px; }
 .toc li { margin: 5px 0; }
-.toc a { color: var(--muted); text-decoration: none; }
+.toc { padding-left: 12px; scrollbar-width: none; }
+.toc::-webkit-scrollbar { display: none; }
+.toc a { position: relative; display: inline-block; color: var(--muted); text-decoration: none; transition: color .2s; }
 .toc a:hover { color: var(--blue); }
+/* the section being read (set by toc.js) */
+.toc a[aria-current="true"] { color: var(--blue); font-weight: 700; }
+.toc a[aria-current="true"]::before { content: ""; position: absolute; left: -12px; top: 2px; bottom: 2px; width: 3px; border-radius: 2px; background: var(--blue); }
 
 .report { max-width: 72ch; padding-bottom: 40px; overflow-wrap: break-word; }
 .report p, .report li { overflow-wrap: anywhere; }

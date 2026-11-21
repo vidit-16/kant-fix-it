@@ -85,6 +85,7 @@ page = f"""<!doctype html>
   <span>&copy; 2026 <a href="https://www.linkedin.com/in/vidit-choudhary">Vidit Choudhary</a> &middot; MIT licence</span>
 </footer>
 <script>document.getElementById("print").addEventListener("click", () => print());</script>
+<script src="toc.js"></script>
 </body>
 </html>
 """
