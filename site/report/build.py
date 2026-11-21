@@ -5,23 +5,17 @@ docs/REPORT.md stays the only copy of the text; run this after editing it:
     python site/report/build.py
 """
 import re
-import shutil
 from pathlib import Path
 
 import markdown
+
+from charts import FIGURES
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
 REPO = "https://github.com/vidit-16/kant-fix-it"
 SRC = ROOT / "docs" / "REPORT.md"
 
-ALT = {
-    "gates": "Payment network: system cost under each acceptance gate, the delay surcharge and the planner.",
-    "e8": "Payment network with rule-level policies: system cost under each gate and price.",
-    "e9": "Shared codebase: system cost and concealed coupling under each gate and charge.",
-    "e10": "Unequal exposure: system cost of each arm as exposure skew grows.",
-    "e11": "Units of universalization: the Kantian gate on four scales against the ambient tax.",
-}
 
 text = SRC.read_text(encoding="utf-8")
 md = markdown.Markdown(extensions=["tables", "fenced_code", "toc", "sane_lists"],
@@ -37,16 +31,9 @@ toc = re.sub(r'^\s*<div class="toc">\s*|\s*</div>\s*$', "", toc)
 toc = re.sub(r'<li><a href="#[^"]*">' + re.escape(title) + r'</a>\s*<ul>(.*)</ul>\s*</li>', r"\1", toc, flags=re.S)
 
 
-# figures: copy next to the page, give them real descriptions
-fig_dir = HERE / "figures"
-fig_dir.mkdir(exist_ok=True)
-
-
+# figures: redrawn in the site's style from the stored result files (charts.py)
 def figure(mo):
-    alt, src = mo.group(1), mo.group(2)
-    name = Path(src).name
-    shutil.copyfile((SRC.parent / src).resolve(), fig_dir / name)
-    return f'<figure><img src="figures/{name}" alt="{ALT.get(alt, alt)}" loading="lazy"></figure>'
+    return FIGURES[mo.group(1)]()
 
 
 body = re.sub(r'<p><img alt="([^"]*)" src="([^"]+)" ?/?></p>', figure, body)
