@@ -25,7 +25,7 @@ h1 { font: 800 clamp(2.4rem, 1.4rem + 3.6vw, 4.6rem)/0.95 var(--display); letter
 /* the board */
 .stage { position: relative; background: var(--paper); border-radius: 22px; overflow: hidden; }
 #board { display: block; width: 100%; height: clamp(420px, calc(100svh - 190px), 780px); }
-#start { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(247,245,240,.72); transition: opacity .5s, visibility .5s; }
+#start { position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; background: var(--paper); transition: opacity .5s, visibility .5s; }
 #start.gone { opacity: 0; visibility: hidden; }
 .stage.xray-on, #board.xray { background: #fbf6f4; }
 #say { position: absolute; left: 50%; bottom: 16px; transform: translate(-50%, 14px); opacity: 0; max-width: min(56%, 520px); z-index: 3; font-size: 15px;
