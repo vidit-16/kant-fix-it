@@ -135,6 +135,7 @@ $("#play").addEventListener("click", () => {
   $("#play").textContent = S.running ? "Pause" : "Run";
   $("#play").setAttribute("aria-pressed", S.running);
   if (S.running && !S.to && !S.pending) freshAgents();
+  $("#start").classList.add("gone");
 });
 $("#reset").addEventListener("click", () => { freshAgents(); say("Six new agents. Honest, for now."); });
 $("#xray").addEventListener("click", () => {
@@ -211,8 +212,10 @@ function fit(c) {
 const ease = (x) => (x < 0.5 ? 4 * x * x * x : 1 - (-2 * x + 2) ** 3 / 2);
 const lerpProfile = (a, b, f) => a.map((p, i) => p.map((x, k) => x + (b[i][k] - x) * f));
 
-function layout(n, w, h) {
-  const R = Math.min(w * 0.38, h * 0.36), cx = w / 2, cy = h * 0.47;
+// the ring leaves room for the largest module, its ripple and its label
+function layout(n, w, h, size) {
+  const pad = size * 1.4 + 22;
+  const R = Math.max(40, Math.min(w / 2 - pad, h / 2 - pad)), cx = w / 2, cy = h / 2;
   return Array.from({ length: n }, (_, i) => {
     const a = -Math.PI / 2 + (i * 2 * Math.PI) / n;
     return [cx + R * Math.cos(a), cy + R * Math.sin(a)];
@@ -249,7 +252,7 @@ function wiresOf(P, pos, w, h, tension, dt) {
       const a = pos[i], b = pos[j];
       const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
       const bend = 0.12 + 0.13 * (k % 3);
-      const rest = [w / 2 + (mx - w / 2) * bend + (k - 2) * 6, h * 0.47 + (my - h * 0.47) * bend + (i - 2.5) * 4];
+      const rest = [w / 2 + (mx - w / 2) * bend + (k - 2) * 6, h / 2 + (my - h / 2) * bend + (i - 2.5) * 4];
       const c = rope(`${i}-${k}`, rest, tension, dt);
       out.push({ i, j, a, b, c: [c.x, c.y], present, hid });
     }
@@ -320,10 +323,10 @@ function draw(t, dt, genMs) {
   ctx.clearRect(0, 0, w, h);
   const P = S.to ? lerpProfile(S.from || S.to, S.to, ease(Math.min(1, (t - S.tStart) / genMs)))
     : Array(6).fill([0.4, 0, 0.1]);
-  const pos = layout(6, w, h);
+  const size = Math.min(w, h) * 0.12;
+  const pos = layout(6, w, h, size);
   const debt = S.m ? S.m.debt : 0.3;
   const tension = Math.min(1, debt / 4);
-  const size = Math.min(w, h) * 0.135;
 
   // debt tide
   // shared debt as a tide: about a quarter of the board at the best outcome,
@@ -397,7 +400,7 @@ function draw(t, dt, genMs) {
     S.shake[i] *= Math.exp(-dt * 9);
     const sh = S.shake[i] * 6;
     const breathe = REDUCED ? 1 : 1 + 0.025 * Math.sin(t / 650 + i * 1.3);
-    const sz = size * breathe * (S.skew > 0 ? 0.85 + 0.35 * Math.sqrt(expo[i] / 6 * 2) : 1);
+    const sz = size * breathe * (S.skew > 0 ? 0.88 + 0.3 * Math.min(1, Math.sqrt(expo[i] / 6 * 2)) : 1);
     const x = pos[i][0] + (Math.random() - 0.5) * sh, y = pos[i][1] + (Math.random() - 0.5) * sh;
     // shadow, body, heat, armour (testing)
     ctx.fillStyle = COL.shadow;

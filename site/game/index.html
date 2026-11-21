@@ -15,15 +15,20 @@
 }
 * { box-sizing: border-box; margin: 0; }
 body { background: var(--bg); color: var(--ink); font: 500 17px/1.5 var(--text); padding: 22px clamp(16px, 3vw, 40px) 48px; }
-header { display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; }
+header { display: grid; gap: 8px; }
 h1 { font: 700 clamp(2.4rem, 1.4rem + 3.6vw, 4.6rem)/0.95 var(--display); letter-spacing: -0.03em; }
-.lead { max-width: 52ch; font-size: 1.06rem; color: var(--muted); }
+.lead { font-size: clamp(1.1rem, 1rem + .4vw, 1.35rem); max-width: 48ch; }
 
 .layout { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 22px; margin-top: 22px; align-items: start; }
 
 /* the board */
 .stage { position: relative; background: var(--paper); border-radius: 22px; overflow: hidden; }
-#board { display: block; width: 100%; aspect-ratio: 1.3; }
+#board { display: block; width: 100%; height: clamp(420px, calc(100svh - 190px), 780px); }
+#start { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(247,245,240,.72); transition: opacity .5s, visibility .5s; }
+#start.gone { opacity: 0; visibility: hidden; }
+#start div { background: var(--paper); border-radius: 22px; padding: 26px 28px; max-width: 420px; text-align: center; box-shadow: 0 18px 50px rgba(29,28,23,.12); }
+#start p { margin: 8px 0 18px; color: var(--muted); }
+#start b { font: 700 1.6rem var(--display); }
 .stage.xray-on, #board.xray { background: #fbf6f4; }
 #say { position: absolute; left: 50%; top: 18px; transform: translate(-50%, -14px); opacity: 0; max-width: min(90%, 560px);
   background: var(--ink); color: var(--paper); padding: 10px 18px; border-radius: 999px; font-weight: 500; text-align: center;
@@ -84,7 +89,7 @@ button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
 
 @media (max-width: 900px) {
   .layout { grid-template-columns: 1fr; }
-  #board { aspect-ratio: 1; }
+  #board { height: min(110vw, 560px); }
   .lines { position: static; width: auto; padding: 0 14px 14px; }
   .genbadge { position: static; padding: 4px 16px 0; }
 }
@@ -94,13 +99,14 @@ button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
 <body>
 <header>
   <h1>Try to stop them</h1>
-  <p class="lead">Six AI agents share a codebase. Each keeps any change that helps itself, and every shortcut hurts the others. Pick a rule, press run, change it whenever you like. These are the real learning agents from the research, live in your browser.</p>
+  <p class="lead">Six AI agents, one codebase. Every shortcut helps the agent that takes it and hurts the rest.</p>
 </header>
 
 <div class="layout">
   <div class="stage">
     <canvas id="board" aria-label="Six modules joined by coupling wires. Red sparks are incidents; the blue tide is shared debt."></canvas>
     <p id="say" role="status" aria-live="polite"></p>
+    <div id="start"><div><b>These are real learning agents</b><p>The same agents as in the research, running in your browser. Pick a rule on the right, press Run, and change the rule whenever you like.</p><button class="big" type="button" onclick="document.querySelector('#play').click()" style="background:var(--blue);color:#fff;padding:14px 28px">Run</button></div></div>
     <p class="genbadge">Generation <b id="genNo">0</b></p>
     <div class="lines">
       <div>System cost<canvas id="costLine"></canvas></div>

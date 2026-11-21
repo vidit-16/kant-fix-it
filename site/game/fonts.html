@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Font options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Jost:wght@400;500;600&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,800&family=Archivo:wdth,wght@100..125,400;100..125,500;100..125,600;100..125,800&display=swap" rel="stylesheet">
+<style>
+:root { --bg: #ecebe7; --paper: #f7f5f0; --ink: #1d1c17; --muted: #55534b; --blue: #2456d6; --red: #d8361f; }
+* { box-sizing: border-box; margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 500 16px/1.5 system-ui; padding: 28px clamp(16px, 3vw, 40px) 60px; }
+.intro { font: 600 1.1rem system-ui; margin-bottom: 22px; max-width: 70ch; }
+.opts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.opt { background: var(--paper); border-radius: 22px; padding: 26px 24px 28px; display: grid; gap: 18px; align-content: start; }
+.tag { font: 600 14px system-ui; color: var(--muted); }
+h1 { line-height: .95; letter-spacing: -0.03em; font-size: clamp(2.3rem, 1.4rem + 2.2vw, 3.6rem); }
+.lead { font-size: 1.15rem; line-height: 1.4; }
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cards div { background: var(--bg); border-radius: 16px; padding: 14px; font-size: 15px; line-height: 1.25; }
+.cards div span { display: block; font-size: 13px; color: var(--muted); margin-top: 6px; font-weight: 400; }
+.cards .on { background: var(--ink); color: var(--paper); }
+.cards .on span { color: #c9c6bd; }
+.score { display: flex; align-items: baseline; gap: 12px; }
+.score b { font-size: 3rem; line-height: 1; }
+.pill { background: var(--ink); color: var(--paper); border-radius: 999px; padding: 10px 18px; justify-self: start; font-size: 15px; }
+.btn { background: var(--blue); color: #fff; border-radius: 999px; padding: 14px 26px; justify-self: start; font-size: 17px; }
+.body { font-size: 16px; color: var(--ink); max-width: 46ch; }
+
+.a { font-family: "Jost", sans-serif; }
+.a h1, .a .score b { font-family: "Fraunces", serif; font-weight: 700; }
+.a .cards div, .a .btn, .a .pill { font-weight: 600; }
+
+.b { font-family: "Bricolage Grotesque", sans-serif; }
+.b h1, .b .score b { font-weight: 800; letter-spacing: -0.04em; }
+.b .cards div, .b .btn, .b .pill { font-weight: 600; }
+
+.c { font-family: "Archivo", sans-serif; font-stretch: 100%; }
+.c h1, .c .score b { font-weight: 800; font-stretch: 125%; letter-spacing: -0.02em; }
+.c .cards div, .c .btn, .c .pill { font-weight: 600; }
+.c .lead { font-stretch: 105%; }
+
+@media (max-width: 980px) { .opts { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<p class="intro">Three type options for the site, each showing the same real pieces of the game. Pick the one that feels most like the project.</p>
+<div class="opts">
+  <section class="opt a">
+    <p class="tag">A · Fraunces with Jost (current)</p>
+    <h1>Try to stop them</h1>
+    <p class="lead">Six AI agents, one codebase. Every shortcut helps the agent that takes it and hurts the rest.</p>
+    <div class="cards"><div class="on">Tax visible coupling<span>Charge for the shortcuts you can see.</span></div><div>Tax the damage<span>Charge for harm landing on others.</span></div></div>
+    <div class="score"><b>87 / 100</b><span>of the way to the best possible</span></div>
+    <p class="pill">Tax what you can see, and they stop letting you see it.</p>
+    <span class="btn">Run</span>
+    <p class="body">Each generation, every agent tries four small changes to its own policy and keeps the best one if its rule says yes.</p>
+  </section>
+  <section class="opt b">
+    <p class="tag">B · Bricolage Grotesque</p>
+    <h1>Try to stop them</h1>
+    <p class="lead">Six AI agents, one codebase. Every shortcut helps the agent that takes it and hurts the rest.</p>
+    <div class="cards"><div class="on">Tax visible coupling<span>Charge for the shortcuts you can see.</span></div><div>Tax the damage<span>Charge for harm landing on others.</span></div></div>
+    <div class="score"><b>87 / 100</b><span>of the way to the best possible</span></div>
+    <p class="pill">Tax what you can see, and they stop letting you see it.</p>
+    <span class="btn">Run</span>
+    <p class="body">Each generation, every agent tries four small changes to its own policy and keeps the best one if its rule says yes.</p>
+  </section>
+  <section class="opt c">
+    <p class="tag">C · Archivo</p>
+    <h1>Try to stop them</h1>
+    <p class="lead">Six AI agents, one codebase. Every shortcut helps the agent that takes it and hurts the rest.</p>
+    <div class="cards"><div class="on">Tax visible coupling<span>Charge for the shortcuts you can see.</span></div><div>Tax the damage<span>Charge for harm landing on others.</span></div></div>
+    <div class="score"><b>87 / 100</b><span>of the way to the best possible</span></div>
+    <p class="pill">Tax what you can see, and they stop letting you see it.</p>
+    <span class="btn">Run</span>
+    <p class="body">Each generation, every agent tries four small changes to its own policy and keeps the best one if its rule says yes.</p>
+  </section>
+</div>
+</body>
+</html>
