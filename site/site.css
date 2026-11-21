@@ -57,7 +57,6 @@ section.chapter { padding-top: clamp(110px, 13vw, 190px); }
 .ctlbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-bottom: 20px; }
 .cmp-next { border: 0; background: none; padding: 8px 4px; font: 700 14px var(--text); color: var(--blue); cursor: pointer; transition: opacity .4s; }
 .cmp-next:hover { text-decoration: underline; text-underline-offset: 3px; }
-.cmp-next::before { content: "← "; }
 .ctlbar.used .cmp-next { opacity: 0; pointer-events: none; }
 .ctl { display: inline-flex; flex-wrap: wrap; gap: 4px; background: var(--bg); padding: 5px; border-radius: 22px; outline: 2px solid transparent; outline-offset: 2px; }
 @media (prefers-reduced-motion: no-preference) {
@@ -149,7 +148,6 @@ footer.end .small { margin-top: 10px; color: var(--muted); font-size: 14px; max-
   .timeline { grid-template-columns: 1fr; }
 }
 
-@media (max-width: 560px) { .cmp-next::before { content: none; } }
 
 /* phones: the bar label sits above its bar, so the bar gets the full width */
 @media (max-width: 560px) {

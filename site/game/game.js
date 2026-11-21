@@ -331,7 +331,8 @@ function draw(t, dt, genMs) {
   // (it also shrinks if it must, so the ring and its labels fit in the space left)
   const { R, cy } = ring(w, h, size);
   S.cy = cy;
-  const extra = Math.max(size * 0.75, S.skew > 0 ? 62 : 0) + 14;
+  // room beside each module: its label, and when focused its imagined versions
+  const extra = Math.max(size * 0.75, 62, S.focus !== null ? size * 1.65 : 0) + 14;
   let shiftTo = 0, scaleTo = 1;
   if (S.focus !== null && S.thinkSide && !PHONE.matches) {
     const panelW = 352, avail = w - panelW - 8;
@@ -358,7 +359,7 @@ function draw(t, dt, genMs) {
   for (let x = 0; x <= w; x += 8) ctx.lineTo(x, h - tideH + Math.sin(x / 38 + t / 700) * 6 + Math.sin(x / 17 - t / 430) * 3);
   ctx.lineTo(w, h); ctx.fill(); ctx.globalAlpha = 1;
   ctx.fillStyle = COL.blue; ctx.font = "600 13px \"Bricolage Grotesque\", system-ui"; ctx.textAlign = "left";
-  ctx.fillText("Shared debt", 12, h - tideH - 10);
+  if (!(S.focus !== null && S.thinkSide)) ctx.fillText("Shared debt", 12, h - tideH - 10);
 
   const wires = wiresOf(P, pos, w, h, tension, dt);
   // hidden coupling: under the paper. A faint shadow normally; with X-ray, red.
@@ -454,7 +455,7 @@ function draw(t, dt, genMs) {
       ctx.strokeStyle = COL.ink; ctx.lineWidth = 2; ctx.setLineDash([4, 5]);
       ctx.beginPath(); ctx.roundRect(x - sz / 2 - 9, y - sz / 2 - 9, sz + 18, sz + 18, sz * 0.3); ctx.stroke(); ctx.setLineDash([]);
     }
-    if (S.skew > 0) {
+    {
       // the label sits outside the ring, pushed out until its box clears the module
       const fs = w < 500 ? 11 : 13;
       ctx.fillStyle = COL.ink; ctx.font = `600 ${fs}px "Bricolage Grotesque", system-ui`; ctx.textAlign = "center";
@@ -540,8 +541,8 @@ function ghostSpot(pos, i, k, size, w, h) {
   const [x, y] = pos[i];
   const out = Math.atan2(y - S.cy, x - w / 2 - (S.shift ?? 0));
   const a = out + (k - 1.5) * 0.62;
-  const r = size * 1.12;
-  return [x + Math.cos(a) * r, y + Math.sin(a) * r];
+  const r = size * 1.12, m = size * 0.3 + 6;
+  return [Math.max(m, Math.min(w - m, x + Math.cos(a) * r)), Math.max(m, Math.min(h - m, y + Math.sin(a) * r))];
 }
 
 function drawThinking(ctx, t, f, pos, size, w, h) {
@@ -615,7 +616,7 @@ function decisionDots(ctx, f, d, pos, i, size, w, h) {
   const [x, y] = pos[i];
   const a = Math.atan2(y - S.cy, x - w / 2 - (S.shift ?? 0));
   const ux = Math.cos(a), uy = Math.sin(a);
-  const r = size * 0.75 + (S.skew > 0 ? 32 : 14); // clear of the module and its label
+  const r = size * 0.75 + 32; // clear of the module and its label
   const cx = x + ux * r, cy = y + uy * r;
   const n = d.candidates.length, gap = 11;
   d.candidates.forEach((_, k) => {

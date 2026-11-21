@@ -17,10 +17,10 @@
 
 /* the board */
 .stage { position: relative; background: var(--paper); border-radius: 22px; overflow: hidden; }
-/* The board grows to the height of the control column beside it, but never
-   taller than the screen; a docked thinking panel takes its room from the board. */
+/* The board grows to the height of the control column beside it; a docked
+   thinking panel takes its room from the board. */
 .stage { display: flex; flex-direction: column; }
-#board { display: block; width: 100%; flex: 1 1 0; height: 0; min-height: clamp(460px, calc(100svh - 240px), 700px); max-height: calc(100svh - 24px); }
+#board { display: block; width: 100%; flex: 1 1 0; height: 0; min-height: clamp(460px, calc(100svh - 240px), 700px); }
 #start { position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; background: var(--paper); transition: opacity .5s, visibility .5s; }
 #start.gone { opacity: 0; visibility: hidden; }
 .stage.xray-on, #board.xray { background: #fbf6f4; }
@@ -171,3 +171,21 @@ button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
   .hint { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+
+/* short laptop screens: a compact control column, so the board beside it stays near screen height */
+@media (min-width: 901px) and (max-height: 820px) {
+  .panel { gap: 12px; }
+  .layout .block { padding: 14px 16px; }
+  .block h2 { margin-bottom: 8px; }
+  .rules { gap: 8px; }
+  .rules button { padding: 10px 12px; min-height: 0; }
+  .rules button span { font-size: 12px; margin-top: 3px; }
+  .dialrow { grid-template-columns: 88px 1fr; gap: 12px; }
+  #knob { width: 88px; height: 88px; }
+  #knob::before { inset: 10px; }
+  #knob::after { top: 16px; height: 20px; transform-origin: 3px 28px; }
+  .dialval { font-size: 1.8rem; }
+  #gauge { height: 92px; }
+  .gaugeno { font-size: 1.8rem; }
+  .lines { margin-top: 10px; padding-top: 10px; }
+}
