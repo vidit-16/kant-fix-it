@@ -11,7 +11,8 @@
    Row spacing sits on the rows themselves so an empty thinking row adds no gap. */
 .layout { display: grid; grid-template-columns: minmax(0, 1fr) 360px; grid-template-areas: "stage panel" "think think" "under under"; gap: 0 22px; margin-top: 22px; align-items: stretch; }
 .layout > .thinkrow { grid-area: think; }
-.layout > .thinkrow:has(#think:not([hidden])) { margin-top: 18px; }
+/* open: a white card the width of the layout, the dark panel centred on it */
+.layout > .thinkrow:has(#think:not([hidden])) { margin-top: 18px; background: var(--paper); border-radius: 22px; padding: 18px; }
 .layout > .stage { grid-area: stage; }
 .layout > .panel { grid-area: panel; display: flex; flex-direction: column; }
 /* the gauge keeps its natural height: if the board's card grows (a docked thinking
