@@ -299,6 +299,7 @@ function frame() {
     });
     narrate();
     levelTick();
+    if (S.lvlGen === 4 && innerWidth < 900) sayOnce("tap", "Tap an agent to see what it is thinking.");
   }
   if (S.running && !S.pending && S.queue.length < 4 && S.lastQueued) request(S.lastQueued);
 
@@ -334,7 +335,7 @@ function draw(t, dt, genMs) {
   for (let x = 0; x <= w; x += 8) ctx.lineTo(x, h - tideH + Math.sin(x / 38 + t / 700) * 6 + Math.sin(x / 17 - t / 430) * 3);
   ctx.lineTo(w, h); ctx.fill(); ctx.globalAlpha = 1;
   ctx.fillStyle = COL.blue; ctx.font = "600 13px \"Bricolage Grotesque\", system-ui"; ctx.textAlign = "left";
-  ctx.fillText("Shared debt", 18, h - tideH - 12);
+  ctx.fillText("Shared debt", 12, h - tideH - 10);
 
   const wires = wiresOf(P, pos, w, h, tension, dt);
   // hidden coupling: under the paper. A faint shadow normally; with X-ray, red.
@@ -431,8 +432,8 @@ function draw(t, dt, genMs) {
       ctx.beginPath(); ctx.roundRect(x - sz / 2 - 9, y - sz / 2 - 9, sz + 18, sz + 18, sz * 0.3); ctx.stroke(); ctx.setLineDash([]);
     }
     if (S.skew > 0) {
-      ctx.fillStyle = COL.ink; ctx.font = "600 13px \"Bricolage Grotesque\", system-ui"; ctx.textAlign = "center";
-      ctx.fillText(`${Math.round(expo[i] / 6 * 100)}% of incidents`, x, y - sz / 2 - 10);
+      ctx.fillStyle = COL.ink; ctx.font = `600 ${w < 500 ? 11 : 13}px "Bricolage Grotesque", system-ui`; ctx.textAlign = "center";
+      ctx.fillText(w < 500 ? `${Math.round(expo[i] / 6 * 100)}%` : `${Math.round(expo[i] / 6 * 100)}% of incidents`, x, y - sz / 2 - 8);
     }
   });
 }
@@ -516,6 +517,7 @@ function drawThinking(ctx, t, f, pos, size, w, h) {
   dec.forEach((d, i) => {
     if (!d) return;
     if (S.focus !== null && S.focus !== i) return;
+    if (S.focus === null && w < 500) return; // small boards: only the agent you tap
     d.candidates.forEach((c, k) => {
       const appear = 0.05 + k * 0.08;
       if (f < appear) return;
@@ -566,7 +568,8 @@ function drawThinking(ctx, t, f, pos, size, w, h) {
       });
       ctx.setLineDash([]); ctx.globalAlpha = fade;
       ctx.fillStyle = COL.blue; ctx.font = "600 15px \"Bricolage Grotesque\", system-ui"; ctx.textAlign = "center";
-      ctx.fillText("Imagining: what if everyone made this change?", w / 2, 28);
+      if (w < 500) { ctx.font = "600 12px \"Bricolage Grotesque\", system-ui"; ctx.fillText("Imagining: what if everyone did this?", w / 2, h - 34); }
+      else ctx.fillText("Imagining: what if everyone made this change?", w / 2, 28);
       ctx.globalAlpha = 1;
     }
   }
@@ -591,7 +594,7 @@ function explain(i) {
     return `<li><span>${describe(before, c.policy)}</span><span>${eff}</span>${v}</li>`;
   }).join("");
   box.innerHTML = `<h3>Agent ${i + 1} is thinking</h3><p>${rule}</p><ul>${rows}</ul>
-    <p class="tail">${d.chosen < 0 ? "Nothing helped, so it stays as it is." : "It keeps the change that helps it most."} Click it again to let go.</p>`;
+    <p class="tail">${d.chosen < 0 ? "Nothing helped, so it stays as it is." : "It keeps the change that helps it most."} Tap it again to let go.</p>`;
   box.hidden = false;
 }
 
