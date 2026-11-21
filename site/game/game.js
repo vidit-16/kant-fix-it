@@ -522,11 +522,23 @@ function drawGauge(dt) {
   S.gauge += S.gaugeV * dt;
   // the pivot sits 14px above the bottom edge, so even a flat needle (and its
   // 7px hub) stays clear of the number underneath
-  const cx = w / 2, cy = h - 14, R = Math.min(w / 2 - 12, cy - 10);
+  // room above the arc for the "Nothing" label at the zero mark
+  const cx = w / 2, cy = h - 14, R = Math.min(w / 2 - 34, cy - 30);
   S.gaugeHub = cy + 7; // lowest pixel the needle can reach, for the layout check
   const ang = (g) => Math.PI + ((g + 1) / 2.05) * Math.PI;
   const arc = (a0, a1, col) => { ctx.strokeStyle = col; ctx.lineWidth = 14; ctx.beginPath(); ctx.arc(cx, cy, R, ang(a0), ang(a1)); ctx.stroke(); };
   arc(-1, 0, "rgba(216,54,31,0.35)"); arc(0, 1.05, "rgba(36,86,214,0.35)");
+  // a tick at zero, where the scale crosses from worse to better
+  const a0 = ang(0);
+  ctx.strokeStyle = COL.ink; ctx.lineWidth = 2; ctx.lineCap = "butt";
+  ctx.beginPath(); ctx.moveTo(cx + Math.cos(a0) * (R - 10), cy + Math.sin(a0) * (R - 10)); ctx.lineTo(cx + Math.cos(a0) * (R + 10), cy + Math.sin(a0) * (R + 10)); ctx.stroke();
+  // labels on their own points of the arc: ends just below, zero just above
+  c.parentElement.querySelectorAll(".gl").forEach((el) => {
+    const v = Number(el.dataset.at), t = ang(v), x = cx + Math.cos(t) * R, y = cy + Math.sin(t) * R;
+    el.style.left = `${x}px`;
+    el.style.top = v === 0 ? `${y - 14}px` : `${cy + 12}px`;
+  });
+  S.gaugeGeom = { cx, cy, R, ang };
   const a = ang(S.gauge);
   ctx.strokeStyle = COL.ink; ctx.lineWidth = 4; ctx.lineCap = "round";
   ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a) * (R - 6), cy + Math.sin(a) * (R - 6)); ctx.stroke();
