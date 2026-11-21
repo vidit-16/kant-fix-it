@@ -208,6 +208,32 @@ function ring(w, h, size) {
   const pad = size * 1.4 + 22, cy = (h - BAND) / 2;
   return { R: Math.max(40, Math.min(w / 2 - pad, cy - pad)), cy };
 }
+// The thinking panel beside the board takes PANEL_W (its width and margins).
+// sideFit gives how far the ring must scale for itself, its labels and the
+// focused agent's imagined versions to fit in what is left; below MIN_RING the
+// panel docks under the board instead.
+const PANEL_W = 352, MIN_RING = 0.85;
+function sideFit(w, R, size) {
+  const reach = Math.max(size * 0.75, 62, size * 1.65) + 14;
+  return Math.min(1, ((w - PANEL_W) / 2 - reach) / R);
+}
+function dockBelow() {
+  S.thinkSide = 0;
+  $("#think").classList.remove("right");
+  $("#think").classList.add("below");
+  holdBoard(true);
+}
+// a docked panel adds to the card's height: the board keeps its size, so the ring
+// does not shrink the moment an agent is opened
+function holdBoard(on) {
+  board.style.minHeight = on ? `${board.offsetHeight}px` : "";
+}
+function closeThink() {
+  S.focus = null;
+  $("#think").hidden = true;
+  $("#think").classList.remove("below", "right");
+  holdBoard(false);
+}
 function layout(n, w, h, size, shift = 0, k = 1) {
   const g = ring(w, h, size);
   const R = g.R * k, cx = w / 2 + shift, cy = g.cy;
@@ -316,6 +342,7 @@ function frame() {
   drawSpark($("#costLine"), S.series.map((x) => x.cost), COL.ink);
   drawSpark($("#hidLine"), S.series.map((x) => x.hidden), COL.red, 0, 1);
   $("#genNo").textContent = S.gen;
+  syncBelow();
   setTimeout(frame, 16);
 }
 
@@ -327,24 +354,28 @@ function draw(t, dt, genMs) {
   const fMove = thinking ? Math.max(0, Math.min(1, (f - 0.66) / 0.3)) : f;
   const P = S.to ? lerpProfile(S.from || S.to, S.to, ease(fMove)) : Array(6).fill([0.4, 0, 0.1]);
   const size = Math.min(w, h) * 0.12;
-  // with the thinking panel open beside a wide board, the ring slides away from it
-  // (it also shrinks if it must, so the ring and its labels fit in the space left)
+  // With the thinking panel open beside a wide board, the ring slides away from it,
+  // shrinking by at most 15%. If that is not enough (say the window was resized),
+  // the panel docks under the board instead. sideFit() is the same test the click
+  // handler uses, so the two can never disagree.
   const { R, cy } = ring(w, h, size);
   S.cy = cy;
-  // room beside each module: its label, and when focused its imagined versions
-  const extra = Math.max(size * 0.75, 62, S.focus !== null ? size * 1.65 : 0) + 14;
   let shiftTo = 0, scaleTo = 1;
   if (S.focus !== null && S.thinkSide && !PHONE.matches) {
-    const panelW = 352, avail = w - panelW - 8;
-    const Rfit = Math.max(R * 0.55, Math.min(R, avail / 2 - extra));
-    scaleTo = Rfit / R;
-    shiftTo = S.thinkSide * (w / 2 - (avail / 2 + 4)); // centre of the uncovered part
+    const fit = sideFit(w, R, size);
+    if (fit < MIN_RING) dockBelow();
+    else {
+      scaleTo = fit;
+      shiftTo = S.thinkSide * (w / 2 - (w - PANEL_W) / 2); // centre of the uncovered part
+    }
   }
   const k = Math.min(1, dt * 6);
   S.shift = (S.shift ?? 0) + (shiftTo - (S.shift ?? 0)) * k;
   S.ringK = (S.ringK ?? 1) + (scaleTo - (S.ringK ?? 1)) * k;
   const pos = layout(6, w, h, size, S.shift, S.ringK);
-  S.pos = pos; S.size = size; S.w = w; S.R = R; S.extra = extra;
+  S.pos = pos; S.size = size; S.w = w; S.R = R;
+  // what was drawn where, for the layout checks (cheap: a few rectangles a frame)
+  S.drawn = { w, h, boxes: [], labels: [], ghosts: [] };
   const debt = S.m ? S.m.debt : 0.3;
   const tension = Math.min(1, debt / 4);
 
@@ -451,6 +482,7 @@ function draw(t, dt, genMs) {
     ctx.globalAlpha = 1;
     const blink = !REDUCED && ((t / 1000 + i * 0.77) % 4.2) < 0.12;
     face(ctx, x, y, sz, mood, blink);
+    S.drawn.boxes.push([pos[i][0] - sz / 2, pos[i][1] - sz / 2, sz, sz]);
     if (S.focus === i) {
       ctx.strokeStyle = COL.ink; ctx.lineWidth = 2; ctx.setLineDash([4, 5]);
       ctx.beginPath(); ctx.roundRect(x - sz / 2 - 9, y - sz / 2 - 9, sz + 18, sz + 18, sz * 0.3); ctx.stroke(); ctx.setLineDash([]);
@@ -459,7 +491,11 @@ function draw(t, dt, genMs) {
       // the label sits outside the ring, pushed out until its box clears the module
       const fs = w < 500 ? 11 : 13;
       ctx.fillStyle = COL.ink; ctx.font = `600 ${fs}px "Bricolage Grotesque", system-ui`; ctx.textAlign = "center";
-      const txt = w < 500 ? `${Math.round(expo[i] / 6 * 100)}%` : `${Math.round(expo[i] / 6 * 100)}% of incidents`;
+      // the long wording only where the ring is wide enough: a label beside the top
+      // module must clear it, so half its width has to fit in 0.87 R minus that module
+      const pc = `${Math.round(expo[i] / 6 * 100)}%`, long = `${pc} of incidents`;
+      const roomy = w >= 500 && (S.R * (S.ringK ?? 1)) * 0.866 - ctx.measureText(long).width / 2 > size * 0.75 + 6;
+      const txt = roomy ? long : pc;
       // above the module on the upper half of the ring, below it on the lower half
       const tw = ctx.measureText(txt).width, th = fs + 4;
       const half = size * 0.75; // the largest a module gets, breathing included
@@ -467,6 +503,7 @@ function draw(t, dt, genMs) {
       const lx = Math.max(tw / 2 + 6, Math.min(w - tw / 2 - 6, pos[i][0]));
       ctx.textBaseline = "middle";
       ctx.fillText(txt, lx, pos[i][1] + dir * (half + th / 2 + 4));
+      S.drawn.labels.push([lx - tw / 2, pos[i][1] + dir * (half + th / 2 + 4) - th / 2, tw, th]);
       ctx.textBaseline = "alphabetic";
     }
   });
@@ -568,6 +605,7 @@ function drawThinking(ctx, t, f, pos, size, w, h) {
       ctx.fillStyle = "#ffffff"; ctx.strokeStyle = COL.ink; ctx.lineWidth = 1.5;
       if (c.policy[1] > 0.5) ctx.setLineDash([4, 3]);
       ctx.beginPath(); ctx.roundRect(gx - g / 2, gy - g / 2, g, g, g * 0.26); ctx.fill(); ctx.stroke();
+      if (alpha > 0.3) S.drawn.ghosts.push([gx - g / 2, gy - g / 2, g, g]);
       ctx.setLineDash([]);
       face(ctx, gx, gy, g, c.policy[0] > 0.6 ? "smug" : "calm", false);
       if (f > 0.4) {
@@ -660,26 +698,30 @@ board.addEventListener("click", (e) => {
   if (!S.pos) return;
   const r = board.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
   const hit = S.pos.findIndex(([px, py]) => Math.hypot(px - x, py - y) < S.size * 0.75);
-  if (hit < 0 || hit === S.focus) { S.focus = null; $("#think").hidden = true; return; }
+  if (hit < 0 || hit === S.focus) { closeThink(); return; }
   S.focus = hit;
   // On a wide board the panel opens on the far side from the agent and the ring
   // slides the other way. Where the ring would have to shrink much to make room,
   // the panel docks under the board instead.
-  const fits = S.w - 360 >= 2 * (S.R * 0.85 + S.extra);
+  const fits = sideFit(S.w, S.R, S.size) >= MIN_RING;
   const unshifted = S.pos[hit][0] - (S.shift ?? 0);
   S.thinkSide = PHONE.matches || !fits ? 0 : unshifted >= S.w / 2 - 1 ? 1 : -1;
   $("#think").classList.toggle("right", S.thinkSide < 0);
-  $("#think").classList.toggle("below", S.thinkSide === 0 && !PHONE.matches);
+  const docked = S.thinkSide === 0 && !PHONE.matches;
+  if (docked && !$("#think").classList.contains("below")) holdBoard(true);
+  if (!docked) holdBoard(false);
+  $("#think").classList.toggle("below", docked);
   explain(hit);
   if (!S.running) $("#play").click();
 });
-addEventListener("keydown", (e) => { if (e.key === "Escape") { S.focus = null; $("#think").hidden = true; } });
-// keep the board's bottom labels above the docked panel
-const belowRO = new ResizeObserver(() => {
-  const st = $(".stage");
-  st.style.setProperty("--below", `${Math.max(0, st.clientHeight - board.offsetHeight)}px`);
-});
-belowRO.observe($("#think")); belowRO.observe($(".stage")); belowRO.observe(board);
+addEventListener("keydown", (e) => { if (e.key === "Escape") closeThink(); });
+// keep the board's bottom labels on the board, above a docked panel (checked each frame)
+const stageEl = $(".stage");
+let belowPx = -1;
+function syncBelow() {
+  const v = Math.max(0, stageEl.clientHeight - board.offsetHeight);
+  if (v !== belowPx) { belowPx = v; stageEl.style.setProperty("--below", `${v}px`); }
+}
 
 // ---- levels -------------------------------------------------------------------
 // Goals were calibrated with calibrate.mjs on the board's own scenarios: the
