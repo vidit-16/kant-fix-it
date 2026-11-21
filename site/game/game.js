@@ -394,7 +394,7 @@ function draw(t, dt, genMs) {
     if (p >= 1) return false;
     const [x, y] = pos[rp.i];
     ctx.strokeStyle = COL.red; ctx.globalAlpha = 0.7 * (1 - p); ctx.lineWidth = 3;
-    ctx.beginPath(); ctx.arc(x, y, size * (0.62 + p * 0.7), 0, 7); ctx.stroke();
+    ctx.beginPath(); ctx.arc(x, y, size * (0.6 + p * 0.45), 0, 7); ctx.stroke();
     ctx.globalAlpha = 1;
     return true;
   });
@@ -433,7 +433,11 @@ function draw(t, dt, genMs) {
     }
     if (S.skew > 0) {
       ctx.fillStyle = COL.ink; ctx.font = `600 ${w < 500 ? 11 : 13}px "Bricolage Grotesque", system-ui`; ctx.textAlign = "center";
-      ctx.fillText(w < 500 ? `${Math.round(expo[i] / 6 * 100)}%` : `${Math.round(expo[i] / 6 * 100)}% of incidents`, x, y - sz / 2 - 8);
+      const oa = Math.atan2(pos[i][1] - h / 2, pos[i][0] - w / 2);
+      ctx.textBaseline = "middle";
+      ctx.fillText(w < 500 ? `${Math.round(expo[i] / 6 * 100)}%` : `${Math.round(expo[i] / 6 * 100)}% of incidents`,
+        pos[i][0] + Math.cos(oa) * (size * 0.5 + 16), pos[i][1] + Math.sin(oa) * (size * 0.5 + 16));
+      ctx.textBaseline = "alphabetic";
     }
   });
 }
@@ -517,7 +521,7 @@ function drawThinking(ctx, t, f, pos, size, w, h) {
   dec.forEach((d, i) => {
     if (!d) return;
     if (S.focus !== null && S.focus !== i) return;
-    if (S.focus === null && w < 500) return; // small boards: only the agent you tap
+    if (S.focus !== i) { decisionDots(ctx, f, d, pos, i, size, w, h); return; }
     d.candidates.forEach((c, k) => {
       const appear = 0.05 + k * 0.08;
       if (f < appear) return;
@@ -573,6 +577,30 @@ function drawThinking(ctx, t, f, pos, size, w, h) {
       ctx.globalAlpha = 1;
     }
   }
+}
+
+
+// one dot per candidate, outside the module beyond its label: grey while
+// thinking, then blue for the kept change and dim for the rejected ones
+function decisionDots(ctx, f, d, pos, i, size, w, h) {
+  const [x, y] = pos[i];
+  const a = Math.atan2(y - h / 2, x - w / 2);
+  const ux = Math.cos(a), uy = Math.sin(a);
+  const r = size * 0.5 + (S.skew > 0 ? 38 : 20);
+  const cx = x + ux * r, cy = y + uy * r;
+  const n = d.candidates.length, gap = 11;
+  d.candidates.forEach((_, k) => {
+    const appear = 0.05 + k * 0.08;
+    if (f < appear) return;
+    const off = (k - (n - 1) / 2) * gap;
+    const px = cx - uy * off, py = cy + ux * off;
+    let col = "#b9b6ae", rad = 3.5;
+    if (f > 0.4) { col = d.chosen === k ? COL.blue : "#d9d6cf"; rad = d.chosen === k ? 5 : 3.5; }
+    ctx.globalAlpha = f > 0.85 ? Math.max(0, 1 - (f - 0.85) / 0.15) : 1;
+    ctx.fillStyle = col;
+    ctx.beginPath(); ctx.arc(px, py, rad, 0, 7); ctx.fill();
+  });
+  ctx.globalAlpha = 1;
 }
 
 // the focused agent's thinking, in words
