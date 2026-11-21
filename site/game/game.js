@@ -345,7 +345,7 @@ function draw(t, dt, genMs) {
   ctx.beginPath(); ctx.moveTo(0, h);
   for (let x = 0; x <= w; x += 8) ctx.lineTo(x, h - tideH + Math.sin(x / 38 + t / 700) * 6 + Math.sin(x / 17 - t / 430) * 3);
   ctx.lineTo(w, h); ctx.fill(); ctx.globalAlpha = 1;
-  ctx.fillStyle = COL.blue; ctx.font = "600 13px Jost, system-ui"; ctx.textAlign = "left";
+  ctx.fillStyle = COL.blue; ctx.font = "600 13px \"Bricolage Grotesque\", system-ui"; ctx.textAlign = "left";
   ctx.fillText("Shared debt", 18, h - tideH - 12);
 
   const wires = wiresOf(P, pos, w, h, tension, dt);
@@ -431,7 +431,7 @@ function draw(t, dt, genMs) {
       ctx.beginPath(); ctx.roundRect(x - sz / 2 - 9, y - sz / 2 - 9, sz + 18, sz + 18, sz * 0.3); ctx.stroke(); ctx.setLineDash([]);
     }
     if (S.skew > 0) {
-      ctx.fillStyle = COL.ink; ctx.font = "600 13px Jost, system-ui"; ctx.textAlign = "center";
+      ctx.fillStyle = COL.ink; ctx.font = "600 13px \"Bricolage Grotesque\", system-ui"; ctx.textAlign = "center";
       ctx.fillText(`${Math.round(expo[i] / 6 * 100)}% of incidents`, x, y - sz / 2 - 10);
     }
   });
@@ -567,7 +567,7 @@ function drawThinking(ctx, t, f, pos, size, w, h) {
         ctx.beginPath(); ctx.roundRect(x - z / 2, y - z / 2, z, z, z * 0.24); ctx.fill(); ctx.stroke();
       });
       ctx.setLineDash([]); ctx.globalAlpha = fade;
-      ctx.fillStyle = COL.blue; ctx.font = "600 15px Jost, system-ui"; ctx.textAlign = "center";
+      ctx.fillStyle = COL.blue; ctx.font = "600 15px \"Bricolage Grotesque\", system-ui"; ctx.textAlign = "center";
       ctx.fillText("Imagining: what if everyone made this change?", w / 2, 28);
       ctx.globalAlpha = 1;
     }
