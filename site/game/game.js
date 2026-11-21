@@ -54,6 +54,7 @@ function measure(profile, skew) {
 
 // ---- state --------------------------------------------------------------------
 
+const PHONE = matchMedia("(max-width: 900px)");
 const S = {
   rule: "visible", level: DIAL.visible.def, skew: 0, honest: true, xray: false, speed: 3,
   running: false, job: 0, gen: 0, seed: 1, queue: [], pending: false, lastQueued: null,
@@ -201,9 +202,15 @@ const ease = (x) => (x < 0.5 ? 4 * x * x * x : 1 - (-2 * x + 2) ** 3 / 2);
 const lerpProfile = (a, b, f) => a.map((p, i) => p.map((x, k) => x + (b[i][k] - x) * f));
 
 // the ring leaves room for the largest module, its ripple and its label
-function layout(n, w, h, size) {
-  const pad = size * 1.4 + 22;
-  const R = Math.max(40, Math.min(w / 2 - pad, h / 2 - pad)), cx = w / 2, cy = h / 2;
+// a strip along the bottom stays free for the generation count and the narration
+const BAND = 52;
+function ring(w, h, size) {
+  const pad = size * 1.4 + 22, cy = (h - BAND) / 2;
+  return { R: Math.max(40, Math.min(w / 2 - pad, cy - pad)), cy };
+}
+function layout(n, w, h, size, shift = 0, k = 1) {
+  const g = ring(w, h, size);
+  const R = g.R * k, cx = w / 2 + shift, cy = g.cy;
   return Array.from({ length: n }, (_, i) => {
     const a = -Math.PI / 2 + (i * 2 * Math.PI) / n;
     return [cx + R * Math.cos(a), cy + R * Math.sin(a)];
@@ -240,7 +247,8 @@ function wiresOf(P, pos, w, h, tension, dt) {
       const a = pos[i], b = pos[j];
       const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
       const bend = 0.12 + 0.13 * (k % 3);
-      const rest = [w / 2 + (mx - w / 2) * bend + (k - 2) * 6, h / 2 + (my - h / 2) * bend + (i - 2.5) * 4];
+      const cxs = w / 2 + (S.shift ?? 0);
+      const rest = [cxs + (mx - cxs) * bend + (k - 2) * 6, S.cy + (my - S.cy) * bend + (i - 2.5) * 4];
       const c = rope(`${i}-${k}`, rest, tension, dt);
       out.push({ i, j, a, b, c: [c.x, c.y], present, hid });
     }
@@ -319,8 +327,23 @@ function draw(t, dt, genMs) {
   const fMove = thinking ? Math.max(0, Math.min(1, (f - 0.66) / 0.3)) : f;
   const P = S.to ? lerpProfile(S.from || S.to, S.to, ease(fMove)) : Array(6).fill([0.4, 0, 0.1]);
   const size = Math.min(w, h) * 0.12;
-  const pos = layout(6, w, h, size);
-  S.pos = pos; S.size = size;
+  // with the thinking panel open beside a wide board, the ring slides away from it
+  // (it also shrinks if it must, so the ring and its labels fit in the space left)
+  const { R, cy } = ring(w, h, size);
+  S.cy = cy;
+  const extra = Math.max(size * 0.75, S.skew > 0 ? 62 : 0) + 14;
+  let shiftTo = 0, scaleTo = 1;
+  if (S.focus !== null && S.thinkSide && !PHONE.matches) {
+    const panelW = 352, avail = w - panelW - 8;
+    const Rfit = Math.max(R * 0.55, Math.min(R, avail / 2 - extra));
+    scaleTo = Rfit / R;
+    shiftTo = S.thinkSide * (w / 2 - (avail / 2 + 4)); // centre of the uncovered part
+  }
+  const k = Math.min(1, dt * 6);
+  S.shift = (S.shift ?? 0) + (shiftTo - (S.shift ?? 0)) * k;
+  S.ringK = (S.ringK ?? 1) + (scaleTo - (S.ringK ?? 1)) * k;
+  const pos = layout(6, w, h, size, S.shift, S.ringK);
+  S.pos = pos; S.size = size; S.w = w; S.R = R; S.extra = extra;
   const debt = S.m ? S.m.debt : 0.3;
   const tension = Math.min(1, debt / 4);
 
@@ -432,11 +455,17 @@ function draw(t, dt, genMs) {
       ctx.beginPath(); ctx.roundRect(x - sz / 2 - 9, y - sz / 2 - 9, sz + 18, sz + 18, sz * 0.3); ctx.stroke(); ctx.setLineDash([]);
     }
     if (S.skew > 0) {
-      ctx.fillStyle = COL.ink; ctx.font = `600 ${w < 500 ? 11 : 13}px "Bricolage Grotesque", system-ui`; ctx.textAlign = "center";
-      const oa = Math.atan2(pos[i][1] - h / 2, pos[i][0] - w / 2);
+      // the label sits outside the ring, pushed out until its box clears the module
+      const fs = w < 500 ? 11 : 13;
+      ctx.fillStyle = COL.ink; ctx.font = `600 ${fs}px "Bricolage Grotesque", system-ui`; ctx.textAlign = "center";
+      const txt = w < 500 ? `${Math.round(expo[i] / 6 * 100)}%` : `${Math.round(expo[i] / 6 * 100)}% of incidents`;
+      // above the module on the upper half of the ring, below it on the lower half
+      const tw = ctx.measureText(txt).width, th = fs + 4;
+      const half = size * 0.75; // the largest a module gets, breathing included
+      const dir = pos[i][1] < S.cy - 1 ? -1 : 1;
+      const lx = Math.max(tw / 2 + 6, Math.min(w - tw / 2 - 6, pos[i][0]));
       ctx.textBaseline = "middle";
-      ctx.fillText(w < 500 ? `${Math.round(expo[i] / 6 * 100)}%` : `${Math.round(expo[i] / 6 * 100)}% of incidents`,
-        pos[i][0] + Math.cos(oa) * (size * 0.5 + 16), pos[i][1] + Math.sin(oa) * (size * 0.5 + 16));
+      ctx.fillText(txt, lx, pos[i][1] + dir * (half + th / 2 + 4));
       ctx.textBaseline = "alphabetic";
     }
   });
@@ -509,7 +538,7 @@ function describe(before, cand) {
 
 function ghostSpot(pos, i, k, size, w, h) {
   const [x, y] = pos[i];
-  const out = Math.atan2(y - h / 2, x - w / 2);
+  const out = Math.atan2(y - S.cy, x - w / 2 - (S.shift ?? 0));
   const a = out + (k - 1.5) * 0.62;
   const r = size * 1.12;
   return [x + Math.cos(a) * r, y + Math.sin(a) * r];
@@ -573,7 +602,7 @@ function drawThinking(ctx, t, f, pos, size, w, h) {
       ctx.setLineDash([]); ctx.globalAlpha = fade;
       ctx.fillStyle = COL.blue; ctx.font = "600 15px \"Bricolage Grotesque\", system-ui"; ctx.textAlign = "center";
       if (w < 500) { ctx.font = "600 12px \"Bricolage Grotesque\", system-ui"; ctx.fillText("Imagining: what if everyone did this?", w / 2, h - 34); }
-      else ctx.fillText("Imagining: what if everyone made this change?", w / 2, 28);
+      else if (S.focus === null) ctx.fillText("Imagining: what if everyone made this change?", w / 2, 28);
       ctx.globalAlpha = 1;
     }
   }
@@ -584,9 +613,9 @@ function drawThinking(ctx, t, f, pos, size, w, h) {
 // thinking, then blue for the kept change and dim for the rejected ones
 function decisionDots(ctx, f, d, pos, i, size, w, h) {
   const [x, y] = pos[i];
-  const a = Math.atan2(y - h / 2, x - w / 2);
+  const a = Math.atan2(y - S.cy, x - w / 2 - (S.shift ?? 0));
   const ux = Math.cos(a), uy = Math.sin(a);
-  const r = size * 0.5 + (S.skew > 0 ? 38 : 20);
+  const r = size * 0.75 + (S.skew > 0 ? 32 : 14); // clear of the module and its label
   const cx = x + ux * r, cy = y + uy * r;
   const n = d.candidates.length, gap = 11;
   d.candidates.forEach((_, k) => {
@@ -632,10 +661,24 @@ board.addEventListener("click", (e) => {
   const hit = S.pos.findIndex(([px, py]) => Math.hypot(px - x, py - y) < S.size * 0.75);
   if (hit < 0 || hit === S.focus) { S.focus = null; $("#think").hidden = true; return; }
   S.focus = hit;
+  // On a wide board the panel opens on the far side from the agent and the ring
+  // slides the other way. Where the ring would have to shrink much to make room,
+  // the panel docks under the board instead.
+  const fits = S.w - 360 >= 2 * (S.R * 0.85 + S.extra);
+  const unshifted = S.pos[hit][0] - (S.shift ?? 0);
+  S.thinkSide = PHONE.matches || !fits ? 0 : unshifted >= S.w / 2 - 1 ? 1 : -1;
+  $("#think").classList.toggle("right", S.thinkSide < 0);
+  $("#think").classList.toggle("below", S.thinkSide === 0 && !PHONE.matches);
   explain(hit);
   if (!S.running) $("#play").click();
 });
 addEventListener("keydown", (e) => { if (e.key === "Escape") { S.focus = null; $("#think").hidden = true; } });
+// keep the board's bottom labels above the docked panel
+const belowRO = new ResizeObserver(() => {
+  const st = $(".stage");
+  st.style.setProperty("--below", `${Math.max(0, st.clientHeight - board.offsetHeight)}px`);
+});
+belowRO.observe($("#think")); belowRO.observe($(".stage")); belowRO.observe(board);
 
 // ---- levels -------------------------------------------------------------------
 // Goals were calibrated with calibrate.mjs on the board's own scenarios: the
@@ -674,7 +717,15 @@ function renderLevelStrip() {
   $("#levels").innerHTML = LEVELS.map((L, k) =>
     `<button data-level="${k}" aria-pressed="${S.lvl === k}">${L.free ? "" : `<i>${k + 1}</i>`}${L.title}${done.has(k) ? "<em>done</em>" : ""}</button>`).join("");
   document.querySelectorAll("[data-level]").forEach((b) => b.addEventListener("click", () => loadLevel(Number(b.dataset.level))));
+  // on phones the row scrolls: keep the current level in view, drop the edge fade at the end
+  const row = $("#levels"), cur = row.querySelector('[aria-pressed="true"]');
+  if (cur && row.scrollWidth > row.clientWidth) row.scrollTo({ left: cur.offsetLeft - 12 });
+  row.classList.toggle("at-end", row.scrollLeft + row.clientWidth >= row.scrollWidth - 4);
 }
+$("#levels").addEventListener("scroll", (e) => {
+  const r = e.currentTarget;
+  r.classList.toggle("at-end", r.scrollLeft + r.clientWidth >= r.scrollWidth - 4);
+}, { passive: true });
 
 function setRuleButtons(L) {
   document.querySelectorAll("[data-rule]").forEach((b) => {

@@ -48,16 +48,17 @@ section.chapter { padding-top: clamp(110px, 13vw, 190px); }
 #game .gamewrap { margin-top: 34px; }
 
 /* findings */
-.finding { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: clamp(24px, 4vw, 64px); align-items: center; margin-top: clamp(64px, 8vw, 110px); }
+.finding { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: clamp(24px, 4vw, 64px); align-items: start; margin-top: clamp(64px, 8vw, 110px); }
 .finding:nth-of-type(even) .chart { order: -1; }
 .finding h3 { font: 800 clamp(1.7rem, 1.1rem + 1.8vw, 2.6rem)/1.02 var(--display); letter-spacing: -0.035em; margin-bottom: 14px; }
 .finding p { max-width: 44ch; font-size: 1.08rem; }
 .finding p + p { margin-top: 12px; color: var(--muted); font-size: 15px; }
 .chart { background: var(--paper); border-radius: 26px; padding: clamp(18px, 2.6vw, 30px); }
 .ctlbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-bottom: 20px; }
-.ctlbar .hint { font-size: 14px; font-weight: 700; color: var(--blue); transition: opacity .4s; }
-.ctlbar .hint::before { content: "← "; }
-.ctlbar.used .hint { opacity: 0; pointer-events: none; }
+.cmp-next { border: 0; background: none; padding: 8px 4px; font: 700 14px var(--text); color: var(--blue); cursor: pointer; transition: opacity .4s; }
+.cmp-next:hover { text-decoration: underline; text-underline-offset: 3px; }
+.cmp-next::before { content: "← "; }
+.ctlbar.used .cmp-next { opacity: 0; pointer-events: none; }
 .ctl { display: inline-flex; flex-wrap: wrap; gap: 4px; background: var(--bg); padding: 5px; border-radius: 22px; outline: 2px solid transparent; outline-offset: 2px; }
 @media (prefers-reduced-motion: no-preference) {
   .chart.live .ctlbar:not(.used) .ctl { animation: nudge 1.6s ease-in-out .6s 3; }
@@ -87,7 +88,9 @@ section.chapter { padding-top: clamp(110px, 13vw, 190px); }
 .ctrack { position: relative; width: min(120px, 70%); height: 100%; display: flex; align-items: flex-end; }
 .ctrack .fill { width: 100%; border-radius: 12px 12px 6px 6px; transition: height .9s cubic-bezier(.2,.8,.2,1); }
 .col .lab { font-weight: 700; }
-.chart .why { margin-top: 18px; padding: 14px 16px; border-radius: 14px; background: var(--bg); font-size: 15px; line-height: 1.45; color: var(--muted); min-height: 4.4em; transition: color .2s; }
+.chart .why { display: grid; margin-top: 18px; padding: 14px 16px; border-radius: 14px; background: var(--bg); font-size: 15px; line-height: 1.45; color: var(--muted); transition: color .2s; }
+.chart .why > span { grid-area: 1 / 1; visibility: hidden; }
+.chart .why > span.cur { visibility: visible; }
 .chart .why.on { color: var(--ink); }
 .chart .why b { color: var(--ink); }
 .finding .try { display: inline-block; margin-top: 18px; font-weight: 700; color: var(--blue); text-decoration: none; border-bottom: 2px solid currentColor; padding-bottom: 2px; }
@@ -104,7 +107,8 @@ section.chapter { padding-top: clamp(110px, 13vw, 190px); }
 .nums b { display: block; font: 800 clamp(2.6rem, 1.4rem + 3.2vw, 5rem)/1 var(--display); letter-spacing: -0.04em; color: #8fb0ff; }
 .nums span { color: #d8d5cc; }
 .timeline { list-style: none; padding: 0; margin: 72px 0 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
-.timeline li { background: #2a2923; border-radius: 18px; padding: 18px; display: grid; gap: 6px; align-content: start; }
+.timeline li { background: #2a2923; border-radius: 18px; padding: 18px; display: grid; grid-template-rows: auto 1fr auto; gap: 6px; }
+.timeline li a { margin-top: 8px; }
 .timeline b { font: 800 1.25rem var(--display); }
 .timeline a { color: #8fb0ff; font-weight: 600; text-decoration: none; }
 .timeline a:hover { text-decoration: underline; }
@@ -145,4 +149,11 @@ footer.end .small { margin-top: 10px; color: var(--muted); font-size: 14px; max-
   .timeline { grid-template-columns: 1fr; }
 }
 
-@media (max-width: 560px) { .ctlbar .hint::before { content: none; } }
+@media (max-width: 560px) { .cmp-next::before { content: none; } }
+
+/* phones: the bar label sits above its bar, so the bar gets the full width */
+@media (max-width: 560px) {
+  .row { grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; }
+  .row .lab { grid-column: 1 / -1; }
+  .rows { gap: 14px; }
+}

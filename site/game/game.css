@@ -17,19 +17,23 @@
 
 /* the board */
 .stage { position: relative; background: var(--paper); border-radius: 22px; overflow: hidden; }
-#board { display: block; width: 100%; height: clamp(460px, calc(100svh - 240px), 700px); }
+/* The board grows to the height of the control column beside it, but never
+   taller than the screen; a docked thinking panel takes its room from the board. */
+.stage { display: flex; flex-direction: column; }
+#board { display: block; width: 100%; flex: 1 1 0; height: 0; min-height: clamp(460px, calc(100svh - 240px), 700px); max-height: calc(100svh - 24px); }
 #start { position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; background: var(--paper); transition: opacity .5s, visibility .5s; }
 #start.gone { opacity: 0; visibility: hidden; }
 .stage.xray-on, #board.xray { background: #fbf6f4; }
-#say { position: absolute; left: 50%; bottom: 16px; transform: translate(-50%, 14px); opacity: 0; max-width: min(56%, 520px); z-index: 3; font-size: 15px;
+/* --below is the height of the thinking panel when it docks under the board */
+#say { position: absolute; left: 190px; right: 16px; bottom: calc(16px + var(--below, 0px)); width: fit-content; margin-inline: auto; transform: translateY(14px); opacity: 0; max-width: 560px; z-index: 3; font-size: 15px;
   background: var(--ink); color: var(--paper); padding: 10px 18px; border-radius: 999px; font-weight: 500; text-align: center;
   transition: opacity .35s, transform .45s var(--spring); pointer-events: none; }
-#say.in { opacity: 1; transform: translate(-50%, 0); }
-.genbadge { position: absolute; left: 18px; bottom: 16px; font: 600 15px var(--text); color: var(--muted); }
+#say.in { opacity: 1; transform: none; }
+.genbadge { position: absolute; left: 18px; bottom: calc(16px + var(--below, 0px)); font: 600 15px var(--text); color: var(--muted); }
 .genbadge b { font: 800 1.6rem var(--display); color: var(--ink); margin-left: 4px; }
-.lines { position: absolute; right: 16px; bottom: 14px; display: grid; gap: 6px; width: min(42%, 260px); }
-.lines div { display: grid; grid-template-columns: 1fr 96px; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); text-align: right; }
-.lines canvas { width: 96px; height: 28px; }
+.lines { display: grid; gap: 6px; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+.lines div { display: grid; grid-template-columns: 1fr minmax(96px, 55%); align-items: center; gap: 12px; font-size: 14px; color: var(--muted); }
+.lines canvas { width: 100%; height: 28px; }
 
 /* controls */
 .panel { display: grid; gap: 16px; }
@@ -78,7 +82,9 @@ button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
 .gaugeno { font: 800 2.4rem/1 var(--display); margin-top: -6px; }
 .gaugelabels { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-top: 6px; }
 
-#think { position: absolute; left: 16px; top: 64px; width: min(340px, calc(100% - 32px)); background: var(--ink); color: var(--paper); border-radius: 18px; padding: 16px 18px; }
+#think { position: absolute; left: 16px; top: 64px; width: min(320px, calc(100% - 32px)); z-index: 3; background: var(--ink); color: var(--paper); border-radius: 18px; padding: 16px 18px; }
+#think.right { left: auto; right: 16px; }
+#think.below { position: relative; left: auto; right: auto; top: auto; width: auto; margin: 0 16px 16px; }
 #think h3 { font: 800 1.1rem var(--display); }
 #think p { font-size: 14px; color: #cfcdc5; margin-top: 4px; }
 #think ul { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 6px; }
@@ -86,7 +92,7 @@ button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
 #think li span:nth-child(2) { color: #cfcdc5; }
 #think .kept { color: #8fb0ff; } #think .rej { color: #8f8c84; font-weight: 500; }
 #think .tail { margin-top: 10px; }
-.hint { position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%); font-size: 14px; color: var(--muted); pointer-events: none; transition: opacity .3s; }
+.hint { position: absolute; left: 50%; bottom: calc(16px + var(--below, 0px)); transform: translateX(-50%); font-size: 14px; color: var(--muted); pointer-events: none; transition: opacity .3s; }
 #say.in ~ .hint { opacity: 0; }
 #board { cursor: pointer; }
 
@@ -122,20 +128,22 @@ button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
   /* one swipeable row of levels */
   #levels { flex-wrap: nowrap; overflow-x: auto; scroll-snap-type: x mandatory; margin: 12px -12px 0; padding: 0 12px 4px; scrollbar-width: none; }
   #levels::-webkit-scrollbar { display: none; }
+  /* the row fades at the edge, so it reads as one you can swipe */
+  #levels { -webkit-mask-image: linear-gradient(90deg, #000 82%, transparent); mask-image: linear-gradient(90deg, #000 82%, transparent); }
+  #levels.at-end { -webkit-mask-image: none; mask-image: none; }
   #levels button { flex: none; scroll-snap-align: start; padding: 9px 14px; font-size: 14px; }
   .layout { grid-template-columns: 1fr; grid-template-areas: "stage" "panel" "under"; gap: 12px; margin-top: 12px; }
   .layout > .under { grid-template-columns: 1fr; gap: 10px; }
   /* the board stays in view while the controls scroll under it */
   .stage { position: sticky; top: 0; z-index: 5; border-radius: 18px; box-shadow: 0 10px 24px rgba(29,28,23,.10); } /* taste-skill-ignore: sticky bar */
-  #board { height: clamp(300px, 50svh, 460px); }
-  .lines { display: none; }
+  #board { flex: none; height: clamp(280px, 44svh, 420px); min-height: 0; }
   .genbadge { left: 12px; bottom: 8px; font-size: 13px; }
   .genbadge b { font-size: 1.2rem; }
   .hint { bottom: 8px; left: auto; right: 12px; transform: none; font-size: 12px; }
   #tracker { right: 8px; top: 8px; padding: 6px 10px; gap: 2px 8px; }
   #tracker b { font-size: 1.15rem; }
   #tracker .segs span { width: 10px; height: 8px; }
-  #say { bottom: 30px; max-width: 86%; font-size: 13px; padding: 7px 12px; }
+  #say { left: 12px; right: 12px; bottom: 30px; max-width: none; font-size: 13px; padding: 7px 12px; }
   #brief, #result > div { max-width: 92%; padding: 18px; gap: 8px; }
   #brief h3, #result h3 { font-size: 1.3rem; }
   #brief p, #result p { font-size: 14px; }

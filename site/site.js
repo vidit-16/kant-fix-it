@@ -193,24 +193,35 @@ const dec3 = (v) => v.toFixed(3);
 function ctlHTML(cfg, view) {
   if (Object.keys(cfg.views).length < 2) return "";
   return `<div class="ctlbar"><div class="ctl" role="group" aria-label="${cfg.ctlLabel}">${Object.entries(cfg.views).map(([k, v]) =>
-    `<button type="button" data-view="${k}" aria-pressed="${k === view}">${v.name}</button>`).join("")}</div><span class="hint">Tap to compare</span></div>`;
+    `<button type="button" data-view="${k}" aria-pressed="${k === view}">${v.name}</button>`).join("")}</div><button type="button" class="cmp-next">Tap to compare</button></div>`;
 }
 function wireCtl(el, st, paint) {
-  el.querySelectorAll("[data-view]").forEach((b) => b.addEventListener("click", () => {
+  const views = [...el.querySelectorAll("[data-view]")];
+  views.forEach((b) => b.addEventListener("click", () => {
     st.view = b.dataset.view;
-    el.querySelectorAll("[data-view]").forEach((x) => x.setAttribute("aria-pressed", x === b));
+    views.forEach((x) => x.setAttribute("aria-pressed", x === b));
     el.querySelector(".ctlbar")?.classList.add("used");
     paint();
   }));
+  // the hint is a button too: it moves to the next view
+  el.querySelector(".cmp-next")?.addEventListener("click", () => {
+    const k = views.findIndex((b) => b.dataset.view === st.view);
+    views[(k + 1) % views.length].click();
+  });
 }
 // hover (mouse) previews a bar's meaning; a tap or Enter pins it
+// Every explanation sits in the same grid cell and only one is visible, so the
+// box is always as tall as the longest one: nothing moves when it changes.
 function explainer(el, items, labels, why) {
   const box = el.querySelector(".why");
+  box.innerHTML = `<span data-k="-1">Tap a bar to see what it means.</span>` +
+    why.map((w, k) => `<span data-k="${k}"><b>${labels[k]}.</b> ${w}</span>`).join("");
+  const spans = [...box.children];
   let pinned = null;
   const show = (i) => {
     items.forEach((r, k) => { r.classList.toggle("dim", i !== null && k !== i); r.setAttribute("aria-pressed", k === i); });
     box.classList.toggle("on", i !== null);
-    box.innerHTML = i === null ? "Tap a bar to see what it means." : `<b>${labels[i]}.</b> ${why[i]}`;
+    spans.forEach((s) => s.classList.toggle("cur", Number(s.dataset.k) === (i ?? -1)));
   };
   items.forEach((r, i) => {
     r.tabIndex = 0; r.setAttribute("role", "button");

@@ -1,0 +1,51 @@
+<!doctype html>
+<!-- Source of og.png, the link preview image. Render with:
+     chrome --headless --hide-scrollbars --window-size=1200,630 --virtual-time-budget=4000 --screenshot=site/og.png site/og/card.html -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=block" rel="stylesheet">
+<style>
+  * { margin: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+  body { background: #e9e9e6; color: #1d1c17; font-family: "Bricolage Grotesque", sans-serif; display: grid; grid-template-columns: 1fr 470px; align-items: center; padding: 0 64px 0 76px; gap: 24px; }
+  h1 { font-weight: 800; font-size: 112px; line-height: .88; letter-spacing: -0.055em; }
+  h1 span { display: block; color: #2456d6; }
+  p { margin-top: 34px; font-weight: 600; font-size: 30px; line-height: 1.25; max-width: 15em; color: #3a3933; }
+  .board { width: 470px; height: 470px; background: #f8f8f7; border-radius: 34px; }
+</style>
+</head>
+<body>
+  <div>
+    <h1>Kant fix it.<span>A price can.</span></h1>
+    <p>Five pre-registered studies, and a game against the real agents.</p>
+  </div>
+  <svg class="board" viewBox="0 0 470 470" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="#1d1c17" stroke-opacity=".42" stroke-width="2.4" fill="none">
+      <path d="M235 75 Q260 200 374 158"/><path d="M235 75 Q220 220 374 312"/><path d="M235 75 Q235 240 235 395"/>
+      <path d="M235 75 Q250 230 96 312"/><path d="M235 75 Q210 200 96 158"/><path d="M374 158 Q300 240 374 312"/>
+      <path d="M374 158 Q270 260 235 395"/><path d="M374 158 Q230 230 96 312"/><path d="M374 158 Q240 170 96 158"/>
+      <path d="M374 312 Q280 340 235 395"/><path d="M374 312 Q240 300 96 312"/><path d="M374 312 Q240 220 96 158"/>
+      <path d="M235 395 Q170 340 96 312"/><path d="M235 395 Q200 250 96 158"/><path d="M96 312 Q170 240 96 158"/>
+    </g>
+    <circle cx="300" cy="226" r="20" fill="#d8361f" opacity=".22"/><circle cx="300" cy="226" r="9" fill="#d8361f"/>
+    <defs><g id="m">
+      <rect x="-38" y="-38" width="76" height="76" rx="18" fill="#fff" stroke="#cfccc4" stroke-width="2.5"/>
+      <circle cx="-13" cy="-6" r="5.5" fill="#1d1c17"/><circle cx="13" cy="-6" r="5.5" fill="#1d1c17"/>
+      <path d="M-9 14h18" stroke="#1d1c17" stroke-width="4" stroke-linecap="round"/>
+    </g></defs>
+    <use href="#m" x="235" y="75"/><use href="#m" x="96" y="158"/><use href="#m" x="96" y="312"/><use href="#m" x="235" y="395"/>
+    <g transform="translate(374 158)">
+      <rect x="-38" y="-38" width="76" height="76" rx="18" fill="#fff" stroke="#cfccc4" stroke-width="2.5"/>
+      <path d="M-20 -6 q7 -9 14 0 M6 -6 q7 -9 14 0" stroke="#1d1c17" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M-12 10 q12 12 24 0" stroke="#1d1c17" stroke-width="4" fill="none" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(374 312)">
+      <rect x="-38" y="-38" width="76" height="76" rx="18" fill="#f2b9ad" stroke="#d8361f" stroke-width="3"/>
+      <circle cx="-13" cy="-7" r="8" fill="none" stroke="#1d1c17" stroke-width="3.5"/><circle cx="13" cy="-7" r="8" fill="none" stroke="#1d1c17" stroke-width="3.5"/>
+      <circle cx="-13" cy="-7" r="3" fill="#1d1c17"/><circle cx="13" cy="-7" r="3" fill="#1d1c17"/>
+      <ellipse cx="0" cy="17" rx="6" ry="8" fill="#1d1c17"/>
+    </g>
+  </svg>
+</body>
+</html>
