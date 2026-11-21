@@ -7,11 +7,17 @@
 * { box-sizing: border-box; margin: 0; }
 [hidden] { display: none !important; }
 
-.layout { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 22px; margin-top: 22px; align-items: start; }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 360px; grid-template-areas: "stage panel" "under under"; gap: 18px 22px; margin-top: 22px; align-items: stretch; }
+.layout > .stage { grid-area: stage; }
+.layout > .panel { grid-area: panel; display: flex; flex-direction: column; }
+.layout > .panel > .gaugebox { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.layout > .under { grid-area: under; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px 22px; }
+.under .block { display: grid; align-content: center; }
+.under .toggles { margin-top: 10px; }
 
 /* the board */
 .stage { position: relative; background: var(--paper); border-radius: 22px; overflow: hidden; }
-#board { display: block; width: 100%; height: clamp(420px, calc(100svh - 190px), 780px); }
+#board { display: block; width: 100%; height: clamp(460px, calc(100svh - 240px), 700px); }
 #start { position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; background: var(--paper); transition: opacity .5s, visibility .5s; }
 #start.gone { opacity: 0; visibility: hidden; }
 .stage.xray-on, #board.xray { background: #fbf6f4; }
@@ -117,7 +123,8 @@ button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
   #levels { flex-wrap: nowrap; overflow-x: auto; scroll-snap-type: x mandatory; margin: 12px -12px 0; padding: 0 12px 4px; scrollbar-width: none; }
   #levels::-webkit-scrollbar { display: none; }
   #levels button { flex: none; scroll-snap-align: start; padding: 9px 14px; font-size: 14px; }
-  .layout { grid-template-columns: 1fr; gap: 12px; margin-top: 12px; }
+  .layout { grid-template-columns: 1fr; grid-template-areas: "stage" "panel" "under"; gap: 12px; margin-top: 12px; }
+  .layout > .under { grid-template-columns: 1fr; gap: 10px; }
   /* the board stays in view while the controls scroll under it */
   .stage { position: sticky; top: 0; z-index: 5; border-radius: 18px; box-shadow: 0 10px 24px rgba(29,28,23,.10); } /* taste-skill-ignore: sticky bar */
   #board { height: clamp(300px, 50svh, 460px); }

@@ -102,30 +102,6 @@
       </div>
     </section>
 
-    <section class="block" aria-labelledby="skew-h">
-      <h2 id="skew-h">Who gets hit</h2>
-      <div class="seg">
-        <button data-skew="0" aria-pressed="true">Everyone equally</button>
-        <button data-skew="0.75" aria-pressed="false">Some more</button>
-        <button data-skew="1.5" aria-pressed="false">One module most</button>
-      </div>
-    </section>
-
-    <section class="block">
-      <div class="actions">
-        <button class="big" id="play" aria-pressed="false">Run</button>
-        <button class="big" id="reset">New agents</button>
-      </div>
-      <div class="toggles">
-        <button id="xray" aria-pressed="false">X-ray</button>
-        <div class="speed" aria-label="Speed">
-          <button data-speed="1" aria-pressed="false">1x</button>
-          <button data-speed="3" aria-pressed="true">3x</button>
-          <button data-speed="8" aria-pressed="false">8x</button>
-        </div>
-      </div>
-    </section>
-
     <section class="block gaugebox" aria-labelledby="gauge-h">
       <h2 id="gauge-h">How you are doing</h2>
       <canvas id="gauge" aria-hidden="true"></canvas>
@@ -133,6 +109,32 @@
       <div class="gaugelabels"><span>Worse than nothing</span><span>Nothing</span><span>Best possible</span></div>
     </section>
   </aside>
+    <div class="under">
+  
+      <section class="block" aria-labelledby="skew-h">
+        <h2 id="skew-h">Who gets hit</h2>
+        <div class="seg">
+          <button data-skew="0" aria-pressed="true">Everyone equally</button>
+          <button data-skew="0.75" aria-pressed="false">Some more</button>
+          <button data-skew="1.5" aria-pressed="false">One module most</button>
+        </div>
+      </section>
+  
+      <section class="block">
+        <div class="actions">
+          <button class="big" id="play" aria-pressed="false">Run</button>
+          <button class="big" id="reset">New agents</button>
+        </div>
+        <div class="toggles">
+          <button id="xray" aria-pressed="false">X-ray</button>
+          <div class="speed" aria-label="Speed">
+            <button data-speed="1" aria-pressed="false">1x</button>
+            <button data-speed="3" aria-pressed="true">3x</button>
+            <button data-speed="8" aria-pressed="false">8x</button>
+          </div>
+        </div>
+      </section>
+    </div>
 </div>
     </div>
   </section>
@@ -179,10 +181,10 @@
       <h2 id="honest-h" class="rise">How it was kept honest</h2>
       <p class="lead rise">Every study was written down and committed before it ran, including the rule that would decide whether the idea survived. It did not.</p>
       <div class="nums">
-        <div class="rise"><b>5</b><span>studies, each pre-registered</span></div>
-        <div class="rise"><b>4,190</b><span>runs on scenarios the agents never trained on</span></div>
+        <div class="rise"><b data-count="5">5</b><span>studies, each pre-registered</span></div>
+        <div class="rise"><b data-count="4190">4,190</b><span>runs on scenarios the agents never trained on</span></div>
         <div class="rise"><b>7 of 29</b><span>predictions failed, reported as failed</span></div>
-        <div class="rise"><b>82</b><span>tests, and a browser engine checked against them</span></div>
+        <div class="rise"><b data-count="82">82</b><span>tests, and a browser engine checked against them</span></div>
       </div>
       <ol class="timeline" aria-label="Pre-registrations, each committed before its runs">
         <li class="rise"><b>Studies 1 to 6</b><small>Gates in a payment network</small><a href="https://github.com/vidit-16/kant-fix-it/commit/4d6ebe9">Frozen in 4d6ebe9</a></li>
