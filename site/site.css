@@ -120,7 +120,10 @@ footer.end { padding-block: clamp(80px, 10vw, 140px) 40px; }
 footer.end .name { font: 800 clamp(3.6rem, 1rem + 11vw, 12rem)/0.86 var(--display); letter-spacing: -0.06em; }
 footer.end .name span { color: var(--blue); }
 footer.end .links { display: flex; flex-wrap: wrap; gap: 14px 30px; margin-top: 34px; font-weight: 700; font-size: 1.1rem; }
-footer.end .small { margin-top: 40px; color: var(--muted); font-size: 14px; max-width: 80ch; }
+footer.end .credit { margin-top: 40px; font-weight: 600; }
+footer.end .credit a { text-underline-offset: 3px; }
+footer.end .credit a:hover { color: var(--blue); }
+footer.end .small { margin-top: 10px; color: var(--muted); font-size: 14px; max-width: 80ch; }
 
 /* entrances */
 @media (prefers-reduced-motion: no-preference) {
