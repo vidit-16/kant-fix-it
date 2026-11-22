@@ -331,10 +331,23 @@ Each DOI was checked in Crossref; contents below are from the abstracts only.
   perfect equilibria of fully observable Markov games are socially optimal.
 * **Mohanty, Rao and Roy (2024)**, *Kantian imperatives in public goods
   networks*, J. Econ. Behav. Organ. 224, 194–214
-  (doi:10.1016/j.jebo.2024.05.018). No abstract in Crossref; not yet read. By
-  its title it bears on Kantian behaviour when agents sit in different network
-  positions, which is the setting of E10. Read in full before any novelty
-  statement about unequal exposure.
+  (doi:10.1016/j.jebo.2024.05.018; open access, CC BY). **Read in full.** A
+  theory paper: a principal assigns selfish and Kantian agents to roles on a
+  network where each agent benefits from its neighbourhood's total effort, to
+  maximise aggregate effort. A Kantian follows a role-based imperative, the
+  effort that maximises welfare if everyone in that role did the same. Main
+  results are for regular graphs: Kantians should sometimes be clustered and
+  sometimes spread out, more Kantians can lower effort and welfare, and both
+  over- and under-provision appear once the graph matters. For asymmetric
+  positions (§5.1) the authors say defining the imperative is conceptually
+  hard, solve only degree-based cases (connected stars), and reject as ad hoc
+  a uniform rule in which everyone mirrors one's own action regardless of role
+  (fn. 14). **Relation to this project:** that uniform rule is our κ = 1 gate,
+  and E10's setting is asymmetric positions, so the paper anticipates E10's
+  mechanism conceptually. It does not pre-empt E10: no learning or acceptance
+  loop, no prices or taxes, a positive externality rather than unattributable
+  damage, and the asymmetric case is left to future work. Cited in REPORT §2
+  and §6.
 * **Couto and Pal (2023)**, *Introspection dynamics in asymmetric multiplayer
   games*, Dyn. Games Appl. 13, 1256–1285 (doi:10.1007/s13235-023-00525-8).
   Players compare their current strategy with an alternative and adopt it more

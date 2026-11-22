@@ -192,7 +192,13 @@ with weights proportional to 1/exposure. That is efficient in Pareto's sense,
 but not the minimum of total cost. This derivation is ours. It is not stated
 in the sources we found, and E10 tests its prediction. It is consistent with
 Laslier's result: E10 fixes each agent's exposure rather than randomising it,
-which is exactly when universalization and total-cost minimisation separate. Universalization has
+which is exactly when universalization and total-cost minimisation separate.
+Mohanty, Rao and Roy (2024) study Kantian agents in local public-goods
+networks, in theory. For asymmetric positions they argue that a Kantian duty
+must depend on the agent's role, and they reject as ad hoc the uniform rule in
+which everyone mirrors one's own action regardless of position (their §5.1).
+That uniform rule is our κ = 1 gate; E10 measures its cost inside a learning
+loop and against a tax, which they do not. Universalization has
 been used as a decision-time prompt for language-model agents (Piatti et al.
 2024). We did not find it used as the acceptance rule of a learning loop.</p>
 <p><strong>Payment systems.</strong> The payment-timing game is a standard example of
@@ -1045,7 +1051,9 @@ equally exposed. With unequal exposure it measures what the agent would
 <em>suffer</em>. Central agents then over-restrain and peripheral agents
 over-shortcut. The additive Kantian point is still Pareto efficient: it is the
 optimum for a planner who weights each agent by one over its exposure (§2).
-It is not the minimum of total cost, which is the outcome measured here. The
+It is not the minimum of total cost, which is the outcome measured here.
+Mohanty et al. (2024) anticipate the general point from theory: with unequal
+positions a uniform Kantian rule is not the right duty. The 1/exposure
 derivation is ours, not taken from the literature, and it is for a scalar game
 with separable gains and shared aggregate damage. The simulated codebase has
 hardening, output-dependent losses, bounded choices and noisy finite search,
@@ -1112,8 +1120,8 @@ depends on which of these an operator can obtain.</p>
   (<a href="https://github.com/vidit-16/kant-fix-it/blob/main/docs/LITERATURE_REVIEW.md">LITERATURE_REVIEW.md</a>). It missed work on reward
   transfers between learning agents (Willis et al. 2024; Haupt et al. 2024),
   which bears directly on §4.6, and on Kantian behaviour in public-goods
-  networks (Mohanty et al. 2024), which bears on unequal exposure and which we
-  have not yet read in full.</li>
+  networks (Mohanty et al. 2024), which anticipates the unequal-exposure
+  mechanism conceptually (§2); it was read in full after the review.</li>
 </ul>
 <h2 id="8-conclusion">8. Conclusion</h2>
 <p>Across two environments and five pre-registered studies, the acceptance gate

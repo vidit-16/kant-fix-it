@@ -827,8 +827,13 @@ by the tuned ambient tax (E9 level 1.5; E10 skew 1.5), so gap shares are
 against a grid reference. (c) No multiplicity correction across registered
 tests. (d) The literature review missed reward-transfer work for learning
 agents (Willis et al. 2024; Haupt et al. 2024) and Kantian behaviour in
-public-goods networks (Mohanty et al. 2024, not yet read in full); all three
-DOIs were checked.
+public-goods networks (Mohanty et al. 2024); all three DOIs were checked.
+Mohanty et al. was read in full on 23 November 2026: a theory paper on
+regular networks that, for asymmetric positions, argues the Kantian duty must
+depend on the role and rejects the uniform "everyone mirrors me" rule (§5.1 and
+fn. 14 there). That anticipates E10's mechanism conceptually; it has no
+learning loop, prices or taxes, so E10's measurement is not pre-empted. The
+report now credits it (REPORT §2, §6).
 
 ### 5.13 E12 — E11 corrected (pre-registered)
 
