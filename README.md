@@ -17,8 +17,8 @@ Project page: **[kant-fix-it-web.vercel.app](https://kant-fix-it-web.vercel.app)
 
 ## What came out
 
-Five pre-registered studies, 4,190 confirmatory run records (some shared
-between studies), two environments:
+Five pre-registered studies and a pre-registered corrected rerun, 4,430
+confirmatory run records (some shared between studies), two environments:
 
 * **The rule matters.** In a simulated interbank payment network, selfish
   agents leave the system 29 % costlier than a planner. The Kantian rule
@@ -40,8 +40,8 @@ between studies), two environments:
   charges sum to zero. In this model it makes exactly the same decisions as
   the tax on damage, so that conclusion is withdrawn. The review also found
   bugs in the units study (one of its four scales was implemented wrongly);
-  a corrected rerun is pending. Details: [REPORT §4.5–4.6](docs/REPORT.md),
-  [PROJECT §5.12](docs/PROJECT.md).
+  a corrected, pre-registered rerun (E12) reached the same verdict. Details:
+  [REPORT §4.5–4.6](docs/REPORT.md), [PROJECT §5.12–5.13](docs/PROJECT.md).
 
 So: Kant can't fix it, but a well-chosen price can, and here even an equal
 split of the output can.
@@ -58,7 +58,7 @@ split of the output can.
 * Failed predictions are reported as failed: 7 of 29 registered predictions
   failed, six outright and one in part.
 * Analysis scripts regenerate every reported number exactly from the stored
-  records; 86 tests cover accounting, determinism and protocol isolation. An
+  records; 94 tests cover accounting, determinism and protocol isolation. An
   independent reviewer re-ran 120 headline runs and reproduced them exactly.
 
 ## Read more
@@ -71,7 +71,7 @@ split of the output can.
 * Protocols, each frozen before its runs:
   [E1–E6](docs/PREREGISTRATION.md), [E8](docs/PREREGISTRATION_E8.md),
   [E9](docs/PREREGISTRATION_E9.md), [E10](docs/PREREGISTRATION_E10.md),
-  [E11](docs/PREREGISTRATION_E11.md).
+  [E11](docs/PREREGISTRATION_E11.md), [E12](docs/PREREGISTRATION_E12.md).
 
 Both environments are simulators only. No real payment system, codebase,
 data or money is involved, and the results say nothing about any real system.
@@ -92,6 +92,8 @@ uv run python -m evortgs.cb_experiments cbpilot2 cbpilot3 E10
 uv run python -m evortgs.analysis_e10
 uv run python -m evortgs.cb_experiments unitspilot E11
 uv run python -m evortgs.analysis_e11
+uv run python -m evortgs.cb_experiments e12pilot E12
+uv run python -m evortgs.analysis_e12
 ```
 
 The full set takes about four hours on a laptop. On a machine with little free

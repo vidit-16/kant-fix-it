@@ -34,9 +34,10 @@ notes of 17 November 2026 are folded into §7 and §9; that file is deleted.
 | Confirmatory experiment E9 (gates against the best available instrument) | Run, 1 280 runs, analysed (§5.9) |
 | Pre-registration for E10 (unequal exposure) | Committed before confirmatory runs (`f580a13`) |
 | Confirmatory experiment E10 | Run, 1 080 runs, analysed (§5.10). **Strong gates line closed** |
-| Robustness study E11 (units of universalization) | Pre-registered (`863f0b4`), 360 runs, analysed (§5.11). Closure held over the variants implemented; **the square-root variant and a verdict flag were faulty** (§5.12), corrected rerun pending |
-| Pre-registration for E12 (E11 corrected: fixed square root, realized-change linear) | Frozen with its analysis script before any E12 run ([PREREGISTRATION_E12.md](PREREGISTRATION_E12.md)); 240 runs |
-| Independent review (23 November 2026) | Headline runs reproduced exactly. **Equal output sharing, a budget-balanced rule we never tested, equals the ambient tax in this model; the gate's budget-balanced niche is withdrawn** (§5.12, post hoc). Pooling rule and tests added (86 tests) |
+| Robustness study E11 (units of universalization) | Pre-registered (`863f0b4`), 360 runs, analysed (§5.11). Closure held over the variants implemented; **the square-root variant and a verdict flag were faulty** (§5.12); corrected in E12 (§5.13) |
+| Pre-registration for E12 (E11 corrected: fixed square root, realized-change linear) | Frozen with its analysis script at `38d1e4f`, before any E12 run ([PREREGISTRATION_E12.md](PREREGISTRATION_E12.md)) |
+| Confirmatory experiment E12 | Run, 240 runs, analysed (§5.13). **All four predictions held; E11's verdict survives the corrections** |
+| Independent review (23 November 2026) | Headline runs reproduced exactly. **Equal output sharing, a budget-balanced rule we never tested, equals the ambient tax in this model; the gate's budget-balanced niche is withdrawn** (§5.12, post hoc). Pooling rule and tests added; 94 tests with the E12 additions |
 | Final write-up | REPORT.md rewritten as a standalone report; every number re-checked against regenerated results (18 November 2026) |
 | **Project status** | **Concluded.** The owner chose to write up and stop (D29). Nothing pushed or published |
 | Language-model proposers | Not started, by decision (D29, §7) |
@@ -829,6 +830,28 @@ agents (Willis et al. 2024; Haupt et al. 2024) and Kantian behaviour in
 public-goods networks (Mohanty et al. 2024, not yet read in full); all three
 DOIs were checked.
 
+### 5.13 E12 — E11 corrected (pre-registered)
+
+Protocol [PREREGISTRATION_E12.md](PREREGISTRATION_E12.md), frozen at
+`38d1e4f`; analysis `src/evortgs/analysis_e12.py`; records `runs/E12.jsonl`
+(240 runs, all at `38d1e4f`, none dirty); results `runs/results_e12.json`.
+Prompted by the review (§5.12) and decided after E11 was known.
+
+| Prediction | Outcome |
+|---|---|
+| V1 ambient tax clearly cheaper than the best of eleven valid gate variants at skews 0.75 and 1.5 | **Held.** −0.0016 (−0.0022 to −0.0011) and −0.0018 (−0.0024 to −0.0012); best gate logit κ = 1 at both, as in E11 |
+| V2 log costlier than linear at matched convention (skew 1.5) | **Held.** +0.0226 (0.0202 to 0.0252) |
+| V3 distortion under every valid scale (skew 1.5) | **Held.** Spread excess +0.28 linear-realized, +0.46 sqrt-fixed, +0.75 log, +0.19 logit |
+| V4 corrected variants within margin of linear at skew 0 | **Held.** Both within 0.0001 |
+
+Without prediction: correcting the square root changed its cost by −0.0005,
++0.0020 and +0.0002 at skews 0, 0.75 and 1.5 (only the first is clear);
+broadcasting the realized instead of the raw change changed linear by 0.0000,
+−0.0001 and −0.0023 (−0.0059 to +0.0003).
+
+**Decision.** The strong line does not reopen; the closure is robust to the
+corrected variants. E11's faults were real but did not drive its results.
+
 ## 6. Decision log
 
 | ID | Question | Resolution |
@@ -869,6 +892,7 @@ DOIs were checked.
 | D34 | Does the gate beat every budget-balanced rule where harm is hidden? | No (post hoc, independent review). Equal output sharing is budget-balanced and equals the level-1 ambient tax in this model; verified by rerun and by tests. D25 withdrawn; the gate has no role in these models |
 | D35 | Add pooling as a formal baseline without rerunning all studies? | Yes: the equivalence is exact and deterministic, so a test pins it (`test_pooling_reproduces_the_ambient_tax_trajectory`) instead of a 4 190-run rerun |
 | D36 | Does E11 stand as run? | Partly. U1 holds over the variants as implemented; the square-root variant is invalid, U2 confounds scale with convention, and one verdict flag had a sign error. Corrected rerun to be registered first, results reported beside the originals |
+| D38 | Does E11's verdict survive its corrections? | Yes (E12, pre-registered, `38d1e4f`). All four predictions held; the ambient tax stays clearly cheaper than the best of eleven valid variants, by less than the practical margin, as in E11 |
 | D37 | Unequal noise filters across gates? | No issue. With `min_t = 0` in every confirmatory study no gate filters; E7 used only gates that apply the filter. Raised while checking the review and retracted |
 
 ## 7. Unresolved questions and next steps
@@ -878,8 +902,8 @@ gates-versus-pricing question, and the strong line ("acceptance gates beat
 the best available instrument") is closed by the rule registered for E10
 (§5.10). The final write-up is [REPORT.md](REPORT.md).
 
-Open after the independent review (§5.12), in this order: correct and rerun
-E11 under a new frozen protocol (E12, D36); then decide whether to reopen the
+After the independent review (§5.12) E11 was corrected and rerun as E12
+(§5.13, D38). What remains is the owner's decision whether to reopen the
 research at all.
 
 What would reopen the line, none of it planned:
@@ -930,6 +954,8 @@ uv run python -m evortgs.cb_experiments cbpilot2 cbpilot3 E10
 uv run python -m evortgs.analysis_e10
 uv run python -m evortgs.cb_experiments unitspilot E11
 uv run python -m evortgs.analysis_e11
+uv run python -m evortgs.cb_experiments e12pilot E12
+uv run python -m evortgs.analysis_e12
 ```
 
 E1–E8 take about 90 minutes on eight logical cores; E9 took 90 minutes and

@@ -99,8 +99,8 @@ their owner can be bad for everyone. We ask whether the <em>acceptance rule</em>
 alone can correct this, and whether it can do so better than a charge on the
 externality that an operator could levy instead. Proposals, search budget and
 environment are identical across arms; only the gate, or the price the agents
-face, differs. Five pre-registered studies (4 190 confirmatory run records, some of them
-shared between studies, 20 paired
+face, differs. Five pre-registered studies and a pre-registered corrected rerun (4 430
+confirmatory run records, some of them shared between studies, 20 paired
 seeds each, held-out evaluation scenarios) were run in two environments.</p>
 <p>In a stylized real-time gross settlement network (E1–E6, E8), private gates
 leave the system 29 % costlier than a symmetric planner. A universalization
@@ -122,8 +122,9 @@ instrument is therefore rejected. A fifth study (E11) re-ran the Kantian gates
 with "the same change" measured on three other scales. The gate's cost moved
 by up to 0.02 with the choice of scale, but the ambient tax still beat the
 best gate over every variant implemented. An independent review later found
-that the square-root variant was implemented incorrectly, so that robustness
-claim awaits a corrected rerun (§4.5).</p>
+that the square-root variant was implemented incorrectly and that the scales
+used different conventions; a corrected, pre-registered rerun (E12) reached
+the same verdict (§4.5).</p>
 <p><strong>Correction (post hoc).</strong> Earlier versions concluded that where only
 budget-balanced charges are possible and the harm's carrier can be hidden, an
 own-cost Kantian gate beats those charges. An independent review found a
@@ -706,7 +707,7 @@ use the proposer's realized change after clipping to the policy bounds, so
 scale and convention are confounded in U2. (iii) The analysis flag "gate
 clearly cheaper beyond the margin" had a sign error and could never be true.
 It changes no outcome here, because the ambient tax was cheaper. A corrected
-rerun will be registered and reported beside these results.</p>
+rerun, E12, is reported below, beside these results.</p>
 <ul>
 <li><strong>The verdict held over the variants implemented (U1).</strong> Over all nine own-cost gate variants, the
   one chosen on development data was the logit Kantian gate at both unequal
@@ -726,7 +727,95 @@ rerun will be registered and reported beside these results.</p>
   bounds, gives the best Kantian gate. A gate whose scale is tuned to the
   problem is, in effect, a different instrument; it was not pursued.</li>
 </ul>
-<figure class="dots "><figcaption><b>The Kantian gate on four scales of “the same change” (E11)</b></figcaption><div class="legend"><span><i style="background:#1d1c17"></i>Kantian gate, four scales</span><span><i style="background:#d8361f"></i>log scale</span><span><i style="background:#2456d6"></i>ambient tax</span><span><i class="dash"></i>optimum</span></div><div class="panels three"><div class="panel"><h4>Equal exposure (skew 0)</h4><div class="drow" role="img" aria-label="Kantian, linear: 0.215 (0.214 to 0.215)"><span class="dl">Kantian, linear</span><div class="dt"><i class="ref" style="left:21.45%"></i><i class="ci" style="left:33.25%;width:26.29%;top:50%;background:#1d1c17"></i><i class="pt" style="left:46.44%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.215</span></span></div><div class="drow" role="img" aria-label="Kantian, logit: 0.215 (0.214 to 0.215)"><span class="dl">Kantian, logit</span><div class="dt"><i class="ref" style="left:21.45%"></i><i class="ci" style="left:32.07%;width:34.56%;top:50%;background:#1d1c17"></i><i class="pt" style="left:49.18%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.215</span></span></div><div class="drow" role="img" aria-label="Kantian, square root (faulty, §4.5): 0.215 (0.215 to 0.216)"><span class="dl">Kantian, square root (faulty, §4.5)</span><div class="dt"><i class="ref" style="left:21.45%"></i><i class="ci" style="left:45.04%;width:25.65%;top:50%;background:#a9a69d"></i><i class="pt" style="left:57.83%;top:50%;background:#a9a69d"></i></div><span class="dv"><span style="color:#55534b">0.215</span></span></div><div class="drow" role="img" aria-label="Kantian, log: 0.215 (0.215 to 0.216)"><span class="dl">Kantian, log</span><div class="dt"><i class="ref" style="left:21.45%"></i><i class="ci" style="left:44.53%;width:38.27%;top:50%;background:#d8361f"></i><i class="pt" style="left:62.38%;top:50%;background:#d8361f"></i></div><span class="dv"><span style="color:#d8361f">0.215</span></span></div><div class="drow" role="img" aria-label="&lt;b&gt;ambient tax&lt;/b&gt;: 0.216 (0.215 to 0.216)"><span class="dl"><b>ambient tax</b></span><div class="dt"><i class="ref" style="left:21.45%"></i><i class="ci" style="left:50.79%;width:42.32%;top:50%;background:#2456d6"></i><i class="pt" style="left:71.25%;top:50%;background:#2456d6"></i></div><span class="dv"><span style="color:#2456d6">0.216</span></span></div><div class="drow" role="img" aria-label="optimum: 0.214 (0.213 to 0.214)"><span class="dl">optimum</span><div class="dt"><i class="ref" style="left:21.45%"></i><i class="ci" style="left:6.90%;width:30.50%;top:50%;background:#55534b"></i><i class="pt" style="left:21.45%;top:50%;background:#55534b"></i></div><span class="dv"><span style="color:#55534b">0.214</span></span></div><div class="axis" aria-hidden="true"><span></span><div class="ticks"><i style="left:1.53%">0.213</i><i style="left:28.10%">0.214</i><i style="left:54.68%">0.215</i><i style="left:81.25%">0.216</i></div><span></span></div><p class="xlab">Held-out system cost</p></div><div class="panel"><h4>Some take more (skew 0.75)</h4><div class="drow" role="img" aria-label="Kantian, linear: 0.204 (0.203 to 0.205)"><span class="dl">Kantian, linear</span><div class="dt"><i class="ref" style="left:7.75%"></i><i class="ci" style="left:13.13%;width:3.59%;top:50%;background:#1d1c17"></i><i class="pt" style="left:14.98%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.204</span></span></div><div class="drow" role="img" aria-label="Kantian, logit: 0.203 (0.203 to 0.204)"><span class="dl">Kantian, logit</span><div class="dt"><i class="ref" style="left:7.75%"></i><i class="ci" style="left:12.07%;width:2.75%;top:50%;background:#1d1c17"></i><i class="pt" style="left:13.40%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.203</span></span></div><div class="drow" role="img" aria-label="Kantian, square root (faulty, §4.5): 0.209 (0.207 to 0.211)"><span class="dl">Kantian, square root (faulty, §4.5)</span><div class="dt"><i class="ref" style="left:7.75%"></i><i class="ci" style="left:23.17%;width:13.31%;top:50%;background:#a9a69d"></i><i class="pt" style="left:29.29%;top:50%;background:#a9a69d"></i></div><span class="dv"><span style="color:#55534b">0.209</span></span></div><div class="drow" role="img" aria-label="Kantian, log: 0.227 (0.222 to 0.231)"><span class="dl">Kantian, log</span><div class="dt"><i class="ref" style="left:7.75%"></i><i class="ci" style="left:68.54%;width:24.57%;top:50%;background:#d8361f"></i><i class="pt" style="left:80.71%;top:50%;background:#d8361f"></i></div><span class="dv"><span style="color:#d8361f">0.227</span></span></div><div class="drow" role="img" aria-label="&lt;b&gt;ambient tax&lt;/b&gt;: 0.202 (0.201 to 0.202)"><span class="dl"><b>ambient tax</b></span><div class="dt"><i class="ref" style="left:7.75%"></i><i class="ci" style="left:7.12%;width:3.33%;top:50%;background:#2456d6"></i><i class="pt" style="left:8.68%;top:50%;background:#2456d6"></i></div><span class="dv"><span style="color:#2456d6">0.202</span></span></div><div class="drow" role="img" aria-label="optimum: 0.202 (0.201 to 0.202)"><span class="dl">optimum</span><div class="dt"><i class="ref" style="left:7.75%"></i><i class="ci" style="left:6.90%;width:1.70%;top:50%;background:#55534b"></i><i class="pt" style="left:7.75%;top:50%;background:#55534b"></i></div><span class="dv"><span style="color:#55534b">0.202</span></span></div><div class="axis" aria-hidden="true"><span></span><div class="ticks"><i style="left:3.39%">0.2</i><i style="left:32.35%">0.21</i><i style="left:61.31%">0.22</i><i style="left:90.27%">0.23</i></div><span></span></div><p class="xlab">Held-out system cost</p></div><div class="panel"><h4>One takes most (skew 1.5)</h4><div class="drow" role="img" aria-label="Kantian, linear: 0.182 (0.179 to 0.185)"><span class="dl">Kantian, linear</span><div class="dt"><i class="ref" style="left:8.16%"></i><i class="ci" style="left:19.75%;width:18.36%;top:50%;background:#1d1c17"></i><i class="pt" style="left:27.43%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.182</span></span></div><div class="drow" role="img" aria-label="Kantian, logit: 0.177 (0.176 to 0.177)"><span class="dl">Kantian, logit</span><div class="dt"><i class="ref" style="left:8.16%"></i><i class="ci" style="left:11.33%;width:3.47%;top:50%;background:#1d1c17"></i><i class="pt" style="left:13.01%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.177</span></span></div><div class="drow" role="img" aria-label="Kantian, square root (faulty, §4.5): 0.184 (0.182 to 0.186)"><span class="dl">Kantian, square root (faulty, §4.5)</span><div class="dt"><i class="ref" style="left:8.16%"></i><i class="ci" style="left:29.27%;width:12.27%;top:50%;background:#a9a69d"></i><i class="pt" style="left:35.02%;top:50%;background:#a9a69d"></i></div><span class="dv"><span style="color:#55534b">0.184</span></span></div><div class="drow" role="img" aria-label="Kantian, log: 0.202 (0.199 to 0.204)"><span class="dl">Kantian, log</span><div class="dt"><i class="ref" style="left:8.16%"></i><i class="ci" style="left:78.65%;width:14.46%;top:50%;background:#d8361f"></i><i class="pt" style="left:85.64%;top:50%;background:#d8361f"></i></div><span class="dv"><span style="color:#d8361f">0.202</span></span></div><div class="drow" role="img" aria-label="&lt;b&gt;ambient tax&lt;/b&gt;: 0.175 (0.174 to 0.175)"><span class="dl"><b>ambient tax</b></span><div class="dt"><i class="ref" style="left:8.16%"></i><i class="ci" style="left:6.90%;width:1.91%;top:50%;background:#2456d6"></i><i class="pt" style="left:7.84%;top:50%;background:#2456d6"></i></div><span class="dv"><span style="color:#2456d6">0.175</span></span></div><div class="drow" role="img" aria-label="optimum: 0.175 (0.174 to 0.175)"><span class="dl">optimum</span><div class="dt"><i class="ref" style="left:8.16%"></i><i class="ci" style="left:7.06%;width:2.28%;top:50%;background:#55534b"></i><i class="pt" style="left:8.16%;top:50%;background:#55534b"></i></div><span class="dv"><span style="color:#55534b">0.175</span></span></div><div class="axis" aria-hidden="true"><span></span><div class="ticks"><i style="left:22.91%">0.18</i><i style="left:51.59%">0.19</i><i style="left:80.27%">0.2</i></div><span></span></div><p class="xlab">Held-out system cost</p></div></div><p class="fnote">Dots are means over 20 seeds; lines are 95% bootstrap intervals. Lower cost is better. The square-root variant was implemented incorrectly (found by an independent review) and is shown in grey for the record only.</p></figure>
+<p><strong>E12: E11 corrected (pre-registered).</strong> Protocol:
+<a href="https://github.com/vidit-16/kant-fix-it/blob/main/docs/PREREGISTRATION_E12.md">PREREGISTRATION_E12.md</a>, frozen at <code>38d1e4f</code> before
+any run; it was decided after E11 and the review were known. E12 re-ran the
+two faulty or unmatched variants: square root with an inverse that stops at
+zero (<code>sqrt_fixed</code>), and linear broadcasting the realized change
+(<code>linear_realized</code>), each at κ = 0.5 and 1, three skews, 20 seeds (240 runs).
+Log and logit were valid as run and were reused from E11; E11's square-root
+records were excluded from every test.</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>Kantian gate (κ = 1)</th>
+<th>skew 0</th>
+<th>skew 0.75</th>
+<th>skew 1.5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>linear (E10, raw change)</td>
+<td>0.2147</td>
+<td>0.2040</td>
+<td>0.1816</td>
+</tr>
+<tr>
+<td>linear, realized change (E12)</td>
+<td>0.2147</td>
+<td>0.2039</td>
+<td>0.1792</td>
+</tr>
+<tr>
+<td>logit (E11)</td>
+<td>0.2148</td>
+<td><strong>0.2035</strong></td>
+<td><strong>0.1765</strong></td>
+</tr>
+<tr>
+<td>square root, corrected (E12)</td>
+<td>0.2147</td>
+<td>0.2110</td>
+<td>0.1845</td>
+</tr>
+<tr>
+<td>square root, faulty (E11, for the record)</td>
+<td>0.2151</td>
+<td>0.2089</td>
+<td>0.1842</td>
+</tr>
+<tr>
+<td>log (E11)</td>
+<td>0.2153</td>
+<td>0.2267</td>
+<td>0.2019</td>
+</tr>
+<tr>
+<td>ambient tax, level 1</td>
+<td>0.2156</td>
+<td><strong>0.2018</strong></td>
+<td><strong>0.1747</strong></td>
+</tr>
+<tr>
+<td>optimum</td>
+<td>0.2137</td>
+<td>0.2015</td>
+<td>0.1749</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li><strong>The verdict holds over the corrected variants (V1).</strong> Over eleven valid
+  own-cost gate variants, development data again chose the logit Kantian gate
+  at both unequal skews, and the ambient tax was clearly cheaper: −0.0016
+  (−0.0022 to −0.0011) and −0.0018 (−0.0024 to −0.0012). As in E11 the
+  difference is clear but smaller than the 0.002 practical margin. The line
+  does not reopen.</li>
+<li><strong>Units still matter at a matched convention (V2).</strong> At skew 1.5 the log
+  gate costs 0.0226 (0.0202 to 0.0252) more than linear with the realized
+  change.</li>
+<li><strong>The distortion survives every valid scale (V3):</strong> the spread excess over
+  the optimum ranges from +0.19 (logit) to +0.75 (log).</li>
+<li><strong>With identical agents the corrected variants agree with linear (V4),</strong>
+  within 0.0001.</li>
+<li><strong>The faults did not drive E11's results</strong> (reported without prediction).
+  Correcting the square root changed its cost by −0.0005 (−0.0008 to −0.0001),
+  +0.0020 (−0.0011 to +0.0050) and +0.0002 (−0.0017 to +0.0024) at the three
+  skews. Switching linear to the realized change made no difference at skews 0
+  and 0.75 and −0.0023 (−0.0059 to +0.0003) at skew 1.5.</li>
+</ul>
+<figure class="dots "><figcaption><b>The Kantian gate on several scales of “the same change” (E11, corrected in E12)</b></figcaption><div class="legend"><span><i style="background:#1d1c17"></i>Kantian gate, valid scales</span><span><i style="background:#d8361f"></i>log scale</span><span><i style="background:#a9a69d"></i>faulty, for the record</span><span><i style="background:#2456d6"></i>ambient tax</span><span><i class="dash"></i>optimum</span></div><div class="panels three"><div class="panel"><h4>Equal exposure (skew 0)</h4><div class="drow" role="img" aria-label="Kantian, linear: 0.215 (0.214 to 0.215)"><span class="dl">Kantian, linear</span><div class="dt"><i class="ref" style="left:21.33%"></i><i class="ci" style="left:32.95%;width:25.85%;top:50%;background:#1d1c17"></i><i class="pt" style="left:45.98%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.215</span></span></div><div class="drow" role="img" aria-label="Kantian, linear (realized change, E12): 0.215 (0.214 to 0.215)"><span class="dl">Kantian, linear (realized change, E12)</span><div class="dt"><i class="ref" style="left:21.33%"></i><i class="ci" style="left:33.24%;width:26.52%;top:50%;background:#1d1c17"></i><i class="pt" style="left:46.83%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.215</span></span></div><div class="drow" role="img" aria-label="Kantian, logit: 0.215 (0.214 to 0.215)"><span class="dl">Kantian, logit</span><div class="dt"><i class="ref" style="left:21.33%"></i><i class="ci" style="left:32.14%;width:33.69%;top:50%;background:#1d1c17"></i><i class="pt" style="left:48.69%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.215</span></span></div><div class="drow" role="img" aria-label="Kantian, square root (corrected, E12): 0.215 (0.214 to 0.215)"><span class="dl">Kantian, square root (corrected, E12)</span><div class="dt"><i class="ref" style="left:21.33%"></i><i class="ci" style="left:33.61%;width:23.26%;top:50%;background:#1d1c17"></i><i class="pt" style="left:45.19%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.215</span></span></div><div class="drow" role="img" aria-label="Kantian, square root (faulty, E11): 0.215 (0.215 to 0.216)"><span class="dl">Kantian, square root (faulty, E11)</span><div class="dt"><i class="ref" style="left:21.33%"></i><i class="ci" style="left:45.19%;width:24.25%;top:50%;background:#a9a69d"></i><i class="pt" style="left:57.22%;top:50%;background:#a9a69d"></i></div><span class="dv"><span style="color:#55534b">0.215</span></span></div><div class="drow" role="img" aria-label="Kantian, log: 0.215 (0.215 to 0.216)"><span class="dl">Kantian, log</span><div class="dt"><i class="ref" style="left:21.33%"></i><i class="ci" style="left:43.72%;width:37.41%;top:50%;background:#d8361f"></i><i class="pt" style="left:61.72%;top:50%;background:#d8361f"></i></div><span class="dv"><span style="color:#d8361f">0.215</span></span></div><div class="drow" role="img" aria-label="&lt;b&gt;ambient tax&lt;/b&gt;: 0.216 (0.215 to 0.216)"><span class="dl"><b>ambient tax</b></span><div class="dt"><i class="ref" style="left:21.33%"></i><i class="ci" style="left:50.20%;width:42.90%;top:50%;background:#2456d6"></i><i class="pt" style="left:70.47%;top:50%;background:#2456d6"></i></div><span class="dv"><span style="color:#2456d6">0.216</span></span></div><div class="drow" role="img" aria-label="optimum: 0.214 (0.213 to 0.214)"><span class="dl">optimum</span><div class="dt"><i class="ref" style="left:21.33%"></i><i class="ci" style="left:6.90%;width:30.18%;top:50%;background:#55534b"></i><i class="pt" style="left:21.33%;top:50%;background:#55534b"></i></div><span class="dv"><span style="color:#55534b">0.214</span></span></div><div class="axis" aria-hidden="true"><span></span><div class="ticks"><i style="left:1.66%">0.213</i><i style="left:27.89%">0.214</i><i style="left:54.11%">0.215</i><i style="left:80.34%">0.216</i></div><span></span></div><p class="xlab">Held-out system cost</p></div><div class="panel"><h4>Some take more (skew 0.75)</h4><div class="drow" role="img" aria-label="Kantian, linear: 0.204 (0.203 to 0.205)"><span class="dl">Kantian, linear</span><div class="dt"><i class="ref" style="left:7.74%"></i><i class="ci" style="left:13.12%;width:3.66%;top:50%;background:#1d1c17"></i><i class="pt" style="left:15.00%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.204</span></span></div><div class="drow" role="img" aria-label="Kantian, linear (realized change, E12): 0.204 (0.203 to 0.204)"><span class="dl">Kantian, linear (realized change, E12)</span><div class="dt"><i class="ref" style="left:7.74%"></i><i class="ci" style="left:12.93%;width:3.50%;top:50%;background:#1d1c17"></i><i class="pt" style="left:14.71%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.204</span></span></div><div class="drow" role="img" aria-label="Kantian, logit: 0.203 (0.203 to 0.204)"><span class="dl">Kantian, logit</span><div class="dt"><i class="ref" style="left:7.74%"></i><i class="ci" style="left:12.07%;width:2.75%;top:50%;background:#1d1c17"></i><i class="pt" style="left:13.41%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.203</span></span></div><div class="drow" role="img" aria-label="Kantian, square root (corrected, E12): 0.211 (0.208 to 0.214)"><span class="dl">Kantian, square root (corrected, E12)</span><div class="dt"><i class="ref" style="left:7.74%"></i><i class="ci" style="left:27.35%;width:16.77%;top:50%;background:#1d1c17"></i><i class="pt" style="left:35.25%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.211</span></span></div><div class="drow" role="img" aria-label="Kantian, square root (faulty, E11): 0.209 (0.207 to 0.211)"><span class="dl">Kantian, square root (faulty, E11)</span><div class="dt"><i class="ref" style="left:7.74%"></i><i class="ci" style="left:23.27%;width:13.16%;top:50%;background:#a9a69d"></i><i class="pt" style="left:29.37%;top:50%;background:#a9a69d"></i></div><span class="dv"><span style="color:#55534b">0.209</span></span></div><div class="drow" role="img" aria-label="Kantian, log: 0.227 (0.222 to 0.231)"><span class="dl">Kantian, log</span><div class="dt"><i class="ref" style="left:7.74%"></i><i class="ci" style="left:68.51%;width:24.59%;top:50%;background:#d8361f"></i><i class="pt" style="left:81.01%;top:50%;background:#d8361f"></i></div><span class="dv"><span style="color:#d8361f">0.227</span></span></div><div class="drow" role="img" aria-label="&lt;b&gt;ambient tax&lt;/b&gt;: 0.202 (0.201 to 0.202)"><span class="dl"><b>ambient tax</b></span><div class="dt"><i class="ref" style="left:7.74%"></i><i class="ci" style="left:7.12%;width:3.25%;top:50%;background:#2456d6"></i><i class="pt" style="left:8.68%;top:50%;background:#2456d6"></i></div><span class="dv"><span style="color:#2456d6">0.202</span></span></div><div class="drow" role="img" aria-label="optimum: 0.202 (0.201 to 0.202)"><span class="dl">optimum</span><div class="dt"><i class="ref" style="left:7.74%"></i><i class="ci" style="left:6.90%;width:1.68%;top:50%;background:#55534b"></i><i class="pt" style="left:7.74%;top:50%;background:#55534b"></i></div><span class="dv"><span style="color:#55534b">0.202</span></span></div><div class="axis" aria-hidden="true"><span></span><div class="ticks"><i style="left:3.36%">0.2</i><i style="left:32.45%">0.21</i><i style="left:61.53%">0.22</i><i style="left:90.61%">0.23</i></div><span></span></div><p class="xlab">Held-out system cost</p></div><div class="panel"><h4>One takes most (skew 1.5)</h4><div class="drow" role="img" aria-label="Kantian, linear: 0.182 (0.179 to 0.185)"><span class="dl">Kantian, linear</span><div class="dt"><i class="ref" style="left:8.15%"></i><i class="ci" style="left:19.72%;width:18.34%;top:50%;background:#1d1c17"></i><i class="pt" style="left:27.50%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.182</span></span></div><div class="drow" role="img" aria-label="Kantian, linear (realized change, E12): 0.179 (0.178 to 0.180)"><span class="dl">Kantian, linear (realized change, E12)</span><div class="dt"><i class="ref" style="left:8.15%"></i><i class="ci" style="left:18.02%;width:5.42%;top:50%;background:#1d1c17"></i><i class="pt" style="left:20.76%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.179</span></span></div><div class="drow" role="img" aria-label="Kantian, logit: 0.177 (0.176 to 0.177)"><span class="dl">Kantian, logit</span><div class="dt"><i class="ref" style="left:8.15%"></i><i class="ci" style="left:11.30%;width:3.51%;top:50%;background:#1d1c17"></i><i class="pt" style="left:13.01%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.177</span></span></div><div class="drow" role="img" aria-label="Kantian, square root (corrected, E12): 0.184 (0.182 to 0.187)"><span class="dl">Kantian, square root (corrected, E12)</span><div class="dt"><i class="ref" style="left:8.15%"></i><i class="ci" style="left:29.27%;width:13.99%;top:50%;background:#1d1c17"></i><i class="pt" style="left:35.78%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.184</span></span></div><div class="drow" role="img" aria-label="Kantian, square root (faulty, E11): 0.184 (0.182 to 0.187)"><span class="dl">Kantian, square root (faulty, E11)</span><div class="dt"><i class="ref" style="left:8.15%"></i><i class="ci" style="left:29.44%;width:12.25%;top:50%;background:#a9a69d"></i><i class="pt" style="left:35.12%;top:50%;background:#a9a69d"></i></div><span class="dv"><span style="color:#55534b">0.184</span></span></div><div class="drow" role="img" aria-label="Kantian, log: 0.202 (0.199 to 0.204)"><span class="dl">Kantian, log</span><div class="dt"><i class="ref" style="left:8.15%"></i><i class="ci" style="left:79.02%;width:14.08%;top:50%;background:#d8361f"></i><i class="pt" style="left:85.95%;top:50%;background:#d8361f"></i></div><span class="dv"><span style="color:#d8361f">0.202</span></span></div><div class="drow" role="img" aria-label="&lt;b&gt;ambient tax&lt;/b&gt;: 0.175 (0.174 to 0.175)"><span class="dl"><b>ambient tax</b></span><div class="dt"><i class="ref" style="left:8.15%"></i><i class="ci" style="left:6.90%;width:1.88%;top:50%;background:#2456d6"></i><i class="pt" style="left:7.82%;top:50%;background:#2456d6"></i></div><span class="dv"><span style="color:#2456d6">0.175</span></span></div><div class="drow" role="img" aria-label="optimum: 0.175 (0.174 to 0.175)"><span class="dl">optimum</span><div class="dt"><i class="ref" style="left:8.15%"></i><i class="ci" style="left:7.05%;width:2.23%;top:50%;background:#55534b"></i><i class="pt" style="left:8.15%;top:50%;background:#55534b"></i></div><span class="dv"><span style="color:#55534b">0.175</span></span></div><div class="axis" aria-hidden="true"><span></span><div class="ticks"><i style="left:22.96%">0.18</i><i style="left:51.76%">0.19</i><i style="left:80.56%">0.2</i></div><span></span></div><p class="xlab">Held-out system cost</p></div></div><p class="fnote">Dots are means over 20 seeds; lines are 95% bootstrap intervals. Lower cost is better. E11's square-root variant was implemented incorrectly (found by an independent review); it is shown in grey for the record. E12 reran it corrected, and added linear with the realized change.</p></figure>
 <h3 id="46-equal-output-sharing-post-hoc-independent-review">4.6 Equal output sharing (post hoc, independent review)</h3>
 <p>This section was not pre-registered. An independent review of the published
 repository proposed a budget-balanced rule that none of our studies included:
@@ -898,7 +987,7 @@ close to reward-transfer schemes studied for learning agents (Willis et al.
 <tr>
 <td>E11</td>
 <td>U1 ambient tax beats the best gate over all scales</td>
-<td>Held over the variants implemented (gap narrows to within margin); the square-root variant was faulty, rerun pending</td>
+<td>Held over the variants implemented (gap narrows to within margin); the square-root variant was faulty, confirmed by E12</td>
 </tr>
 <tr>
 <td></td>
@@ -913,6 +1002,26 @@ close to reward-transfer schemes studied for learning agents (Willis et al.
 <tr>
 <td></td>
 <td>U4 scales agree with identical agents</td>
+<td>Held</td>
+</tr>
+<tr>
+<td>E12</td>
+<td>V1 ambient tax beats the best gate over all corrected variants</td>
+<td>Held (gap within margin, as in E11)</td>
+</tr>
+<tr>
+<td></td>
+<td>V2 log costlier than linear at matched convention, skew 1.5</td>
+<td>Held (+0.0226)</td>
+</tr>
+<tr>
+<td></td>
+<td>V3 distortion under every valid scale</td>
+<td>Held</td>
+</tr>
+<tr>
+<td></td>
+<td>V4 corrected variants agree with linear at skew 0</td>
 <td>Held</td>
 </tr>
 </tbody>
@@ -985,17 +1094,10 @@ depends on which of these an operator can obtain.</p>
   effectiveness among humans (Wu 2017). So E9 and E10's results for the tax
   hold for these agents, not necessarily for people.</li>
 <li><strong>The Kantian gate depends on units.</strong> The Kantian counterfactual depends
-  on how actions are represented (Sloev and Lianos 2026). E11 confirms this:
-  the gate's cost moved by up to 0.02 across four scales. The verdict held
-  under all four, but other scales were not tested.</li>
-<li><strong>Unequal noise filters across gates (found after publication).</strong> The
-  private, κ = 1 and unilateral-welfare gates accept a change only if it passes
-  a t-test on its scenarios. The mixed κ (0 &lt; κ &lt; 1) and joint-welfare gates
-  apply no such test, and the mixed gate scores each half of its counterfactual
-  on half of the scenarios. E10's chosen gate at skew 1.5 (κ = 0.5) and the
-  best non-price rule in payments (joint welfare) are both unfiltered, so some
-  differences between arms may reflect how much noise a gate lets through
-  rather than its objective. This has not yet been tested.</li>
+  on how actions are represented (Sloev and Lianos 2026). E11 and its
+  corrected rerun E12 confirm this: the gate's cost moved by up to 0.02 across
+  the scales tested, and the verdict held under all of them. Other scales were
+  not tested.</li>
 <li><strong>Many tests, no multiplicity correction.</strong> Each study registered a family
   of tests with no adjustment, and several verdicts lie close to the 0.002
   practical margin. Those should be read as indicative.</li>

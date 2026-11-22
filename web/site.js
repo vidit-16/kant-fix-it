@@ -328,17 +328,18 @@ columnChart(document.querySelector("#chartUnequal"), {
 });
 
 barChart(document.querySelector("#chartUnits"), {
-  ctlLabel: "", labels: ["Conscience, linear", "Conscience, logit", "Conscience, log", "Tax the damage"],
-  colors: [C.ink, C.ink, C.red, C.blue],
+  ctlLabel: "", labels: ["Conscience, linear", "Conscience, logit", "Conscience, square root", "Conscience, log", "Tax the damage"],
+  colors: [C.ink, C.ink, C.ink, C.red, C.blue],
   why: [
     "The original rule: “the same change” means the same amount added for everyone.",
     "The same change measured on a logit scale. The best of these, still short of the tax.",
+    "The same change measured on a square-root scale. Worse than the original. This is the corrected version: the first run had a bug, found by an independent review.",
     "The same change measured in proportion, on a log scale. Here the conscience leaves the system worse than having no rule at all.",
     "The damage tax, for comparison. No scale to choose: an agent pays for what it causes.",
   ],
   views: {
-    one: { name: "", min: -0.5, max: 1.05, fmt: pct, values: [0.67, 0.92, -0.34, 1.0], tags: ["", "", "worse than nothing", ""],
-      note: "Share of the damage fixed when one module takes most incidents, for three ways of measuring “the same change”. 100% is the best solution our search found. Below zero is worse than doing nothing. 20 seeds each." },
+    one: { name: "", min: -0.5, max: 1.05, fmt: pct, values: [0.67, 0.92, 0.53, -0.33, 1.0], tags: ["", "", "", "worse than nothing", ""],
+      note: "Share of the damage fixed when one module takes most incidents, for four ways of measuring “the same change”. 100% is the best solution our search found. Below zero is worse than doing nothing. 20 seeds each." },
   },
 });
 

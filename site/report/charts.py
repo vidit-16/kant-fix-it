@@ -169,18 +169,24 @@ def fig_e10():
 
 # ---- E11: units of universalization ------------------------------------------------
 def fig_e11():
-    S = load("results_e11")["skews"]
+    # E11 and its corrected rerun E12; results_e12 holds every arm, the faulty one labelled
+    S = load("results_e12")["skews"]
     panels = []
     for sk in SKEWS:
         A = S[sk]["arms"]
-        rows = [("Kantian, linear", "k1@linear", INK), ("Kantian, logit", "k1@logit", INK),
-                ("Kantian, square root (faulty, §4.5)", "k1@sqrt", GREY), ("Kantian, log", "k1@log", RED),
+        rows = [("Kantian, linear", "k1@linear", INK),
+                ("Kantian, linear (realized change, E12)", "k1@linear_realized", INK),
+                ("Kantian, logit", "k1@logit", INK),
+                ("Kantian, square root (corrected, E12)", "k1@sqrt_fixed", INK),
+                ("Kantian, square root (faulty, E11)", "k1@sqrt (E11, faulty)", GREY),
+                ("Kantian, log", "k1@log", RED),
                 ("<b>ambient tax</b>", "ambient1", BLUE), ("optimum", "optimum", REF)]
         data = [(lab, [(*C(A[k]), c)]) for lab, k, c in rows]
         panels.append(panel(data, title=SKEW_NAME[sk], ref=A["optimum"]["cost"][0], xlabel="Held-out system cost"))
-    body = legend([("Kantian gate, four scales", INK), ("log scale", RED), ("ambient tax", BLUE), ("optimum", None)])
+    body = legend([("Kantian gate, valid scales", INK), ("log scale", RED), ("faulty, for the record", GREY), ("ambient tax", BLUE), ("optimum", None)])
     body += '<div class="panels three">' + "".join(panels) + "</div>"
-    return figure("The Kantian gate on four scales of “the same change” (E11)", body, [CI_NOTE, "The square-root variant was implemented incorrectly (found by an independent review) and is shown in grey for the record only."])
+    return figure("The Kantian gate on several scales of “the same change” (E11, corrected in E12)", body,
+                  [CI_NOTE, "E11's square-root variant was implemented incorrectly (found by an independent review); it is shown in grey for the record. E12 reran it corrected, and added linear with the realized change."])
 
 
 FIGURES = {"gates": fig_gates, "e8": fig_e8, "e9": fig_e9, "e10": fig_e10, "e11": fig_e11}

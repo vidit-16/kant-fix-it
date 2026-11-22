@@ -19,8 +19,8 @@ their owner can be bad for everyone. We ask whether the *acceptance rule*
 alone can correct this, and whether it can do so better than a charge on the
 externality that an operator could levy instead. Proposals, search budget and
 environment are identical across arms; only the gate, or the price the agents
-face, differs. Five pre-registered studies (4 190 confirmatory run records, some of them
-shared between studies, 20 paired
+face, differs. Five pre-registered studies and a pre-registered corrected rerun (4 430
+confirmatory run records, some of them shared between studies, 20 paired
 seeds each, held-out evaluation scenarios) were run in two environments.
 
 In a stylized real-time gross settlement network (E1–E6, E8), private gates
@@ -44,8 +44,9 @@ instrument is therefore rejected. A fifth study (E11) re-ran the Kantian gates
 with "the same change" measured on three other scales. The gate's cost moved
 by up to 0.02 with the choice of scale, but the ambient tax still beat the
 best gate over every variant implemented. An independent review later found
-that the square-root variant was implemented incorrectly, so that robustness
-claim awaits a corrected rerun (§4.5).
+that the square-root variant was implemented incorrectly and that the scales
+used different conventions; a corrected, pre-registered rerun (E12) reached
+the same verdict (§4.5).
 
 **Correction (post hoc).** Earlier versions concluded that where only
 budget-balanced charges are possible and the harm's carrier can be hidden, an
@@ -471,7 +472,7 @@ use the proposer's realized change after clipping to the policy bounds, so
 scale and convention are confounded in U2. (iii) The analysis flag "gate
 clearly cheaper beyond the margin" had a sign error and could never be true.
 It changes no outcome here, because the ambient tax was cheaper. A corrected
-rerun will be registered and reported beside these results.
+rerun, E12, is reported below, beside these results.
 
 * **The verdict held over the variants implemented (U1).** Over all nine own-cost gate variants, the
   one chosen on development data was the logit Kantian gate at both unequal
@@ -490,6 +491,45 @@ rerun will be registered and reported beside these results.
 * **Post hoc:** the logit scale, which compresses changes near the policy
   bounds, gives the best Kantian gate. A gate whose scale is tuned to the
   problem is, in effect, a different instrument; it was not pursued.
+
+**E12: E11 corrected (pre-registered).** Protocol:
+[PREREGISTRATION_E12.md](PREREGISTRATION_E12.md), frozen at `38d1e4f` before
+any run; it was decided after E11 and the review were known. E12 re-ran the
+two faulty or unmatched variants: square root with an inverse that stops at
+zero (`sqrt_fixed`), and linear broadcasting the realized change
+(`linear_realized`), each at κ = 0.5 and 1, three skews, 20 seeds (240 runs).
+Log and logit were valid as run and were reused from E11; E11's square-root
+records were excluded from every test.
+
+| Kantian gate (κ = 1) | skew 0 | skew 0.75 | skew 1.5 |
+|---|---|---|---|
+| linear (E10, raw change) | 0.2147 | 0.2040 | 0.1816 |
+| linear, realized change (E12) | 0.2147 | 0.2039 | 0.1792 |
+| logit (E11) | 0.2148 | **0.2035** | **0.1765** |
+| square root, corrected (E12) | 0.2147 | 0.2110 | 0.1845 |
+| square root, faulty (E11, for the record) | 0.2151 | 0.2089 | 0.1842 |
+| log (E11) | 0.2153 | 0.2267 | 0.2019 |
+| ambient tax, level 1 | 0.2156 | **0.2018** | **0.1747** |
+| optimum | 0.2137 | 0.2015 | 0.1749 |
+
+* **The verdict holds over the corrected variants (V1).** Over eleven valid
+  own-cost gate variants, development data again chose the logit Kantian gate
+  at both unequal skews, and the ambient tax was clearly cheaper: −0.0016
+  (−0.0022 to −0.0011) and −0.0018 (−0.0024 to −0.0012). As in E11 the
+  difference is clear but smaller than the 0.002 practical margin. The line
+  does not reopen.
+* **Units still matter at a matched convention (V2).** At skew 1.5 the log
+  gate costs 0.0226 (0.0202 to 0.0252) more than linear with the realized
+  change.
+* **The distortion survives every valid scale (V3):** the spread excess over
+  the optimum ranges from +0.19 (logit) to +0.75 (log).
+* **With identical agents the corrected variants agree with linear (V4),**
+  within 0.0001.
+* **The faults did not drive E11's results** (reported without prediction).
+  Correcting the square root changed its cost by −0.0005 (−0.0008 to −0.0001),
+  +0.0020 (−0.0011 to +0.0050) and +0.0002 (−0.0017 to +0.0024) at the three
+  skews. Switching linear to the realized change made no difference at skews 0
+  and 0.75 and −0.0023 (−0.0059 to +0.0003) at skew 1.5.
 
 ![e11](../runs/fig_e11.png)
 
@@ -556,10 +596,14 @@ close to reward-transfer schemes studied for learning agents (Willis et al.
 | | D4 Kantian distortion | Held |
 | | D5 gate beats budget-balanced at every skew | Held against the charges registered, shrinking to within margin; see §4.6 |
 | | D6 identity | Held |
-| E11 | U1 ambient tax beats the best gate over all scales | Held over the variants implemented (gap narrows to within margin); the square-root variant was faulty, rerun pending |
+| E11 | U1 ambient tax beats the best gate over all scales | Held over the variants implemented (gap narrows to within margin); the square-root variant was faulty, confirmed by E12 |
 | | U2 log-scale gate costlier than linear at skew 1.5 | Held (+0.020), with linear and log using different change conventions |
 | | U3 distortion under every scale | Held |
 | | U4 scales agree with identical agents | Held |
+| E12 | V1 ambient tax beats the best gate over all corrected variants | Held (gap within margin, as in E11) |
+| | V2 log costlier than linear at matched convention, skew 1.5 | Held (+0.0226) |
+| | V3 distortion under every valid scale | Held |
+| | V4 corrected variants agree with linear at skew 0 | Held |
 
 ## 6. Discussion
 
@@ -635,9 +679,10 @@ depends on which of these an operator can obtain.
   effectiveness among humans (Wu 2017). So E9 and E10's results for the tax
   hold for these agents, not necessarily for people.
 * **The Kantian gate depends on units.** The Kantian counterfactual depends
-  on how actions are represented (Sloev and Lianos 2026). E11 confirms this:
-  the gate's cost moved by up to 0.02 across four scales. The verdict held
-  under all four, but other scales were not tested.
+  on how actions are represented (Sloev and Lianos 2026). E11 and its
+  corrected rerun E12 confirm this: the gate's cost moved by up to 0.02 across
+  the scales tested, and the verdict held under all of them. Other scales were
+  not tested.
 * **Many tests, no multiplicity correction.** Each study registered a family
   of tests with no adjustment, and several verdicts lie close to the 0.002
   practical margin. Those should be read as indicative.
