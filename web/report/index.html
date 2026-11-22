@@ -41,6 +41,7 @@
 <li><a href="#43-no-direct-price-the-shared-codebase-e9">4.3 No direct price: the shared codebase (E9)</a></li>
 <li><a href="#44-unequal-exposure-e10">4.4 Unequal exposure (E10)</a></li>
 <li><a href="#45-robustness-to-the-units-of-universalization-e11">4.5 Robustness to the units of universalization (E11)</a></li>
+<li><a href="#46-equal-output-sharing-post-hoc-independent-review">4.6 Equal output sharing (post hoc, independent review)</a></li>
 </ul>
 </li>
 <li><a href="#5-registered-predictions-and-outcomes">5. Registered predictions and outcomes</a></li>
@@ -70,6 +71,7 @@
 <li><a href="#43-no-direct-price-the-shared-codebase-e9">4.3 No direct price: the shared codebase (E9)</a></li>
 <li><a href="#44-unequal-exposure-e10">4.4 Unequal exposure (E10)</a></li>
 <li><a href="#45-robustness-to-the-units-of-universalization-e11">4.5 Robustness to the units of universalization (E11)</a></li>
+<li><a href="#46-equal-output-sharing-post-hoc-independent-review">4.6 Equal output sharing (post hoc, independent review)</a></li>
 </ul>
 </li>
 <li><a href="#5-registered-predictions-and-outcomes">5. Registered predictions and outcomes</a></li>
@@ -80,8 +82,10 @@
 <li><a href="#references">References</a></li>
 </ul></details>
 
-<p>Final report of the gates line, 18 November 2026. Status: single-site,
-unreviewed, unreplicated. The audit trail, decision log and per-study detail
+<p>Final report of the gates line, 18 November 2026, corrected 23 November 2026
+after an independent review (§4.5, §4.6). Status: single-site, not peer
+reviewed; an independent reviewer re-ran 120 headline runs and reproduced them
+exactly, but the results are not independently replicated. The audit trail, decision log and per-study detail
 are in <a href="https://github.com/vidit-16/kant-fix-it/blob/main/docs/PROJECT.md">PROJECT.md</a>. The frozen protocols are
 <a href="https://github.com/vidit-16/kant-fix-it/blob/main/docs/PREREGISTRATION.md">PREREGISTRATION.md</a> (E1–E6),
 <a href="https://github.com/vidit-16/kant-fix-it/blob/main/docs/PREREGISTRATION_E8.md">PREREGISTRATION_E8.md</a>,
@@ -95,7 +99,8 @@ their owner can be bad for everyone. We ask whether the <em>acceptance rule</em>
 alone can correct this, and whether it can do so better than a charge on the
 externality that an operator could levy instead. Proposals, search budget and
 environment are identical across arms; only the gate, or the price the agents
-face, differs. Five pre-registered studies (4 190 confirmatory runs, 20 paired
+face, differs. Five pre-registered studies (4 190 confirmatory run records, some of them
+shared between studies, 20 paired
 seeds each, held-out evaluation scenarios) were run in two environments.</p>
 <p>In a stylized real-time gross settlement network (E1–E6, E8), private gates
 leave the system 29 % costlier than a symmetric planner. A universalization
@@ -106,8 +111,8 @@ every gate, with three-parameter and with eight-parameter rule-level policies.</
 <p>In a shared-codebase environment (E9, E10), harm is unattributable and its
 carrier can be hidden, so no direct price exists. With identical agents the
 Kantian gate and a budget-breaking ambient tax are practically equivalent
-(difference 0.0009, 0.4 % of cost). Every budget-balanced charge either had no
-effect or was gamed into concealment. When incident exposure is unequal, the
+(difference 0.0009, 0.4 % of cost). Every budget-balanced charge we
+registered either had no effect or was gamed into concealment. When incident exposure is unequal, the
 ambient tax beats the best gate (by 0.0022 and 0.0060 at two levels of
 inequality). The gate shows the distortion our derivation predicts: a
 Kantian point that is Pareto efficient but weights agents by one over their
@@ -116,12 +121,17 @@ decision rule fixed in advance, the claim that gates beat the best available
 instrument is therefore rejected. A fifth study (E11) re-ran the Kantian gates
 with "the same change" measured on three other scales. The gate's cost moved
 by up to 0.02 with the choice of scale, but the ambient tax still beat the
-best gate over all scales, so the verdict does not depend on units.</p>
-<p>What remains is conditional. Where only budget-balanced charges are possible
-and the harm's carrier can be hidden, an own-cost Kantian gate beats those
-charges. Its margin shrinks as exposure becomes unequal, and at the strongest
-inequality tested it is within the equivalence margin. Several registered
-predictions failed; they are listed in §5.</p>
+best gate over every variant implemented. An independent review later found
+that the square-root variant was implemented incorrectly, so that robustness
+claim awaits a corrected rerun (§4.5).</p>
+<p><strong>Correction (post hoc).</strong> Earlier versions concluded that where only
+budget-balanced charges are possible and the harm's carrier can be hidden, an
+own-cost Kantian gate beats those charges. An independent review found a
+budget-balanced rule we had not tested: equal sharing of shipped output. In
+this model it makes exactly the same decisions as the level-1 ambient tax
+(identical trajectories, verified), so that conditional role for the gate does
+not hold here (§4.6). Several registered predictions failed; they are listed
+in §5.</p>
 <h2 id="1-question">1. Question</h2>
 <p>Systems that improve themselves by proposing changes, scoring them and keeping
 the ones that score well are now common (for example CORAL, Qu et al. 2026;
@@ -246,7 +256,8 @@ update together. Every arm spends the same number of simulations.</p>
 <li><em>κ ∈ (0, 1)</em>: a mixture of the two;</li>
 <li><em>unilateral welfare</em>: total cost under the unilateral change;</li>
 <li><em>joint welfare</em>: total cost under the joint shift;</li>
-<li><em>no-harm</em> (payments only): no other agent made worse off.</li>
+<li><em>no-harm</em> (payments only): the combined cost of all other agents does not
+  rise. An individual agent can lose if the others together gain more.</li>
 </ul>
 <p>The own-cost gates read only the agent's own cost; the welfare gates read
 everyone's.</p>
@@ -537,7 +548,9 @@ externality channel itself.</p>
   Any proxy level strong enough to bind is gamed into concealment, a multitask
   effect. The output charge only rescales own cost and has exactly no effect.
   The level chosen on development data leaves the whole gap open. Against
-  these, the gate wins by 0.024 (C5b).</li>
+  these, the gate wins by 0.024 (C5b). This holds only for the charges we
+  registered; equal output sharing, found later, does as well as the ambient
+  tax (§4.6).</li>
 <li><strong>Positive control (γ = 1).</strong> When concealment is pointless, the proxy is a
   direct price and beats the gate with six agents (−0.0027). C3 failed with
   twelve agents (+0.0006, inside the margin).</li>
@@ -612,9 +625,10 @@ bit for bit.</p>
   intensity under it rose from 0.45 for the most exposed agent to 0.89 for the
   least exposed. At the optimum the range is 0.64 to 0.73. The ambient tax
   showed no such spread.</li>
-<li><strong>The gate still beat the best budget-balanced charge at every skew (D5),
-  but the margin shrank:</strong> +0.024, +0.013 and +0.0007. The last is inside the
-  equivalence margin.</li>
+<li><strong>The gate still beat the best registered budget-balanced charge at every
+  skew (D5), but the margin shrank:</strong> +0.024, +0.013 and +0.0007. The last is
+  inside the equivalence margin. Equal output sharing, not registered, matches
+  the ambient tax at every skew (§4.6).</li>
 <li><strong>The identity held:</strong> ambient level 1 equals the unilateral welfare gate
   (D6).</li>
 <li><strong>Post hoc:</strong> at skew 1.5 the development data chose κ = 0.5 over κ = 1.</li>
@@ -681,14 +695,27 @@ from E10. The modified code reproduces E10 runs bit for bit.</p>
 </tr>
 </tbody>
 </table></div>
+<p><strong>Corrections (post hoc, independent review).</strong> Three problems were found
+after publication. (i) The square-root inverse squares its argument, so a step
+that takes a peer below zero is reflected into a step the other way: in a
+replay at skew 1.5, seed 0, 323 of 960 proposals moved at least one peer
+against the proposer's own change. The square-root row is therefore not a
+valid measurement of a square-root scale. (ii) The linear rule broadcasts the
+raw proposed change (the registered E1–E10 definition), while the other scales
+use the proposer's realized change after clipping to the policy bounds, so
+scale and convention are confounded in U2. (iii) The analysis flag "gate
+clearly cheaper beyond the margin" had a sign error and could never be true.
+It changes no outcome here, because the ambient tax was cheaper. A corrected
+rerun will be registered and reported beside these results.</p>
 <ul>
-<li><strong>The verdict is robust (U1).</strong> Over all nine own-cost gate variants, the
+<li><strong>The verdict held over the variants implemented (U1).</strong> Over all nine own-cost gate variants, the
   one chosen on development data was the logit Kantian gate at both unequal
   skews. The ambient tax was still clearly cheaper: −0.0016 (−0.0022 to
   −0.0010) and −0.0018 (−0.0025 to −0.0012). The best scale narrows the gap
   to inside the equivalence margin, but the gate does not win anywhere, so the
   line stays closed.</li>
-<li><strong>The gate depends strongly on units when agents differ (U2).</strong> On the log
+<li><strong>The gate depends strongly on units when agents differ (U2),</strong> with the
+  caveat in (ii) above. On the log
   scale the most exposed agent almost stops taking shortcuts (s = 0.08 at
   skew 1.5), and cost rises by 0.020 (0.017 to 0.023) over the linear gate.
   With identical agents, all scales agree within 0.0006 (U4).</li>
@@ -699,7 +726,40 @@ from E10. The modified code reproduces E10 runs bit for bit.</p>
   bounds, gives the best Kantian gate. A gate whose scale is tuned to the
   problem is, in effect, a different instrument; it was not pursued.</li>
 </ul>
-<figure class="dots "><figcaption><b>The Kantian gate on four scales of “the same change” (E11)</b></figcaption><div class="legend"><span><i style="background:#1d1c17"></i>Kantian gate, four scales</span><span><i style="background:#d8361f"></i>log scale</span><span><i style="background:#2456d6"></i>ambient tax</span><span><i class="dash"></i>optimum</span></div><div class="panels three"><div class="panel"><h4>Equal exposure (skew 0)</h4><div class="drow" role="img" aria-label="Kantian, linear: 0.215 (0.214 to 0.215)"><span class="dl">Kantian, linear</span><div class="dt"><i class="ref" style="left:21.45%"></i><i class="ci" style="left:33.25%;width:26.29%;top:50%;background:#1d1c17"></i><i class="pt" style="left:46.44%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.215</span></span></div><div class="drow" role="img" aria-label="Kantian, logit: 0.215 (0.214 to 0.215)"><span class="dl">Kantian, logit</span><div class="dt"><i class="ref" style="left:21.45%"></i><i class="ci" style="left:32.07%;width:34.56%;top:50%;background:#1d1c17"></i><i class="pt" style="left:49.18%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.215</span></span></div><div class="drow" role="img" aria-label="Kantian, square root: 0.215 (0.215 to 0.216)"><span class="dl">Kantian, square root</span><div class="dt"><i class="ref" style="left:21.45%"></i><i class="ci" style="left:45.04%;width:25.65%;top:50%;background:#1d1c17"></i><i class="pt" style="left:57.83%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.215</span></span></div><div class="drow" role="img" aria-label="Kantian, log: 0.215 (0.215 to 0.216)"><span class="dl">Kantian, log</span><div class="dt"><i class="ref" style="left:21.45%"></i><i class="ci" style="left:44.53%;width:38.27%;top:50%;background:#d8361f"></i><i class="pt" style="left:62.38%;top:50%;background:#d8361f"></i></div><span class="dv"><span style="color:#d8361f">0.215</span></span></div><div class="drow" role="img" aria-label="&lt;b&gt;ambient tax&lt;/b&gt;: 0.216 (0.215 to 0.216)"><span class="dl"><b>ambient tax</b></span><div class="dt"><i class="ref" style="left:21.45%"></i><i class="ci" style="left:50.79%;width:42.32%;top:50%;background:#2456d6"></i><i class="pt" style="left:71.25%;top:50%;background:#2456d6"></i></div><span class="dv"><span style="color:#2456d6">0.216</span></span></div><div class="drow" role="img" aria-label="optimum: 0.214 (0.213 to 0.214)"><span class="dl">optimum</span><div class="dt"><i class="ref" style="left:21.45%"></i><i class="ci" style="left:6.90%;width:30.50%;top:50%;background:#55534b"></i><i class="pt" style="left:21.45%;top:50%;background:#55534b"></i></div><span class="dv"><span style="color:#55534b">0.214</span></span></div><div class="axis" aria-hidden="true"><span></span><div class="ticks"><i style="left:1.53%">0.213</i><i style="left:28.10%">0.214</i><i style="left:54.68%">0.215</i><i style="left:81.25%">0.216</i></div><span></span></div><p class="xlab">Held-out system cost</p></div><div class="panel"><h4>Some take more (skew 0.75)</h4><div class="drow" role="img" aria-label="Kantian, linear: 0.204 (0.203 to 0.205)"><span class="dl">Kantian, linear</span><div class="dt"><i class="ref" style="left:7.75%"></i><i class="ci" style="left:13.13%;width:3.59%;top:50%;background:#1d1c17"></i><i class="pt" style="left:14.98%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.204</span></span></div><div class="drow" role="img" aria-label="Kantian, logit: 0.203 (0.203 to 0.204)"><span class="dl">Kantian, logit</span><div class="dt"><i class="ref" style="left:7.75%"></i><i class="ci" style="left:12.07%;width:2.75%;top:50%;background:#1d1c17"></i><i class="pt" style="left:13.40%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.203</span></span></div><div class="drow" role="img" aria-label="Kantian, square root: 0.209 (0.207 to 0.211)"><span class="dl">Kantian, square root</span><div class="dt"><i class="ref" style="left:7.75%"></i><i class="ci" style="left:23.17%;width:13.31%;top:50%;background:#1d1c17"></i><i class="pt" style="left:29.29%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.209</span></span></div><div class="drow" role="img" aria-label="Kantian, log: 0.227 (0.222 to 0.231)"><span class="dl">Kantian, log</span><div class="dt"><i class="ref" style="left:7.75%"></i><i class="ci" style="left:68.54%;width:24.57%;top:50%;background:#d8361f"></i><i class="pt" style="left:80.71%;top:50%;background:#d8361f"></i></div><span class="dv"><span style="color:#d8361f">0.227</span></span></div><div class="drow" role="img" aria-label="&lt;b&gt;ambient tax&lt;/b&gt;: 0.202 (0.201 to 0.202)"><span class="dl"><b>ambient tax</b></span><div class="dt"><i class="ref" style="left:7.75%"></i><i class="ci" style="left:7.12%;width:3.33%;top:50%;background:#2456d6"></i><i class="pt" style="left:8.68%;top:50%;background:#2456d6"></i></div><span class="dv"><span style="color:#2456d6">0.202</span></span></div><div class="drow" role="img" aria-label="optimum: 0.202 (0.201 to 0.202)"><span class="dl">optimum</span><div class="dt"><i class="ref" style="left:7.75%"></i><i class="ci" style="left:6.90%;width:1.70%;top:50%;background:#55534b"></i><i class="pt" style="left:7.75%;top:50%;background:#55534b"></i></div><span class="dv"><span style="color:#55534b">0.202</span></span></div><div class="axis" aria-hidden="true"><span></span><div class="ticks"><i style="left:3.39%">0.2</i><i style="left:32.35%">0.21</i><i style="left:61.31%">0.22</i><i style="left:90.27%">0.23</i></div><span></span></div><p class="xlab">Held-out system cost</p></div><div class="panel"><h4>One takes most (skew 1.5)</h4><div class="drow" role="img" aria-label="Kantian, linear: 0.182 (0.179 to 0.185)"><span class="dl">Kantian, linear</span><div class="dt"><i class="ref" style="left:8.16%"></i><i class="ci" style="left:19.75%;width:18.36%;top:50%;background:#1d1c17"></i><i class="pt" style="left:27.43%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.182</span></span></div><div class="drow" role="img" aria-label="Kantian, logit: 0.177 (0.176 to 0.177)"><span class="dl">Kantian, logit</span><div class="dt"><i class="ref" style="left:8.16%"></i><i class="ci" style="left:11.33%;width:3.47%;top:50%;background:#1d1c17"></i><i class="pt" style="left:13.01%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.177</span></span></div><div class="drow" role="img" aria-label="Kantian, square root: 0.184 (0.182 to 0.186)"><span class="dl">Kantian, square root</span><div class="dt"><i class="ref" style="left:8.16%"></i><i class="ci" style="left:29.27%;width:12.27%;top:50%;background:#1d1c17"></i><i class="pt" style="left:35.02%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.184</span></span></div><div class="drow" role="img" aria-label="Kantian, log: 0.202 (0.199 to 0.204)"><span class="dl">Kantian, log</span><div class="dt"><i class="ref" style="left:8.16%"></i><i class="ci" style="left:78.65%;width:14.46%;top:50%;background:#d8361f"></i><i class="pt" style="left:85.64%;top:50%;background:#d8361f"></i></div><span class="dv"><span style="color:#d8361f">0.202</span></span></div><div class="drow" role="img" aria-label="&lt;b&gt;ambient tax&lt;/b&gt;: 0.175 (0.174 to 0.175)"><span class="dl"><b>ambient tax</b></span><div class="dt"><i class="ref" style="left:8.16%"></i><i class="ci" style="left:6.90%;width:1.91%;top:50%;background:#2456d6"></i><i class="pt" style="left:7.84%;top:50%;background:#2456d6"></i></div><span class="dv"><span style="color:#2456d6">0.175</span></span></div><div class="drow" role="img" aria-label="optimum: 0.175 (0.174 to 0.175)"><span class="dl">optimum</span><div class="dt"><i class="ref" style="left:8.16%"></i><i class="ci" style="left:7.06%;width:2.28%;top:50%;background:#55534b"></i><i class="pt" style="left:8.16%;top:50%;background:#55534b"></i></div><span class="dv"><span style="color:#55534b">0.175</span></span></div><div class="axis" aria-hidden="true"><span></span><div class="ticks"><i style="left:22.91%">0.18</i><i style="left:51.59%">0.19</i><i style="left:80.27%">0.2</i></div><span></span></div><p class="xlab">Held-out system cost</p></div></div><p class="fnote">Dots are means over 20 seeds; lines are 95% bootstrap intervals. Lower cost is better.</p></figure>
+<figure class="dots "><figcaption><b>The Kantian gate on four scales of “the same change” (E11)</b></figcaption><div class="legend"><span><i style="background:#1d1c17"></i>Kantian gate, four scales</span><span><i style="background:#d8361f"></i>log scale</span><span><i style="background:#2456d6"></i>ambient tax</span><span><i class="dash"></i>optimum</span></div><div class="panels three"><div class="panel"><h4>Equal exposure (skew 0)</h4><div class="drow" role="img" aria-label="Kantian, linear: 0.215 (0.214 to 0.215)"><span class="dl">Kantian, linear</span><div class="dt"><i class="ref" style="left:21.45%"></i><i class="ci" style="left:33.25%;width:26.29%;top:50%;background:#1d1c17"></i><i class="pt" style="left:46.44%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.215</span></span></div><div class="drow" role="img" aria-label="Kantian, logit: 0.215 (0.214 to 0.215)"><span class="dl">Kantian, logit</span><div class="dt"><i class="ref" style="left:21.45%"></i><i class="ci" style="left:32.07%;width:34.56%;top:50%;background:#1d1c17"></i><i class="pt" style="left:49.18%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.215</span></span></div><div class="drow" role="img" aria-label="Kantian, square root (faulty, §4.5): 0.215 (0.215 to 0.216)"><span class="dl">Kantian, square root (faulty, §4.5)</span><div class="dt"><i class="ref" style="left:21.45%"></i><i class="ci" style="left:45.04%;width:25.65%;top:50%;background:#a9a69d"></i><i class="pt" style="left:57.83%;top:50%;background:#a9a69d"></i></div><span class="dv"><span style="color:#55534b">0.215</span></span></div><div class="drow" role="img" aria-label="Kantian, log: 0.215 (0.215 to 0.216)"><span class="dl">Kantian, log</span><div class="dt"><i class="ref" style="left:21.45%"></i><i class="ci" style="left:44.53%;width:38.27%;top:50%;background:#d8361f"></i><i class="pt" style="left:62.38%;top:50%;background:#d8361f"></i></div><span class="dv"><span style="color:#d8361f">0.215</span></span></div><div class="drow" role="img" aria-label="&lt;b&gt;ambient tax&lt;/b&gt;: 0.216 (0.215 to 0.216)"><span class="dl"><b>ambient tax</b></span><div class="dt"><i class="ref" style="left:21.45%"></i><i class="ci" style="left:50.79%;width:42.32%;top:50%;background:#2456d6"></i><i class="pt" style="left:71.25%;top:50%;background:#2456d6"></i></div><span class="dv"><span style="color:#2456d6">0.216</span></span></div><div class="drow" role="img" aria-label="optimum: 0.214 (0.213 to 0.214)"><span class="dl">optimum</span><div class="dt"><i class="ref" style="left:21.45%"></i><i class="ci" style="left:6.90%;width:30.50%;top:50%;background:#55534b"></i><i class="pt" style="left:21.45%;top:50%;background:#55534b"></i></div><span class="dv"><span style="color:#55534b">0.214</span></span></div><div class="axis" aria-hidden="true"><span></span><div class="ticks"><i style="left:1.53%">0.213</i><i style="left:28.10%">0.214</i><i style="left:54.68%">0.215</i><i style="left:81.25%">0.216</i></div><span></span></div><p class="xlab">Held-out system cost</p></div><div class="panel"><h4>Some take more (skew 0.75)</h4><div class="drow" role="img" aria-label="Kantian, linear: 0.204 (0.203 to 0.205)"><span class="dl">Kantian, linear</span><div class="dt"><i class="ref" style="left:7.75%"></i><i class="ci" style="left:13.13%;width:3.59%;top:50%;background:#1d1c17"></i><i class="pt" style="left:14.98%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.204</span></span></div><div class="drow" role="img" aria-label="Kantian, logit: 0.203 (0.203 to 0.204)"><span class="dl">Kantian, logit</span><div class="dt"><i class="ref" style="left:7.75%"></i><i class="ci" style="left:12.07%;width:2.75%;top:50%;background:#1d1c17"></i><i class="pt" style="left:13.40%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.203</span></span></div><div class="drow" role="img" aria-label="Kantian, square root (faulty, §4.5): 0.209 (0.207 to 0.211)"><span class="dl">Kantian, square root (faulty, §4.5)</span><div class="dt"><i class="ref" style="left:7.75%"></i><i class="ci" style="left:23.17%;width:13.31%;top:50%;background:#a9a69d"></i><i class="pt" style="left:29.29%;top:50%;background:#a9a69d"></i></div><span class="dv"><span style="color:#55534b">0.209</span></span></div><div class="drow" role="img" aria-label="Kantian, log: 0.227 (0.222 to 0.231)"><span class="dl">Kantian, log</span><div class="dt"><i class="ref" style="left:7.75%"></i><i class="ci" style="left:68.54%;width:24.57%;top:50%;background:#d8361f"></i><i class="pt" style="left:80.71%;top:50%;background:#d8361f"></i></div><span class="dv"><span style="color:#d8361f">0.227</span></span></div><div class="drow" role="img" aria-label="&lt;b&gt;ambient tax&lt;/b&gt;: 0.202 (0.201 to 0.202)"><span class="dl"><b>ambient tax</b></span><div class="dt"><i class="ref" style="left:7.75%"></i><i class="ci" style="left:7.12%;width:3.33%;top:50%;background:#2456d6"></i><i class="pt" style="left:8.68%;top:50%;background:#2456d6"></i></div><span class="dv"><span style="color:#2456d6">0.202</span></span></div><div class="drow" role="img" aria-label="optimum: 0.202 (0.201 to 0.202)"><span class="dl">optimum</span><div class="dt"><i class="ref" style="left:7.75%"></i><i class="ci" style="left:6.90%;width:1.70%;top:50%;background:#55534b"></i><i class="pt" style="left:7.75%;top:50%;background:#55534b"></i></div><span class="dv"><span style="color:#55534b">0.202</span></span></div><div class="axis" aria-hidden="true"><span></span><div class="ticks"><i style="left:3.39%">0.2</i><i style="left:32.35%">0.21</i><i style="left:61.31%">0.22</i><i style="left:90.27%">0.23</i></div><span></span></div><p class="xlab">Held-out system cost</p></div><div class="panel"><h4>One takes most (skew 1.5)</h4><div class="drow" role="img" aria-label="Kantian, linear: 0.182 (0.179 to 0.185)"><span class="dl">Kantian, linear</span><div class="dt"><i class="ref" style="left:8.16%"></i><i class="ci" style="left:19.75%;width:18.36%;top:50%;background:#1d1c17"></i><i class="pt" style="left:27.43%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.182</span></span></div><div class="drow" role="img" aria-label="Kantian, logit: 0.177 (0.176 to 0.177)"><span class="dl">Kantian, logit</span><div class="dt"><i class="ref" style="left:8.16%"></i><i class="ci" style="left:11.33%;width:3.47%;top:50%;background:#1d1c17"></i><i class="pt" style="left:13.01%;top:50%;background:#1d1c17"></i></div><span class="dv"><span style="color:#1d1c17">0.177</span></span></div><div class="drow" role="img" aria-label="Kantian, square root (faulty, §4.5): 0.184 (0.182 to 0.186)"><span class="dl">Kantian, square root (faulty, §4.5)</span><div class="dt"><i class="ref" style="left:8.16%"></i><i class="ci" style="left:29.27%;width:12.27%;top:50%;background:#a9a69d"></i><i class="pt" style="left:35.02%;top:50%;background:#a9a69d"></i></div><span class="dv"><span style="color:#55534b">0.184</span></span></div><div class="drow" role="img" aria-label="Kantian, log: 0.202 (0.199 to 0.204)"><span class="dl">Kantian, log</span><div class="dt"><i class="ref" style="left:8.16%"></i><i class="ci" style="left:78.65%;width:14.46%;top:50%;background:#d8361f"></i><i class="pt" style="left:85.64%;top:50%;background:#d8361f"></i></div><span class="dv"><span style="color:#d8361f">0.202</span></span></div><div class="drow" role="img" aria-label="&lt;b&gt;ambient tax&lt;/b&gt;: 0.175 (0.174 to 0.175)"><span class="dl"><b>ambient tax</b></span><div class="dt"><i class="ref" style="left:8.16%"></i><i class="ci" style="left:6.90%;width:1.91%;top:50%;background:#2456d6"></i><i class="pt" style="left:7.84%;top:50%;background:#2456d6"></i></div><span class="dv"><span style="color:#2456d6">0.175</span></span></div><div class="drow" role="img" aria-label="optimum: 0.175 (0.174 to 0.175)"><span class="dl">optimum</span><div class="dt"><i class="ref" style="left:8.16%"></i><i class="ci" style="left:7.06%;width:2.28%;top:50%;background:#55534b"></i><i class="pt" style="left:8.16%;top:50%;background:#55534b"></i></div><span class="dv"><span style="color:#55534b">0.175</span></span></div><div class="axis" aria-hidden="true"><span></span><div class="ticks"><i style="left:22.91%">0.18</i><i style="left:51.59%">0.19</i><i style="left:80.27%">0.2</i></div><span></span></div><p class="xlab">Held-out system cost</p></div></div><p class="fnote">Dots are means over 20 seeds; lines are 95% bootstrap intervals. Lower cost is better. The square-root variant was implemented incorrectly (found by an independent review) and is shown in grey for the record only.</p></figure>
+<h3 id="46-equal-output-sharing-post-hoc-independent-review">4.6 Equal output sharing (post hoc, independent review)</h3>
+<p>This section was not pre-registered. An independent review of the published
+repository proposed a budget-balanced rule that none of our studies included:
+charge each agent its shipped output minus the average shipped output, paying
+a rebate when that is negative. The charges sum to zero in every scenario, and
+the rule needs only each module's shipped output, which the operator observes.
+It is equal sharing of output, a textbook sharing rule (Holmström 1982), and
+close to reward-transfer schemes studied for learning agents (Willis et al.
+2024; Haupt et al. 2024).</p>
+<ul>
+<li><strong>It is equivalent to the level-1 ambient tax in this model.</strong> On the
+  development scenarios output is worth one unit and module sizes do not depend
+  on policy. An agent's pooled cost then changes by exactly one <em>n</em>th of the
+  total cost change when it alone changes policy, while under the ambient tax
+  it changes by the whole total. Every gate decision depends only on the sign
+  of that score and on a scale-free t-test, so the two rules make the same
+  decisions.</li>
+<li><strong>Verified, not only derived.</strong> The reviewer's harness and our own test
+  (<code>test_pooling_reproduces_the_ambient_tax_trajectory</code>) show identical
+  policies, histories and simulation counts at skews 0, 0.75 and 1.5; the
+  transfers balance to within 10⁻¹³.</li>
+<li><strong>What it changes.</strong> C5b and D5 hold only against the budget-balanced charges
+  we registered. With equal output sharing available, a budget-balanced rule
+  does as well as the best instrument at every skew, so this model gives the
+  gate no role. The headline is unchanged: a transfer, not a conscience,
+  reaches the optimum, and now even without breaking the budget.</li>
+<li><strong>Why it works here, and where it would not.</strong> The simulated agents have no
+  costs or benefits outside the shared ledger. If agents bore private costs,
+  such as effort or compute, equal sharing would give each only one <em>n</em>th of
+  the gain from bearing them, the team problem Holmström identified, while the
+  ambient tax would not. Whether a gate helps in that setting is open and
+  would need its own registered study.</li>
+</ul>
 <h2 id="5-registered-predictions-and-outcomes">5. Registered predictions and outcomes</h2>
 <div class="tablewrap"><table>
 <thead>
@@ -718,7 +778,7 @@ from E10. The modified code reproduces E10 runs bit for bit.</p>
 <tr>
 <td></td>
 <td>H2 universalization closes ≥ half the gap</td>
-<td>Held at the threshold (0.51)</td>
+<td>Point estimate at the threshold (0.51; 95 % interval 0.41–0.63), so not clearly met</td>
 </tr>
 <tr>
 <td></td>
@@ -793,7 +853,7 @@ from E10. The modified code reproduces E10 runs bit for bit.</p>
 <tr>
 <td></td>
 <td>C5b gate beats budget-balanced</td>
-<td>Held at γ = 0.25</td>
+<td>Held at γ = 0.25 against the charges registered; equal output sharing, found later, matches the ambient tax (§4.6)</td>
 </tr>
 <tr>
 <td></td>
@@ -828,7 +888,7 @@ from E10. The modified code reproduces E10 runs bit for bit.</p>
 <tr>
 <td></td>
 <td>D5 gate beats budget-balanced at every skew</td>
-<td>Held, shrinking to within margin</td>
+<td>Held against the charges registered, shrinking to within margin; see §4.6</td>
 </tr>
 <tr>
 <td></td>
@@ -838,12 +898,12 @@ from E10. The modified code reproduces E10 runs bit for bit.</p>
 <tr>
 <td>E11</td>
 <td>U1 ambient tax beats the best gate over all scales</td>
-<td>Held (gap narrows to within margin)</td>
+<td>Held over the variants implemented (gap narrows to within margin); the square-root variant was faulty, rerun pending</td>
 </tr>
 <tr>
 <td></td>
 <td>U2 log-scale gate costlier than linear at skew 1.5</td>
-<td>Held (+0.020)</td>
+<td>Held (+0.020), with linear and log using different change conventions</td>
 </tr>
 <tr>
 <td></td>
@@ -877,16 +937,27 @@ equally exposed. With unequal exposure it measures what the agent would
 over-shortcut. The additive Kantian point is still Pareto efficient: it is the
 optimum for a planner who weights each agent by one over its exposure (§2).
 It is not the minimum of total cost, which is the outcome measured here. The
-derivation is ours, not taken from the literature; E10 confirms its
-prediction inside a learning loop.</p>
-<p><strong>What survives.</strong> The gate's practical role is narrow. Where an operator can
-neither price the carrier of harm (because it can be hidden) nor break the
-budget, every budget-balanced charge fails: it is gamed or neutral. An
-own-cost Kantian gate then does much better when agents are alike, and only
-slightly better when they are not. Whether an operator can break the budget,
-whether agents are risk-averse, and whether they can collude decide between
-the gate and the ambient tax. These studies hold all three fixed in the
-ambient tax's favour.</p>
+derivation is ours, not taken from the literature, and it is for a scalar game
+with separable gains and shared aggregate damage. The simulated codebase has
+hardening, output-dependent losses, bounded choices and noisy finite search,
+so E10's pattern of shortcuts is consistent with the derivation; it does not
+show that the learned profiles are Pareto efficient in the simulated game.</p>
+<p><strong>What survives.</strong> Earlier versions said that where an operator can neither
+price the carrier of harm nor break the budget, every budget-balanced charge
+fails and the gate is the best option. That was wrong for this model: equal
+output sharing is budget-balanced, needs only shipped output, and does as well
+as the ambient tax (§4.6). The comparison set was incomplete, against our own
+rule to include the strongest instrument an operator could realistically use.
+The gate therefore has no role in these models. A role could exist where
+agents bear private costs, where risk aversion or collusion matter, or where
+transfers are capped; these studies hold all of them fixed.</p>
+<p><strong>What each rule needs to observe.</strong> The rules differ in information, and the
+matched search budget does not equalise that. Equal output sharing needs each
+module's shipped output. The ambient tax needs the incident losses that land
+on others. The Kantian gate needs no measurement by an operator but must
+simulate a world in which every other agent makes its change, so it needs a
+model of the others' policies. A fair statement of which rule is realistic
+depends on which of these an operator can obtain.</p>
 <h2 id="7-limitations">7. Limitations</h2>
 <ul>
 <li><strong>Toy models.</strong></li>
@@ -902,7 +973,10 @@ ambient tax's favour.</p>
 <li><strong>Imperfect references.</strong></li>
 <li>The payment planner is symmetric, so gap closure there is understated.</li>
 <li>The codebase optimum is a grid and coordinate-descent optimum, possibly
-    local; the ambient tax came within 0.0003 of it.</li>
+    local, and the tuned ambient tax beats it (0.2136 against 0.2138 in E9 at
+    level 1.5; 0.1747 against 0.1749 at skew 1.5). Every "share of the gap" and
+    "best possible" figure is measured against this reference, not a true
+    optimum.</li>
 <li><strong>Favourable assumptions for the ambient tax.</strong> Agents are risk-neutral and
   cannot collude, which removes the classic objections to it. Our agents
   each accept changes by their own gate and cannot coordinate. Human subjects
@@ -914,11 +988,30 @@ ambient tax's favour.</p>
   on how actions are represented (Sloev and Lianos 2026). E11 confirms this:
   the gate's cost moved by up to 0.02 across four scales. The verdict held
   under all four, but other scales were not tested.</li>
+<li><strong>Unequal noise filters across gates (found after publication).</strong> The
+  private, κ = 1 and unilateral-welfare gates accept a change only if it passes
+  a t-test on its scenarios. The mixed κ (0 &lt; κ &lt; 1) and joint-welfare gates
+  apply no such test, and the mixed gate scores each half of its counterfactual
+  on half of the scenarios. E10's chosen gate at skew 1.5 (κ = 0.5) and the
+  best non-price rule in payments (joint welfare) are both unfiltered, so some
+  differences between arms may reflect how much noise a gate lets through
+  rather than its objective. This has not yet been tested.</li>
+<li><strong>Many tests, no multiplicity correction.</strong> Each study registered a family
+  of tests with no adjustment, and several verdicts lie close to the 0.002
+  practical margin. Those should be read as indicative.</li>
+<li><strong>E8 provenance.</strong> E8's protocol was frozen at <code>9729748</code>, but its runs carry
+  the "dirty" flag: the analysis script was written while they started and was
+  committed with the results (<code>0547687</code>). The simulation code did not change
+  (PROJECT.md §5.8).</li>
 <li><strong>No language models.</strong> Proposals are random mutations, so the link to
   self-improving language-model systems is an analogy, not a result.</li>
 <li><strong>Prior-art review</strong> was broad and structured but not a formal systematic
   review; several sources were seen at abstract level only
-  (<a href="https://github.com/vidit-16/kant-fix-it/blob/main/docs/LITERATURE_REVIEW.md">LITERATURE_REVIEW.md</a>).</li>
+  (<a href="https://github.com/vidit-16/kant-fix-it/blob/main/docs/LITERATURE_REVIEW.md">LITERATURE_REVIEW.md</a>). It missed work on reward
+  transfers between learning agents (Willis et al. 2024; Haupt et al. 2024),
+  which bears directly on §4.6, and on Kantian behaviour in public-goods
+  networks (Mohanty et al. 2024), which bears on unequal exposure and which we
+  have not yet read in full.</li>
 </ul>
 <h2 id="8-conclusion">8. Conclusion</h2>
 <p>Across two environments and five pre-registered studies, the acceptance gate
@@ -929,10 +1022,13 @@ tested:</p>
 <li>a delay surcharge where the channel is observable;</li>
 <li>an ambient tax where it is not.</li>
 </ul>
-<p>A Kantian own-cost gate is a strong default only where neither is available.
-Its advantage over budget-balanced charges shrinks as agents become unequal.</p>
-<p>The line is closed. Three things could reopen it, none of them in scope here:</p>
+<p>In these models a budget-balanced transfer, equal sharing of output, does as
+well as the ambient tax (§4.6, post hoc), so we found no setting in which the
+gate is needed. That equivalence rests on agents having no private costs
+outside the shared ledger.</p>
+<p>The line is closed. Four things could reopen it, none of them in scope here:</p>
 <ul>
+<li>agents with private costs, where equal sharing under-incentivises;</li>
 <li>risk-averse agents facing a noisy ambient charge;</li>
 <li>collusion against the ambient tax;</li>
 <li>open-ended action spaces, such as agents that edit real code under a
@@ -956,19 +1052,22 @@ records.</p>
 <li>Bech, M., Garratt, R. (2003). The intraday liquidity management game. <em>J. Econ. Theory</em> 109(2).</li>
 <li>Castro, P. S., Desai, A., Du, H., Garratt, R., Rivadeneyra, F. (2025). Estimating policy functions in payments systems using reinforcement learning. <em>ACM Trans. Econ. Comput.</em> 13(1), doi:10.1145/3691326. Earlier as Bank of Canada SWP 2021-7.</li>
 <li>Cochard, F., Willinger, M., Xepapadeas, A. (2005). Efficiency of nonpoint source pollution instruments: an experimental study. <em>Environ. Resour. Econ.</em> 30(4).</li>
-<li>Danassis, P., Filos-Ratsikas, A., Chen, H. et al. (2026). Rectifying market externalities via AI policymaking. <em>Auton. Agents Multi-Agent Syst.</em></li>
+<li>Couto, M., Pal, S. (2023). Introspection dynamics in asymmetric multiplayer games. <em>Dyn. Games Appl.</em> 13, 1256–1285.</li>
+<li>Danassis, P., Filos-Ratsikas, A., Chen, H., Tambe, M. (2026). Rectifying market externalities via AI policymaking. <em>Auton. Agents Multi-Agent Syst.</em> 40, 46.</li>
 <li>Danisman, F., Desai, A., Jiang, J., Rivadeneyra, F., Azad, T. (2026). Strategic interaction among AI agents: evidence from payment systems. Seminar paper, Toulouse School of Economics.</li>
 <li>Fu, Z., Xu, R., Ren, Q. (2026). Financial fragility in societies of LLM agents. arXiv:2609.30940.</li>
 <li>Galbiati, M., Soramäki, K. (2011). An agent-based model of payment systems. <em>J. Econ. Dyn. Control</em> 35(6).</li>
 <li>Gavidia-Calderon, C., Sarro, F., Harman, M., Barr, E. T. (2020). Game-theoretic analysis of development practices: challenges and opportunities. <em>J. Syst. Softw.</em> 159, 110424.</li>
 <li>Holmström, B. (1982). Moral hazard in teams. <em>Bell J. Econ.</em> 13(2).</li>
 <li>Holmström, B., Milgrom, P. (1991). Multitask principal–agent analyses. <em>J. Law Econ. Organ.</em> 7.</li>
+<li>Haupt, A., Christoffersen, P., Damani, M., Hadfield-Menell, D. (2024). Formal contracts mitigate social dilemmas in multi-agent reinforcement learning. <em>Auton. Agents Multi-Agent Syst.</em> 38, 51.</li>
 <li>Hua, Y., Gao, S. et al. (2025). LOPT: learning optimal Pigovian tax in sequential social dilemmas. NeurIPS 2025.</li>
 <li>Istrate, G. (2020). Game-theoretic models of moral and other-regarding agents. arXiv:2012.09759.</li>
 <li>Kordonis, I. (2020). A model for partial Kantian cooperation. <em>Annals of the International Society of Dynamic Games</em>, 319–348.</li>
 <li>Laslier, J.-F. (2022). Universalization and altruism. <em>Soc. Choice Welf.</em> Working-paper version: HAL halshs-03227354 (2021).</li>
 <li>McAvoy, A., Kates-Harbeck, J., Chatterjee, K. et al. (2022). Evolutionary instability of selfish learning in repeated games. <em>PNAS Nexus</em>, pgac141.</li>
 <li>Millock, K., Salanié, F. (2005). Nonpoint source pollution when polluters might cooperate. <em>Topics Econ. Anal. Policy</em> 5(1).</li>
+<li>Mohanty, S., Rao, K., Roy, J. (2024). Kantian imperatives in public goods networks. <em>J. Econ. Behav. Organ.</em> 224, 194–214.</li>
 <li>Nellen, T. (2019). Intraday liquidity facilities, late settlement fee and coordination. <em>J. Bank. Finance</em>.</li>
 <li>Ota, T. (2011). Intraday two-part tariff in payment systems. Bank of England Working Paper 428.</li>
 <li>Piatti, G., Jin, Z., Kleiman-Weiner, M. et al. (2024). Cooperate or collapse: emergence of sustainable cooperation in a society of LLM agents. NeurIPS 2024.</li>
@@ -983,6 +1082,7 @@ records.</p>
 <li>Srikanth, D. et al. (2026). Recursive self-improvement of AI research agents. arXiv:2609.26457.</li>
 <li>Suter, J. F., Vossler, C. A., Poe, G. L., Segerson, K. (2008). Experiments on damage-based ambient taxes for nonpoint source polluters. <em>Am. J. Agric. Econ.</em> 90(1), 86–102.</li>
 <li>Wang, Y., Xia, L., Liu, R., Zhang, Z. et al. (2026). SAGE: a statistical acceptance gate for self-evolving agents. arXiv:2609.36043.</li>
+<li>Willis, R., Du, Y., Leibo, J., Luck, M. (2024). Resolving social dilemmas with minimal reward transfer. <em>Auton. Agents Multi-Agent Syst.</em> 38, 49.</li>
 <li>Wu, S. (2017). Essays on experiments and agent-based modeling. PhD dissertation, University of Delaware.</li>
 <li>Zhang, J. et al. (2026). Hyperagents. arXiv:2603.19461.</li>
 </ul>

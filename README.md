@@ -17,7 +17,8 @@ Project page: **[kant-fix-it-web.vercel.app](https://kant-fix-it-web.vercel.app)
 
 ## What came out
 
-Five pre-registered studies, 4,190 confirmatory runs, two environments:
+Five pre-registered studies, 4,190 confirmatory run records (some shared
+between studies), two environments:
 
 * **The rule matters.** In a simulated interbank payment network, selfish
   agents leave the system 29 % costlier than a planner. The Kantian rule
@@ -32,9 +33,18 @@ Five pre-registered studies, 4,190 confirmatory runs, two environments:
   it matched a tax on shared damage. When some modules absorb most of the
   incidents, "what if everyone did this?" measures what an agent would suffer,
   not what it causes. The exposed agents froze, the sheltered ones ran wild,
-  and the tax won. That held on every scale tested for "the same change".
+  and the tax won.
+* **Correction after an independent review (post hoc).** We had concluded
+  that the Kantian rule still beats charges that keep the budget balanced.
+  A reviewer found one we never tested: share shipped output equally, so the
+  charges sum to zero. In this model it makes exactly the same decisions as
+  the tax on damage, so that conclusion is withdrawn. The review also found
+  bugs in the units study (one of its four scales was implemented wrongly);
+  a corrected rerun is pending. Details: [REPORT §4.5–4.6](docs/REPORT.md),
+  [PROJECT §5.12](docs/PROJECT.md).
 
-So: Kant can't fix it, but a well-chosen price can.
+So: Kant can't fix it, but a well-chosen price can, and here even an equal
+split of the output can.
 
 ![The ambient tax against the Kantian gate as exposure becomes unequal](runs/fig_e10.png)
 
@@ -48,7 +58,8 @@ So: Kant can't fix it, but a well-chosen price can.
 * Failed predictions are reported as failed: 7 of 29 registered predictions
   failed, six outright and one in part.
 * Analysis scripts regenerate every reported number exactly from the stored
-  records; 82 tests cover accounting, determinism and protocol isolation.
+  records; 86 tests cover accounting, determinism and protocol isolation. An
+  independent reviewer re-ran 120 headline runs and reproduced them exactly.
 
 ## Read more
 

@@ -236,8 +236,20 @@ def simulate(b: Batch, profile, cfg: CodebaseConfig, check: bool = False) -> Out
                    incidents=inc / (T * n), visible=vis, hidden=hid)
 
 
+# A budget-balanced rule added after an independent review (2026-11-23), post hoc;
+# no pre-registered study used it. Each agent is charged its shipped output minus
+# the average shipped output, so charges sum to zero in every scenario: equal
+# sharing of output (Holmstrom 1982). It needs only observable (ii), shipped output.
+# It is kept apart from INSTRUMENTS because its charge can be negative (a rebate),
+# and so that the records of E9-E11, which index INSTRUMENTS, are untouched.
+POOL = "pool"
+
+
 def private_cost(o: Outcome, instrument: str | None, level: float) -> np.ndarray:
     """Real cost plus the charge of one instrument at one level (a transfer)."""
     if not instrument or level == 0.0:
         return o.cost
+    if instrument == POOL:
+        y = o.charges[:, :, 1]
+        return o.cost + level * (y - y.mean(axis=1, keepdims=True))
     return o.cost + level * o.charges[:, :, INSTRUMENTS.index(instrument)]

@@ -106,6 +106,39 @@ def test_ambient_at_one_aligns_unilateral_incentives_with_social_cost():
         assert np.allclose(g, gaps[0])
 
 
+# --- equal output pooling (added after the independent review, post hoc) ---
+
+@settings(max_examples=20, deadline=None)
+@given(profiles, st.floats(0.0, 10.0))
+def test_pooling_is_budget_balanced(prof, level):
+    o = cb.simulate(B, prof, CFG)
+    pc = cb.private_cost(o, cb.POOL, level)
+    assert np.allclose((pc - o.cost).sum(axis=1), 0.0, atol=1e-9)
+
+
+def test_pooling_gives_each_agent_one_nth_of_the_social_cost_change():
+    # On base scenarios (output value 1, sizes fixed by the configuration) an
+    # agent's pooled private cost moves by exactly 1/n of the social cost when it
+    # alone changes policy, so it ranks its options as the level-1 ambient tax does.
+    base = [(0.5, 0.0, 0.5)] * 4
+    gaps = []
+    for p in [(0.0, 0.0, 0.0), (0.9, 0.3, 0.1), (0.4, 1.0, 1.0)]:
+        o = cb.simulate(B, [p] + base[1:], CFG)
+        gaps.append(cb.private_cost(o, cb.POOL, 1.0)[:, 0] - o.system_cost / CFG.n)
+    for g in gaps[1:]:
+        assert np.allclose(g, gaps[0])
+
+
+@pytest.mark.parametrize("skew", [0.0, 1.5])
+def test_pooling_reproduces_the_ambient_tax_trajectory(skew):
+    cfg = cb.CodebaseConfig(n=4, T=8, exposure_skew=skew)
+    s = cb.DevSampler(cfg)
+    e = EvoConfig(generations=6, K=3, M=3, gate="kappa", kappa=0.0)
+    a = evolve_env(s.batch, make_costs(cfg, "ambient", 1.0), cfg.n, 3, e, seed=2)
+    b = evolve_env(s.batch, make_costs(cfg, cb.POOL, 1.0), cfg.n, 3, e, seed=2)
+    assert a.profile == b.profile and a.history == b.history and a.sims == b.sims
+
+
 def test_profile_validation():
     with pytest.raises(ValueError):
         cb.simulate(B, [(0.5, 0.5, 1.2)] * 4, CFG)

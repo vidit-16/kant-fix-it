@@ -262,7 +262,7 @@ function barChart(el, cfg) {
 function columnChart(el, cfg) {
   const st = { view: Object.keys(cfg.views)[0], shown: false };
   el.innerHTML = `${ctlHTML(cfg, st.view)}
-    <div class="cols"><i class="best"><span>Best possible</span></i>${cfg.labels.map((l, i) =>
+    <div class="cols"><i class="best"><span>Best found</span></i>${cfg.labels.map((l, i) =>
       `<div class="col"><b class="val"></b><div class="ctrack"><i class="fill" style="background:${cfg.colors[i]}"></i></div><span class="lab">${l}</span></div>`).join("")}</div>
     <p class="why" aria-live="polite"></p><p class="note">${cfg.note}</p>`;
   const cols = [...el.querySelectorAll(".col")];
@@ -317,9 +317,9 @@ columnChart(document.querySelector("#chartUnequal"), {
   ctlLabel: "Who gets hit", labels: ["A conscience", "Tax the damage"], colors: [C.ink, C.blue],
   why: [
     "“What if everyone did this?” measures what an agent would suffer, not what it causes. As exposure gets unequal, the exposed agent freezes and the sheltered ones run wild.",
-    "Each agent pays for the damage it causes. It holds near the best possible however unevenly the incidents fall.",
+    "Each agent pays for the damage it causes. It stays near the best solution found, however unevenly the incidents fall.",
   ],
-  note: "Share of the damage fixed, where 100% is the best possible. 20 seeds per bar.",
+  note: "Share of the damage fixed, where 100% is the best solution our grid search found (a well-tuned tax can edge past it). 20 seeds per bar.",
   views: {
     equal: { name: "All equal", values: [0.96, 0.92] },
     some: { name: "Some take more", values: [0.92, 0.99] },
@@ -328,18 +328,17 @@ columnChart(document.querySelector("#chartUnequal"), {
 });
 
 barChart(document.querySelector("#chartUnits"), {
-  ctlLabel: "", labels: ["Conscience, linear", "Conscience, logit", "Conscience, square root", "Conscience, log", "Tax the damage"],
-  colors: [C.ink, C.ink, C.ink, C.red, C.blue],
+  ctlLabel: "", labels: ["Conscience, linear", "Conscience, logit", "Conscience, log", "Tax the damage"],
+  colors: [C.ink, C.ink, C.red, C.blue],
   why: [
     "The original rule: “the same change” means the same amount added for everyone.",
-    "The same change measured on a logit scale. The best of the four, still short of the tax.",
-    "The same change measured on a square-root scale. Worse than the original.",
+    "The same change measured on a logit scale. The best of these, still short of the tax.",
     "The same change measured in proportion, on a log scale. Here the conscience leaves the system worse than having no rule at all.",
     "The damage tax, for comparison. No scale to choose: an agent pays for what it causes.",
   ],
   views: {
-    one: { name: "", min: -0.5, max: 1.05, fmt: pct, values: [0.67, 0.92, 0.54, -0.34, 1.0], tags: ["", "", "", "worse than nothing", ""],
-      note: "Share of the damage fixed when one module takes most incidents, for four ways of measuring “the same change”. Below zero is worse than doing nothing. 20 seeds each." },
+    one: { name: "", min: -0.5, max: 1.05, fmt: pct, values: [0.67, 0.92, -0.34, 1.0], tags: ["", "", "worse than nothing", ""],
+      note: "Share of the damage fixed when one module takes most incidents, for three ways of measuring “the same change”. 100% is the best solution our search found. Below zero is worse than doing nothing. 20 seeds each." },
   },
 });
 

@@ -2,7 +2,8 @@
 
 Single source of truth for decisions, evidence, status and open questions.
 Supersedes the handoff of 17 November 2026 where they conflict.
-Last updated: 18 November 2026. Status: concluded.
+Last updated: 23 November 2026 (corrections after an independent review, §5.12).
+Status: concluded.
 
 Related files: [PREREGISTRATION.md](PREREGISTRATION.md),
 [PREREGISTRATION_E8.md](PREREGISTRATION_E8.md) and
@@ -31,7 +32,8 @@ notes of 17 November 2026 are folded into §7 and §9; that file is deleted.
 | Confirmatory experiment E9 (gates against the best available instrument) | Run, 1 280 runs, analysed (§5.9) |
 | Pre-registration for E10 (unequal exposure) | Committed before confirmatory runs (`f580a13`) |
 | Confirmatory experiment E10 | Run, 1 080 runs, analysed (§5.10). **Strong gates line closed** |
-| Robustness study E11 (units of universalization) | Pre-registered (`863f0b4`), 360 runs, analysed (§5.11). **Closure robust to scale** |
+| Robustness study E11 (units of universalization) | Pre-registered (`863f0b4`), 360 runs, analysed (§5.11). Closure held over the variants implemented; **the square-root variant and a verdict flag were faulty** (§5.12), corrected rerun pending |
+| Independent review (23 November 2026) | Headline runs reproduced exactly. **Equal output sharing, a budget-balanced rule we never tested, equals the ambient tax in this model; the gate's budget-balanced niche is withdrawn** (§5.12, post hoc). Pooling rule and tests added (86 tests) |
 | Final write-up | REPORT.md rewritten as a standalone report; every number re-checked against regenerated results (18 November 2026) |
 | **Project status** | **Concluded.** The owner chose to write up and stop (D29). Nothing pushed or published |
 | Language-model proposers | Not started, by decision (D29, §7) |
@@ -41,10 +43,11 @@ One-sentence state: acceptance gates do not beat the best available
 instrument — a delay price beats them in payments, and in a shared codebase
 with unattributable harm a budget-breaking ambient tax ties them when agents
 are alike and beats them when agents are unequally exposed (E10, the
-pre-registered rule closes the line); what survives is narrower: where only
-budget-balanced charges are possible and the harm's carrier can be hidden, an
-own-cost gate does better than those charges, by a margin that shrinks as
-exposure becomes unequal. No novelty claim is made.
+pre-registered rule closes the line); the narrower claim made earlier, that
+the gate beats budget-balanced charges, was withdrawn after an independent
+review showed that equal output sharing, which is budget-balanced, does as
+well as the ambient tax in this model (§5.12, post hoc). No novelty claim is
+made.
 
 ## 2. Direction taken, and why it differs from the handoff
 
@@ -758,6 +761,70 @@ What this adds:
 
 ![e11](../runs/fig_e11.png)
 
+### 5.12 Independent review (23 November 2026) — post hoc
+
+An independent reviewer audited the repository at `ff94078`. Everything below
+was found after the studies and is labelled post hoc. Each point was checked
+here against the code and, where possible, by rerunning it.
+
+**What the review reproduced.** All 82 tests passed; the five analysis
+modules regenerated their results byte for byte; 120 fresh headline runs (E10
+level-1 ambient tax and the chosen gate at skews 0.75 and 1.5, and the E11
+logit gate, all 20 seeds) matched the stored profiles, histories, simulation
+counts and holdout evaluations exactly.
+
+**1. A missing budget-balanced comparator (changes a conclusion).** Charging
+each agent its shipped output minus the average shipped output is
+budget-balanced and needs only shipped output. On development scenarios
+(output value 1, sizes fixed) an agent's pooled cost moves by exactly 1/n of
+the total cost change, while under the level-1 ambient tax it moves by the
+whole change; gate decisions depend only on the sign and a scale-free t-test,
+so the two rules decide identically. Checked here: the reviewer's harness
+gave identical policies, histories and simulation counts at skews 0, 0.75 and
+1.5 for seeds 0 and 19, with transfers summing to zero within 5e-14. Added:
+`codebase.POOL` and four tests (budget balance, the 1/n identity, identical
+trajectories at skews 0 and 1.5). Consequence: C5b and D5 hold only against
+the charges registered; D25 is withdrawn. Omitting this rule broke the
+project's own standing rule to include the strongest instrument an operator
+could realistically use. The equivalence rests on agents having no private
+costs outside the shared ledger; with such costs, equal sharing is
+Holmström's team problem and would fall behind the ambient tax.
+
+**2. E11 implementation faults.** (i) The square-root inverse reflects steps
+below zero: in a replay at skew 1.5, seed 0, κ = 1, 323 of 960 proposals moved
+at least one peer against the proposer's change (checked here; the reviewer
+found the same count). (ii) Linear broadcasts the raw proposed change, the
+other scales the realized change after clipping, so U2 confounds scale with
+convention (604 of 960 proposals differ on the linear run's own trajectory
+here; the reviewer counted 474 on a different trajectory). (iii) The verdict
+flag `gate_clearly_cheaper_beyond_margin` used `-d[0] > MARGIN` with
+`d[1] > 0` and could never be true; E10's version is correct. No outcome
+changes, because the ambient tax was cheaper. U1 holds over the variants as
+implemented; the robustness-to-units claim waits for a corrected rerun under a
+new frozen protocol.
+
+**3. Theory scope.** The 1/exposure derivation is for a scalar game. E10's
+shortcut pattern is consistent with it; it does not show the learned profiles
+are Pareto efficient in the simulated game. Report wording corrected.
+
+**4. Reporting.** The no-harm gate constrains the combined cost of the other
+agents, not each one (report wording corrected). H2's closure, 0.51, has a
+95 % interval of 0.41–0.63 and so does not clearly meet the threshold. The
+4 190 figure counts run records, some shared between studies. E8's dirty flag
+is now stated in the report too.
+
+**Found here while checking the review (not in it).** (a) The mixed-κ and
+joint-welfare gates apply no t-test filter, while the private, κ = 1 and
+unilateral-welfare gates do; the mixed gate also halves its samples per
+counterfactual. E10's chosen gate at skew 1.5 and the best non-price payment
+rule are both unfiltered. Not yet tested. (b) The codebase "optimum" is beaten
+by the tuned ambient tax (E9 level 1.5; E10 skew 1.5), so gap shares are
+against a grid reference. (c) No multiplicity correction across registered
+tests. (d) The literature review missed reward-transfer work for learning
+agents (Willis et al. 2024; Haupt et al. 2024) and Kantian behaviour in
+public-goods networks (Mohanty et al. 2024, not yet read in full); all three
+DOIs were checked.
+
 ## 6. Decision log
 
 | ID | Question | Resolution |
@@ -794,7 +861,11 @@ What this adds:
 | D30 | Does the project's positioning survive a fuller literature review? | The central gap holds ("not found in this review"). The E10 mechanism was reworded (Pareto efficient, but weighted by 1/exposure), the technical-debt background corrected, and four citations fixed (§3.5). No result changes |
 | D31 | Does a pass through scholarly APIs change that? | No change to the gap or the results. Citations added, one title fixed, two limitations added (unit dependence of the Kantian gate; ambient tax weaker with heterogeneous humans in the lab) (§3.5) |
 | D32 | Does a manual Google Scholar pass change that? | No. About 110 results screened; the gap holds. Added: prompted AI agents in an RTGS liquidity game (Danisman et al. 2026), AI-assisted coding framed as a tragedy of the commons (Baltes et al. 2026), and more moral-agent tax and ambient-policy work ([scholar_pass.md](literature_notes/scholar_pass.md)) |
-| D33 | Is E10's closure an artefact of the units in which the Kantian gate measures "the same change"? | No (E11, pre-registered). Across log, square-root and logit scales the ambient tax still beats the best gate at both unequal skews; the gate's own cost moves by up to 0.02 with the scale |
+| D33 | Is E10's closure an artefact of the units in which the Kantian gate measures "the same change"? | No (E11, pre-registered). Across log, square-root and logit scales the ambient tax still beats the best gate at both unequal skews; the gate's own cost moves by up to 0.02 with the scale. *Amended by D36* |
+| D34 | Does the gate beat every budget-balanced rule where harm is hidden? | No (post hoc, independent review). Equal output sharing is budget-balanced and equals the level-1 ambient tax in this model; verified by rerun and by tests. D25 withdrawn; the gate has no role in these models |
+| D35 | Add pooling as a formal baseline without rerunning all studies? | Yes: the equivalence is exact and deterministic, so a test pins it (`test_pooling_reproduces_the_ambient_tax_trajectory`) instead of a 4 190-run rerun |
+| D36 | Does E11 stand as run? | Partly. U1 holds over the variants as implemented; the square-root variant is invalid, U2 confounds scale with convention, and one verdict flag had a sign error. Corrected rerun to be registered first, results reported beside the originals |
+| D37 | Unequal noise filters across gates? | Found while checking the review: mixed-κ and joint-welfare gates are unfiltered. To be tested in the same registered rerun as D36 |
 
 ## 7. Unresolved questions and next steps
 
@@ -803,8 +874,16 @@ gates-versus-pricing question, and the strong line ("acceptance gates beat
 the best available instrument") is closed by the rule registered for E10
 (§5.10). The final write-up is [REPORT.md](REPORT.md).
 
+Open after the independent review (§5.12), in this order: correct and rerun
+E11 and the noise-filter check under a new frozen protocol (D36, D37); then
+decide whether to reopen the research at all.
+
 What would reopen the line, none of it planned:
 
+* **Agents with private costs** (effort, compute) outside the shared ledger.
+  Equal output sharing then under-incentivises (Holmström's team problem)
+  while the ambient tax does not, so a gate could matter against
+  budget-balanced rules again. The most direct follow-up to D34.
 * **Risk-averse agents facing a noisy ambient charge**, or **collusion**
   against it: the classic objections to ambient taxes, which E9 and E10
   exclude by construction. The only remaining test that could give gates a

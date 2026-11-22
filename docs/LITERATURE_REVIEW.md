@@ -312,6 +312,39 @@ New items:
   * No further simulation of a shared debt stock with operator charges
     turned up.
 
+## Missed by this review, found by an independent audit (23 November 2026)
+
+An independent audit of the repository cited work this review did not find.
+Each DOI was checked in Crossref; contents below are from the abstracts only.
+
+* **Willis, Du, Leibo and Luck (2024)**, *Resolving social dilemmas with minimal
+  reward transfer*, Auton. Agents Multi-Agent Syst. 38, 49
+  (doi:10.1007/s10458-024-09675-4). Redistributes rewards among agents so that
+  a social-welfare optimum becomes a dominant strategy, and measures how much
+  of its own reward each agent can keep. Directly relevant to the equal
+  output-sharing result (REPORT §4.6): budget-balanced transfers, not only
+  budget-breaking taxes, can align incentives.
+* **Haupt, Christoffersen, Damani and Hadfield-Menell (2024)**, *Formal contracts
+  mitigate social dilemmas in multi-agent reinforcement learning*, Auton.
+  Agents Multi-Agent Syst. 38, 51 (doi:10.1007/s10458-024-09682-5). Agents agree
+  binding reward transfers; with a rich enough contract space all subgame-
+  perfect equilibria of fully observable Markov games are socially optimal.
+* **Mohanty, Rao and Roy (2024)**, *Kantian imperatives in public goods
+  networks*, J. Econ. Behav. Organ. 224, 194–214
+  (doi:10.1016/j.jebo.2024.05.018). No abstract in Crossref; not yet read. By
+  its title it bears on Kantian behaviour when agents sit in different network
+  positions, which is the setting of E10. Read in full before any novelty
+  statement about unequal exposure.
+* **Couto and Pal (2023)**, *Introspection dynamics in asymmetric multiplayer
+  games*, Dyn. Games Appl. 13, 1256–1285 (doi:10.1007/s13235-023-00525-8).
+  Players compare their current strategy with an alternative and adopt it more
+  often when it pays more, in asymmetric multiplayer games: close to the
+  propose–evaluate–accept loop used here.
+
+Consequence: the claim that a gate is useful where only budget-balanced
+instruments are feasible was already weak against this literature, and the
+audit's counterexample (equal output sharing) removes it in our model.
+
 ## Google Scholar queries for the owner
 
 Google Scholar refuses automated clients, so these are for a manual check.
