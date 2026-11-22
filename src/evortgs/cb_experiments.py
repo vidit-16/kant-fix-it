@@ -211,6 +211,21 @@ def experiments(which: str) -> list[dict]:
                     for k in (0.5, 1.0):
                         S.append(spec("E11", seed, kappa=k, gamma=0.25, skew=skew, scale=scale))
         return S
+    if which == "e12pilot":  # code and timing check only; tunes nothing (PREREGISTRATION_E12.md)
+        for seed in PILOT_SEEDS[:2]:
+            for skew in (0.0, 1.5):
+                for scale in E12_SCALES:
+                    for k in (0.5, 1.0):
+                        S.append(spec("e12pilot", seed, kappa=k, gamma=0.25, skew=skew,
+                                      split="pilot", scale=scale))
+        return S
+    if which == "E12":  # frozen in docs/PREREGISTRATION_E12.md
+        for seed in CONFIRM_SEEDS:
+            for skew in E10_SKEWS:
+                for scale in E12_SCALES:
+                    for k in (0.5, 1.0):
+                        S.append(spec("E12", seed, kappa=k, gamma=0.25, skew=skew, scale=scale))
+        return S
     if which == "E9":  # frozen in docs/PREREGISTRATION_E9.md
         for seed in CONFIRM_SEEDS:
             for gamma in (0.25, 1.0):
@@ -244,6 +259,8 @@ E10_GRIDS = {"proxy": (0.1, 0.2, 0.4, 0.8), "surface": (1.0, 2.0, 4.0, 8.0),
 # Rescaled universalization counterfactuals; "linear" is E10's own gate and is
 # taken from the E10 records rather than re-run.
 E11_SCALES = ("log", "sqrt", "logit")
+# E12: the two corrected variants; log and logit from E11 are valid as run
+E12_SCALES = ("linear_realized", "sqrt_fixed")
 
 
 def main(argv=None):

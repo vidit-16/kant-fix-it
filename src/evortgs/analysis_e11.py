@@ -56,7 +56,8 @@ def main():
         d = T["U1_ambient_vs_best_gate"]["diff"]
         R["verdicts"] = {
             "ambient_clearly_cheaper": d[2] < 0,
-            "gate_clearly_cheaper_beyond_margin": d[1] > 0 and -d[0] > MARGIN,
+            # sign corrected after an independent review (was -d[0]); unchanged output here
+            "gate_clearly_cheaper_beyond_margin": d[1] > 0 and d[0] > MARGIN,
             "within_margin": -MARGIN < d[1] and d[2] < MARGIN,
         }
         if skew == 0.0:

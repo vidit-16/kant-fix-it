@@ -295,7 +295,7 @@ def test_ambient_alignment_holds_with_skewed_exposure():
 from evortgs.gates import SCALES, _universal  # noqa: E402
 
 
-@pytest.mark.parametrize("scale", [s for s in SCALES if s != "linear"])
+@pytest.mark.parametrize("scale", [s for s in SCALES if SCALES[s] is not None])
 def test_scale_maps_invert_on_policy_range(scale):
     g, ginv = SCALES[scale]
     x = np.linspace(0.0, 1.0, 101)
@@ -348,3 +348,61 @@ def test_e10_specification_unchanged_by_e11():
     assert len(S) == 1080 and all("scale" not in s for s in S)
     E = experiments("E11")
     assert len(E) == 360 and {s["scale"] for s in E} == {"log", "sqrt", "logit"}
+
+
+# --- E12: corrected scales (after the independent review) -----------------------
+
+@settings(max_examples=60, deadline=None)
+@given(st.lists(st.floats(0.0, 1.0), min_size=3, max_size=3),
+       st.lists(st.floats(-0.3, 0.3), min_size=3, max_size=3),
+       st.lists(st.floats(0.0, 1.0), min_size=6, max_size=6))
+def test_sqrt_fixed_never_moves_a_peer_against_the_proposer(x, d, peers):
+    from evortgs.evolve import _clip
+    cur = (tuple(x), tuple(peers[:3]), tuple(peers[3:]))
+    cand = tuple(_clip(x[a] + d[a]) for a in range(3))
+    allp = _universal(cur, 0, cand, d, 3, 3, "sqrt_fixed")
+    for j in (1, 2):
+        for a in range(3):
+            realized = cand[a] - cur[0][a]
+            assert (allp[j][a] - cur[j][a]) * realized >= -1e-12
+
+
+def test_old_sqrt_reflects_and_sqrt_fixed_does_not():
+    # a peer near zero, a proposer stepping down: the E11 rule moves the peer up
+    cur = ((0.5, 0.5, 0.5), (0.01, 0.5, 0.5))
+    cand = (0.2, 0.5, 0.5)
+    d = (-0.3, 0.0, 0.0)
+    old = _universal(cur, 0, cand, d, 2, 3, "sqrt")
+    new = _universal(cur, 0, cand, d, 2, 3, "sqrt_fixed")
+    assert old[1][0] > cur[1][0] and new[1][0] == 0.0
+
+
+@settings(max_examples=40, deadline=None)
+@given(st.lists(st.floats(0.1, 0.9), min_size=3, max_size=3),
+       st.lists(st.floats(-0.09, 0.09), min_size=3, max_size=3))
+def test_linear_realized_equals_linear_without_clipping(x, d):
+    cur = (tuple(x), (0.3, 0.5, 0.7), (0.5, 0.4, 0.6))
+    cand = tuple(x[a] + d[a] for a in range(3))
+    a = _universal(cur, 0, cand, d, 3, 3, "linear")
+    b = _universal(cur, 0, cand, d, 3, 3, "linear_realized")
+    assert np.allclose(np.array(a), np.array(b), atol=1e-12)
+
+
+def test_linear_realized_broadcasts_the_clipped_change():
+    cur = ((0.95, 0.5, 0.5), (0.5, 0.5, 0.5))
+    d = (0.2, 0.0, 0.0)          # proposer is clipped at 1: realized change 0.05
+    cand = (1.0, 0.5, 0.5)
+    raw = _universal(cur, 0, cand, d, 2, 3, "linear")
+    real = _universal(cur, 0, cand, d, 2, 3, "linear_realized")
+    assert raw[1][0] == pytest.approx(0.7) and real[1][0] == pytest.approx(0.55)
+
+
+def test_e12_specification():
+    from evortgs.cb_experiments import E10_SKEWS, experiments
+    E = experiments("E12")
+    assert len(E) == 240
+    assert {s["scale"] for s in E} == {"linear_realized", "sqrt_fixed"}
+    assert {s["seed"] for s in E} == set(range(20)) and {s["skew"] for s in E} == set(E10_SKEWS)
+    assert all(s["split"] == "holdout" and s["kappa"] in (0.5, 1.0) for s in E)
+    # earlier studies untouched
+    assert len(experiments("E11")) == 360 and len(experiments("E10")) == 1080

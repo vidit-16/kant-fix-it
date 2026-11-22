@@ -8,7 +8,9 @@ Status: concluded.
 Related files: [PREREGISTRATION.md](PREREGISTRATION.md),
 [PREREGISTRATION_E8.md](PREREGISTRATION_E8.md) and
 [PREREGISTRATION_E9.md](PREREGISTRATION_E9.md),
-[PREREGISTRATION_E10.md](PREREGISTRATION_E10.md) (frozen protocols),
+[PREREGISTRATION_E10.md](PREREGISTRATION_E10.md),
+[PREREGISTRATION_E11.md](PREREGISTRATION_E11.md),
+[PREREGISTRATION_E12.md](PREREGISTRATION_E12.md) (frozen protocols),
 [REPORT.md](REPORT.md) (final paper-style write-up), `runs/` (raw records,
 `results.json`, `results_e8.json`, `results_e9.json`, `results_e10.json`). The next-stage working
 notes of 17 November 2026 are folded into §7 and §9; that file is deleted.
@@ -33,6 +35,7 @@ notes of 17 November 2026 are folded into §7 and §9; that file is deleted.
 | Pre-registration for E10 (unequal exposure) | Committed before confirmatory runs (`f580a13`) |
 | Confirmatory experiment E10 | Run, 1 080 runs, analysed (§5.10). **Strong gates line closed** |
 | Robustness study E11 (units of universalization) | Pre-registered (`863f0b4`), 360 runs, analysed (§5.11). Closure held over the variants implemented; **the square-root variant and a verdict flag were faulty** (§5.12), corrected rerun pending |
+| Pre-registration for E12 (E11 corrected: fixed square root, realized-change linear) | Frozen with its analysis script before any E12 run ([PREREGISTRATION_E12.md](PREREGISTRATION_E12.md)); 240 runs |
 | Independent review (23 November 2026) | Headline runs reproduced exactly. **Equal output sharing, a budget-balanced rule we never tested, equals the ambient tax in this model; the gate's budget-balanced niche is withdrawn** (§5.12, post hoc). Pooling rule and tests added (86 tests) |
 | Final write-up | REPORT.md rewritten as a standalone report; every number re-checked against regenerated results (18 November 2026) |
 | **Project status** | **Concluded.** The owner chose to write up and stop (D29). Nothing pushed or published |
@@ -813,11 +816,12 @@ agents, not each one (report wording corrected). H2's closure, 0.51, has a
 4 190 figure counts run records, some shared between studies. E8's dirty flag
 is now stated in the report too.
 
-**Found here while checking the review (not in it).** (a) The mixed-κ and
-joint-welfare gates apply no t-test filter, while the private, κ = 1 and
-unilateral-welfare gates do; the mixed gate also halves its samples per
-counterfactual. E10's chosen gate at skew 1.5 and the best non-price payment
-rule are both unfiltered. Not yet tested. (b) The codebase "optimum" is beaten
+**Found here while checking the review (not in it).** (a) *Retracted.* An
+apparent inconsistency, that the mixed-κ and joint-welfare gates skip the
+t-test filter the other gates apply, does not matter: every confirmatory study
+used `min_t = 0`, at which `_t_ok` accepts unconditionally, so no gate filtered
+anything; the one study with a threshold, E7, ran only gates that apply it. It
+was briefly listed as a limitation and withdrawn before release. (b) The codebase "optimum" is beaten
 by the tuned ambient tax (E9 level 1.5; E10 skew 1.5), so gap shares are
 against a grid reference. (c) No multiplicity correction across registered
 tests. (d) The literature review missed reward-transfer work for learning
@@ -865,7 +869,7 @@ DOIs were checked.
 | D34 | Does the gate beat every budget-balanced rule where harm is hidden? | No (post hoc, independent review). Equal output sharing is budget-balanced and equals the level-1 ambient tax in this model; verified by rerun and by tests. D25 withdrawn; the gate has no role in these models |
 | D35 | Add pooling as a formal baseline without rerunning all studies? | Yes: the equivalence is exact and deterministic, so a test pins it (`test_pooling_reproduces_the_ambient_tax_trajectory`) instead of a 4 190-run rerun |
 | D36 | Does E11 stand as run? | Partly. U1 holds over the variants as implemented; the square-root variant is invalid, U2 confounds scale with convention, and one verdict flag had a sign error. Corrected rerun to be registered first, results reported beside the originals |
-| D37 | Unequal noise filters across gates? | Found while checking the review: mixed-κ and joint-welfare gates are unfiltered. To be tested in the same registered rerun as D36 |
+| D37 | Unequal noise filters across gates? | No issue. With `min_t = 0` in every confirmatory study no gate filters; E7 used only gates that apply the filter. Raised while checking the review and retracted |
 
 ## 7. Unresolved questions and next steps
 
@@ -875,8 +879,8 @@ the best available instrument") is closed by the rule registered for E10
 (§5.10). The final write-up is [REPORT.md](REPORT.md).
 
 Open after the independent review (§5.12), in this order: correct and rerun
-E11 and the noise-filter check under a new frozen protocol (D36, D37); then
-decide whether to reopen the research at all.
+E11 under a new frozen protocol (E12, D36); then decide whether to reopen the
+research at all.
 
 What would reopen the line, none of it planned:
 

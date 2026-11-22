@@ -638,14 +638,6 @@ depends on which of these an operator can obtain.
   on how actions are represented (Sloev and Lianos 2026). E11 confirms this:
   the gate's cost moved by up to 0.02 across four scales. The verdict held
   under all four, but other scales were not tested.
-* **Unequal noise filters across gates (found after publication).** The
-  private, κ = 1 and unilateral-welfare gates accept a change only if it passes
-  a t-test on its scenarios. The mixed κ (0 < κ < 1) and joint-welfare gates
-  apply no such test, and the mixed gate scores each half of its counterfactual
-  on half of the scenarios. E10's chosen gate at skew 1.5 (κ = 0.5) and the
-  best non-price rule in payments (joint welfare) are both unfiltered, so some
-  differences between arms may reflect how much noise a gate lets through
-  rather than its objective. This has not yet been tested.
 * **Many tests, no multiplicity correction.** Each study registered a family
   of tests with no adjustment, and several verdicts lie close to the 0.002
   practical margin. Those should be read as indicative.

@@ -29,6 +29,15 @@ SCALES = {
     "sqrt": (np.sqrt, np.square),
     "logit": (lambda x: np.log((x + _EPS) / (1.0 + _EPS - x)),
               lambda y: ((1.0 + _EPS) * np.exp(y) - _EPS) / (1.0 + np.exp(y))),
+    # E12 corrections, added after an independent review (E11's own scales above
+    # are kept unchanged so its records reproduce):
+    # "sqrt" squares g(x_j) + step even when that is negative, which reflects a
+    # step below zero into a step the other way; "sqrt_fixed" stops at zero.
+    "sqrt_fixed": (np.sqrt, lambda y: np.square(np.maximum(y, 0.0))),
+    # "linear" broadcasts the raw proposed delta d (the registered E1-E10 rule);
+    # the scales above use the proposer's realized change after clipping.
+    # "linear_realized" is linear with the realized change, to match them.
+    "linear_realized": None,
 }
 
 
@@ -36,6 +45,10 @@ def _universal(cur, i, cand, d, n, dim, scale):
     """Profile in which every agent makes agent i's change, measured on ``scale``."""
     if scale == "linear":
         return tuple(tuple(_clip(cur[j][a] + d[a]) for a in range(dim)) for j in range(n))
+    if scale == "linear_realized":
+        step = [cand[a] - cur[i][a] for a in range(dim)]
+        return tuple(cand if j == i else tuple(_clip(cur[j][a] + step[a]) for a in range(dim))
+                     for j in range(n))
     g, ginv = SCALES[scale]
     step = [float(g(cand[a]) - g(cur[i][a])) for a in range(dim)]
     return tuple(cand if j == i else
