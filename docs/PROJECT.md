@@ -10,7 +10,8 @@ Related files: [PREREGISTRATION.md](PREREGISTRATION.md),
 [PREREGISTRATION_E9.md](PREREGISTRATION_E9.md),
 [PREREGISTRATION_E10.md](PREREGISTRATION_E10.md),
 [PREREGISTRATION_E11.md](PREREGISTRATION_E11.md),
-[PREREGISTRATION_E12.md](PREREGISTRATION_E12.md) (frozen protocols),
+[PREREGISTRATION_E12.md](PREREGISTRATION_E12.md),
+[PREREGISTRATION_E13.md](PREREGISTRATION_E13.md) (frozen protocols),
 [REPORT.md](REPORT.md) (final paper-style write-up), `runs/` (raw records,
 `results.json`, `results_e8.json`, `results_e9.json`, `results_e10.json`). The next-stage working
 notes of 17 November 2026 are folded into §7 and §9; that file is deleted.
@@ -38,8 +39,9 @@ notes of 17 November 2026 are folded into §7 and §9; that file is deleted.
 | Pre-registration for E12 (E11 corrected: fixed square root, realized-change linear) | Frozen with its analysis script at `38d1e4f`, before any E12 run ([PREREGISTRATION_E12.md](PREREGISTRATION_E12.md)) |
 | Confirmatory experiment E12 | Run, 240 runs, analysed (§5.13). **All four predictions held; E11's verdict survives the corrections** |
 | Independent review (23 November 2026) | Headline runs reproduced exactly. **Equal output sharing, a budget-balanced rule we never tested, equals the ambient tax in this model; the gate's budget-balanced niche is withdrawn** (§5.12, post hoc). Pooling rule and tests added; 94 tests with the E12 additions |
+| Pre-registration for E13 (gate vs budget-balanced transfers with off-ledger effort) | Frozen with its code, analysis and tests before any E13 run ([PREREGISTRATION_E13.md](PREREGISTRATION_E13.md)). Reopens the line through the first candidate in §7 (D39) |
 | Final write-up | REPORT.md rewritten as a standalone report; every number re-checked against regenerated results (18 November 2026) |
-| **Project status** | **Concluded.** The owner chose to write up and stop (D29). Nothing pushed or published |
+| **Project status** | **Reopened for E13 (D39)** after concluding at D29, aiming at a journal paper |
 | Language-model proposers | Not started, by decision (D29, §7) |
 | External replication, peer review | None |
 
@@ -898,6 +900,7 @@ corrected variants. E11's faults were real but did not drive its results.
 | D35 | Add pooling as a formal baseline without rerunning all studies? | Yes: the equivalence is exact and deterministic, so a test pins it (`test_pooling_reproduces_the_ambient_tax_trajectory`) instead of a 4 190-run rerun |
 | D36 | Does E11 stand as run? | Partly. U1 holds over the variants as implemented; the square-root variant is invalid, U2 confounds scale with convention, and one verdict flag had a sign error. Corrected rerun to be registered first, results reported beside the originals |
 | D38 | Does E11's verdict survive its corrections? | Yes (E12, pre-registered, `38d1e4f`). All four predictions held; the ambient tax stays clearly cheaper than the best of eleven valid variants, by less than the practical margin, as in E11 |
+| D39 | Reopen the research? | Yes, for one pre-registered study, E13: off-ledger effort breaks the pooling/ambient equivalence, so the gate is compared again with the strongest tested budget-balanced transfers (tuned pooling, a direct load charge with balanced rebate, a centred externality contract) and separately with the ambient tax. Calibration, selection and confirmation are staged; fresh seeds 3000-3019 and a fresh holdout block. Owner's decision, 23 November 2026 |
 | D37 | Unequal noise filters across gates? | No issue. With `min_t = 0` in every confirmatory study no gate filters; E7 used only gates that apply the filter. Raised while checking the review and retracted |
 
 ## 7. Unresolved questions and next steps
@@ -908,8 +911,8 @@ the best available instrument") is closed by the rule registered for E10
 (§5.10). The final write-up is [REPORT.md](REPORT.md).
 
 After the independent review (§5.12) E11 was corrected and rerun as E12
-(§5.13, D38). What remains is the owner's decision whether to reopen the
-research at all.
+(§5.13, D38). The owner reopened the research for one study, E13, which takes
+up the first candidate below ([PREREGISTRATION_E13.md](PREREGISTRATION_E13.md), D39).
 
 What would reopen the line, none of it planned:
 

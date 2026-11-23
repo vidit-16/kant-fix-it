@@ -77,6 +77,10 @@ class CodebaseConfig:
     # most incidents, peripheral ones rarely break; coupling enters the shared
     # debt by size alone, so exposure and contribution come apart
     exposure_skew: float = 0.0
+    # off-ledger effort (E13): an agent that avoids shortcuts pays
+    # effort * capacity * (1 - s)^2 per period in real cost that is not shipped
+    # output, so no output-based charge sees it. 0 reproduces E1-E12 exactly.
+    effort: float = 0.0
 
 
 def sizes(cfg: CodebaseConfig) -> np.ndarray:
@@ -159,6 +163,7 @@ class Outcome:
     incidents: np.ndarray  # (S,) incidents per module-period
     visible: np.ndarray    # (S,) total visible coupling
     hidden: np.ndarray     # (S,) total concealed coupling
+    effort: np.ndarray | None = None  # (S, n) off-ledger effort cost, included in ``cost``
 
     @property
     def system_cost(self) -> np.ndarray:
@@ -207,6 +212,8 @@ def simulate(b: Batch, profile, cfg: CodebaseConfig, check: bool = False) -> Out
     inc = np.zeros(S)
     vis = np.zeros(S)
     hid = np.zeros(S)
+    eff = np.zeros((S, n))
+    avoid = (1.0 - s) ** 2
     for t in range(T):
         capA = b.cap[:, t, :] * A                                    # (S, n)
         v = b.val[:, t][:, None]
@@ -217,6 +224,8 @@ def simulate(b: Batch, profile, cfg: CodebaseConfig, check: bool = False) -> Out
         y = planned * (1.0 - down)
         nom = v * capA * (1.0 + cfg.boost)
         cost += nom - v * y
+        if cfg.effort:
+            eff += cfg.effort * capA * avoid   # pre-downtime capacity, not scaled by value
         nominal += nom.sum(axis=1)
         loss = v * planned * down                                     # incident loss by module
         ch[:, :, 0] += capA * s * (1.0 - m)
@@ -232,8 +241,8 @@ def simulate(b: Batch, profile, cfg: CodebaseConfig, check: bool = False) -> Out
         if check:
             assert np.all(D >= 0.0) and np.all(y >= -1e-12) and np.all(y <= planned + 1e-12)
             assert np.all(cost >= -1e-9)
-    return Outcome(cost=cost, nominal=nominal, charges=ch, debt=debt_sum / T,
-                   incidents=inc / (T * n), visible=vis, hidden=hid)
+    return Outcome(cost=cost + eff, nominal=nominal, charges=ch, debt=debt_sum / T,
+                   incidents=inc / (T * n), visible=vis, hidden=hid, effort=eff)
 
 
 # A budget-balanced rule added after an independent review (2026-11-23), post hoc;
