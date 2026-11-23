@@ -1,0 +1,171 @@
+select: 20/960 runs, 47s
+select: 40/960 runs, 118s
+select: 60/960 runs, 171s
+select: 80/960 runs, 218s
+select: 100/960 runs, 267s
+select: 120/960 runs, 321s
+select: 140/960 runs, 360s
+select: 160/960 runs, 394s
+select: 180/960 runs, 427s
+select: 200/960 runs, 459s
+select: 220/960 runs, 492s
+select: 240/960 runs, 524s
+select: 260/960 runs, 557s
+select: 280/960 runs, 595s
+select: 300/960 runs, 630s
+select: 320/960 runs, 665s
+select: 340/960 runs, 705s
+select: 360/960 runs, 772s
+select: 380/960 runs, 822s
+select: 400/960 runs, 866s
+select: 420/960 runs, 914s
+select: 440/960 runs, 953s
+select: 460/960 runs, 1004s
+select: 480/960 runs, 1050s
+select: 500/960 runs, 1099s
+select: 520/960 runs, 1154s
+select: 540/960 runs, 1204s
+select: 560/960 runs, 1254s
+select: 580/960 runs, 1304s
+select: 600/960 runs, 1354s
+select: 620/960 runs, 1402s
+select: 640/960 runs, 1453s
+select: 660/960 runs, 1504s
+select: 680/960 runs, 1553s
+select: 700/960 runs, 1603s
+select: 720/960 runs, 1652s
+select: 740/960 runs, 1701s
+select: 760/960 runs, 1751s
+select: 780/960 runs, 1805s
+select: 800/960 runs, 1855s
+select: 820/960 runs, 1903s
+select: 840/960 runs, 1958s
+select: 860/960 runs, 2005s
+select: 880/960 runs, 2059s
+select: 900/960 runs, 2111s
+select: 920/960 runs, 2160s
+select: 940/960 runs, 2211s
+select: 960/960 runs, 2276s
+{
+ "anchor_means": {
+  "zero": 0.21243096518745724,
+  "mid": 0.20884109843440157
+ },
+ "anchor": "mid",
+ "direct_scale": {
+  "0.0": 4.9629264137096225,
+  "1.5": 4.5188591728248175
+ },
+ "selected": {
+  "0.0": {
+   "means": {
+    "private": 0.23963108848262746,
+    "kantian": 0.2353499118738287,
+    "pool_0.25": 0.2395840113381004,
+    "ambient_0.25": 0.23868477358216392,
+    "direct_0.25": 0.23686872204001372,
+    "pool_0.5": 0.23862448933637745,
+    "ambient_0.5": 0.2427549269305897,
+    "direct_0.5": 0.2407595977389761,
+    "pool_1.0": 0.23956603112382288,
+    "pool_1.5": 0.36677625688785737,
+    "ambient_1.0": 0.23511385955287598,
+    "direct_1.0": 0.24699702123759462,
+    "pool_2.0": 0.5602251073956863,
+    "ambient_1.5": 0.23368884090526168,
+    "ambient_2.0": 0.23949259560960517,
+    "direct_1.5": 0.23624185257289237,
+    "pool_4.0": 0.5602251073956863,
+    "ambient_4.0": 0.28308494336536244,
+    "direct_2.0": 0.2324860831889454,
+    "direct_4.0": 0.30138187774201775,
+    "contract": 0.23768083869126988
+   },
+   "strict": {
+    "spec": {
+     "arm": "direct_2.0",
+     "kind": "direct",
+     "level": 2.0,
+     "role": false,
+     "anchor": "zero"
+    },
+    "mean": 0.2324860831889454,
+    "edge": false
+   },
+   "ambient": {
+    "spec": {
+     "arm": "ambient_1.5",
+     "kind": "ambient",
+     "level": 1.5,
+     "role": false,
+     "anchor": "zero"
+    },
+    "mean": 0.23368884090526168,
+    "edge": false
+   },
+   "expected_halfwidth": {
+    "strict": 0.0008204504192655543,
+    "ambient": 0.0010262525814003273
+   }
+  },
+  "1.5": {
+   "means": {
+    "private": 0.20042423440575635,
+    "kantian": 0.18436060548285713,
+    "pool_0.25": 0.19849211529678373,
+    "ambient_0.25": 0.191561191752476,
+    "direct_0.25": 0.1922877625665575,
+    "directrole_0.25": 0.19186218486149564,
+    "pool_0.5": 0.1963286919152093,
+    "ambient_0.5": 0.18522281217692055,
+    "direct_0.5": 0.1861179586720358,
+    "directrole_0.5": 0.186376668800852,
+    "ambient_1.0": 0.18199489968735966,
+    "pool_1.0": 0.18883741772263768,
+    "direct_1.0": 0.18132432807598423,
+    "pool_1.5": 0.45600469698040264,
+    "directrole_1.0": 0.18160953275277095,
+    "ambient_1.5": 0.1842683804745956,
+    "direct_1.5": 0.1830532131986188,
+    "directrole_1.5": 0.18406541858360148,
+    "pool_2.0": 0.5447502369405993,
+    "ambient_2.0": 0.1898142745708342,
+    "directrole_2.0": 0.18935363278000306,
+    "direct_2.0": 0.18805615319865893,
+    "pool_4.0": 0.5572552167292452,
+    "ambient_4.0": 0.23947336064830466,
+    "direct_4.0": 0.27724918842353186,
+    "directrole_4.0": 0.28066929514291616,
+    "contract": 0.18317366562907578
+   },
+   "strict": {
+    "spec": {
+     "arm": "direct_1.0",
+     "kind": "direct",
+     "level": 1.0,
+     "role": false,
+     "anchor": "zero"
+    },
+    "mean": 0.18132432807598423,
+    "edge": false
+   },
+   "ambient": {
+    "spec": {
+     "arm": "ambient_1.0",
+     "kind": "ambient",
+     "level": 1.0,
+     "role": false,
+     "anchor": "zero"
+    },
+    "mean": 0.18199489968735966,
+    "edge": false
+   },
+   "expected_halfwidth": {
+    "strict": 0.0010237372410123167,
+    "ambient": 0.0007668773911246753
+   }
+  }
+ },
+ "contract_total_sims_median": 96640.0,
+ "big_M": 48
+}
