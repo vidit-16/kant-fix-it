@@ -1,14 +1,18 @@
-# Acceptance gates versus prices for co-evolving agents: five pre-registered studies in two environments
+# Acceptance gates versus prices for co-evolving agents: six pre-registered studies in two environments
 
 Final report of the gates line, 18 November 2026, corrected 23 November 2026
-after an independent review (§4.5, §4.6). Status: single-site, not peer
+after an independent review (§4.5, §4.6) and extended the same day with a
+sixth pre-registered study, E13 (§4.7). Status: single-site, not peer
 reviewed; an independent reviewer re-ran 120 headline runs and reproduced them
 exactly, but the results are not independently replicated. The audit trail, decision log and per-study detail
 are in [PROJECT.md](PROJECT.md). The frozen protocols are
 [PREREGISTRATION.md](PREREGISTRATION.md) (E1–E6),
 [PREREGISTRATION_E8.md](PREREGISTRATION_E8.md),
-[PREREGISTRATION_E9.md](PREREGISTRATION_E9.md) and
-[PREREGISTRATION_E10.md](PREREGISTRATION_E10.md).
+[PREREGISTRATION_E9.md](PREREGISTRATION_E9.md),
+[PREREGISTRATION_E10.md](PREREGISTRATION_E10.md),
+[PREREGISTRATION_E11.md](PREREGISTRATION_E11.md),
+[PREREGISTRATION_E12.md](PREREGISTRATION_E12.md) and
+[PREREGISTRATION_E13.md](PREREGISTRATION_E13.md).
 
 ## Abstract
 
@@ -19,7 +23,7 @@ their owner can be bad for everyone. We ask whether the *acceptance rule*
 alone can correct this, and whether it can do so better than a charge on the
 externality that an operator could levy instead. Proposals, search budget and
 environment are identical across arms; only the gate, or the price the agents
-face, differs. Five pre-registered studies and a pre-registered corrected rerun (4 430
+face, differs. Six pre-registered studies and a pre-registered corrected rerun (4 810
 confirmatory run records, some of them shared between studies, 20 paired
 seeds each, held-out evaluation scenarios) were run in two environments.
 
@@ -56,6 +60,16 @@ this model it makes exactly the same decisions as the level-1 ambient tax
 (identical trajectories, verified), so that conditional role for the gate does
 not hold here (§4.6). Several registered predictions failed; they are listed
 in §5.
+
+**Effort off the ledger (E13, pre-registered).** Equal sharing works here
+only because agents bear no private costs. E13 gave every agent a private
+effort cost for avoiding shortcuts, which breaks that equivalence, and
+compared the gate again with the strongest budget-balanced transfers we could
+tune on development data. A direct charge on each agent's verified shortcut
+load, rebated equally, beat the Kantian gate in both effort-on cells (by
+0.0030 and 0.0034; familywise intervals entirely below −0.002), so the
+registered kill criterion was met: the gate-advantage line is closed for
+budget-balanced settings as well (§4.7).
 
 ## 1. Question
 
@@ -570,8 +584,104 @@ close to reward-transfer schemes studied for learning agents (Willis et al.
   costs or benefits outside the shared ledger. If agents bore private costs,
   such as effort or compute, equal sharing would give each only one *n*th of
   the gain from bearing them, the team problem Holmström identified, while the
-  ambient tax would not. Whether a gate helps in that setting is open and
-  would need its own registered study.
+  ambient tax would not. Whether a gate helps in that setting was tested in
+  its own registered study, E13 (§4.7).
+
+### 4.7 Effort off the ledger (E13)
+
+Protocol [PREREGISTRATION_E13.md](PREREGISTRATION_E13.md), frozen with its
+code, analysis and tests at `945b6ec` before any run. The study was decided
+after §4.6 was known. Every agent now pays a private effort cost
+0.15 · (module capacity) · (1 − s)² for keeping its shortcut level s low. The
+cost lands on the agent, never on the shared ledger, so equal output sharing
+(pool) no longer reproduces the ambient tax.
+
+**Staging.** Everything tunable was fixed on development data before any
+confirmatory run:
+* calibration (seeds 2000–2019) chose the contract's anchor and the direct
+  charge's scale;
+* selection (seeds 2100–2119) picked, per skew, the best *strict*
+  (budget-balanced) comparator among pool, a direct load charge with equal
+  rebate, its role-weighted variant and a centred externality contract, at six
+  levels, and the best ambient-tax level;
+* the lock was committed at `d98ac2a`.
+
+Confirmation used fresh seeds 3000–3019 and a fresh holdout block (indices
+1 000 000–1 000 099 in every family; E1–E12 used 0–99). There were 380
+confirmatory and 160 sensitivity runs, all at `d98ac2a` with a clean tree.
+Every invariant held:
+* with effort off, pool and ambient learned identical profiles in 20/20 seeds
+  at both skews;
+* the largest strict balance residual was 5 × 10⁻¹⁴;
+* every run spent exactly 16 000 search simulations.
+
+**Primary contrasts** (comparator − gate, effort on; negative favours the
+comparator; Bonferroni familywise 95 %, margin 0.002):
+
+| Cell | Comparator (locked) | Δ | Interval | Verdict |
+|---|---|---|---|---|
+| skew 0 | direct charge, level 2 | −0.0030 | −0.0040 to −0.0021 | comparator advantage |
+| skew 1.5 | direct charge, level 1 | −0.0034 | −0.0045 to −0.0022 | comparator advantage |
+| skew 0 | ambient tax, level 1.5 | −0.0020 | −0.0032 to −0.0008 | inconclusive |
+| skew 1.5 | ambient tax, level 1 | −0.0026 | −0.0035 to −0.0017 | inconclusive |
+
+**Kill criterion met.** The strict comparator's upper bound is −0.0021 and
+−0.0022, both below +0.002. So the gate does not beat budget-balanced
+transfers even with effort off the ledger, and the tuned direct charge beats
+it by more than the margin in both cells. Both ambient intervals lie wholly
+below zero, but each crosses −0.002, so by the registered rule they are
+inconclusive, not a practical advantage.
+
+**Secondary tests** (Holm over three, one-sided): all supported.
+* **S1.** Effort widens the pool − ambient gap: +0.0069, p_Holm < 10⁻¹⁰.
+* **S2.** With effort on, unequal exposure widens the gate − ambient gap:
+  +0.0031, p_Holm = 4 × 10⁻⁶.
+* **S3.** Marginal-incentive error (|c·Δown − ΔW|) is smaller than pool's for
+  both the direct charge and the contract: pool 1.23, direct 0.57 and 0.13,
+  contract 0.09, against 0 for the ambient tax, at skews 0 and 1.5;
+  p_Holm < 10⁻¹⁰.
+
+**Directional predictions** (plain 95 % intervals):
+* **D1** held: the gate beats pool by 0.0074 (0.0048 to 0.0099) and 0.0043
+  (0.0030 to 0.0056).
+* **D2** held: the ambient comparator beats the gate by 0.0020 (0.0011 to
+  0.0029) and 0.0026 (0.0019 to 0.0033).
+* **D3** held.
+
+No prediction was registered for the primary strict contrasts.
+
+**Descriptive.** Holdout cost with effort on:
+
+| | private | gate | pool | ambient 1 | ambient (locked) | direct (locked) |
+|---|---|---|---|---|---|---|
+| skew 0 | 0.2392 | 0.2341 | 0.2414 | 0.2345 | 0.2321 | **0.2310** |
+| skew 1.5 | 0.1986 | 0.1841 | 0.1883 | 0.1815 | = ambient 1 | **0.1807** |
+
+* **Agents worse off than going private** (cost including settlement):
+  - direct charge: none at skew 0, 18 % at skew 1.5;
+  - gate: 30 % and 13 %;
+  - pool: 63 % and 50 %;
+  - ambient tax: every agent, because it is a tax.
+* **Largest single settlement**, as a share of nominal value: 0.03 for the
+  direct charge, 0.23–0.35 for pool, 1.2–1.9 for the ambient tax.
+
+**Sensitivities** (labelled, outside inference). All six intervals lie
+entirely below zero:
+
+| | skew 0 | skew 1.5 |
+|---|---|---|
+| peer noise (SD 0.1) | −0.0028 (inconclusive) | −0.0036 (comparator advantage) |
+| settlements capped at 10 % of nominal | −0.0030 (inconclusive) | −0.0034 (comparator advantage) |
+| gate given the contract's compute (M = 48) | −0.0023 (inconclusive) | −0.0023 (inconclusive) |
+
+The direct charge's lead keeps its sign under each. It clears the margin only
+in the noise and cap runs at skew 1.5.
+
+**Caveats.**
+* The direct charge needs each agent's shortcut load to be verified, which E9's
+  concealment arms showed can be gamed. E13 assumes verification works.
+* The contract was a candidate at selection (validation 0.2377 and 0.1832) but
+  was not chosen, so it has no confirmatory estimate.
 
 ## 5. Registered predictions and outcomes
 
@@ -610,6 +720,12 @@ close to reward-transfer schemes studied for learning agents (Willis et al.
 | | V2 log costlier than linear at matched convention, skew 1.5 | Held (+0.0226) |
 | | V3 distortion under every valid scale | Held |
 | | V4 corrected variants agree with linear at skew 0 | Held |
+| E13 | Primary: gate against the locked strict comparator (no direction predicted) | Comparator advantage in both cells; **kill criterion met** |
+| | D1 gate beats pool with effort on | Held (+0.0074, +0.0043) |
+| | D2 ambient comparator beats gate with effort on | Held (−0.0020, −0.0026); inconclusive against the margin in the primary test |
+| | D3 / S1 effort widens pool − ambient gap | Held |
+| | D3 / S2 unequal exposure widens gate − ambient gap | Held |
+| | D3 / S3 direct charge and contract beat pool on marginal error | Held |
 
 ## 6. Discussion
 
@@ -648,9 +764,11 @@ fails and the gate is the best option. That was wrong for this model: equal
 output sharing is budget-balanced, needs only shipped output, and does as well
 as the ambient tax (§4.6). The comparison set was incomplete, against our own
 rule to include the strongest instrument an operator could realistically use.
-The gate therefore has no role in these models. A role could exist where
-agents bear private costs, where risk aversion or collusion matter, or where
-transfers are capped; these studies hold all of them fixed.
+The gate therefore has no role in these models. E13 then tested the first
+candidate for a role, private effort, which does break equal sharing: pool
+fell behind the gate as predicted, but a direct charge on verified shortcut
+load, rebated equally, beat the gate, and still did with settlements capped at
+10 % of nominal value (§4.7). Risk aversion and collusion remain untested.
 
 **What each rule needs to observe.** The rules differ in information, and the
 matched search budget does not equalise that. Equal output sharing needs each
@@ -691,9 +809,15 @@ depends on which of these an operator can obtain.
   corrected rerun E12 confirm this: the gate's cost moved by up to 0.02 across
   the scales tested, and the verdict held under all of them. Other scales were
   not tested.
-* **Many tests, no multiplicity correction.** Each study registered a family
-  of tests with no adjustment, and several verdicts lie close to the 0.002
-  practical margin. Those should be read as indicative.
+* **Many tests, no multiplicity correction (E1–E12).** Each of those studies
+  registered a family of tests with no adjustment, and several verdicts lie
+  close to the 0.002 practical margin; those should be read as indicative.
+  E13 corrected for multiplicity (Bonferroni for the primary contrasts, Holm
+  for the secondary tests).
+* **E13 tunes its comparators but not the gate.** The comparators were picked
+  as the best of many arms on development data. Confirmation on fresh seeds
+  and scenarios removes the selection bias from the estimates, but the gate
+  had only its fixed κ = 1 and, as a sensitivity, more compute.
 * **E8 provenance.** E8's protocol was frozen at `9729748`, but its runs carry
   the "dirty" flag: the analysis script was written while they started and was
   committed with the results (`0547687`). The simulation code did not change
@@ -710,7 +834,7 @@ depends on which of these an operator can obtain.
 
 ## 8. Conclusion
 
-Across two environments and five pre-registered studies, the acceptance gate
+Across two environments and six pre-registered studies, the acceptance gate
 is a consequential design choice, but it is not a substitute for a
 well-chosen price. A price on the externality matches or beats every gate
 tested:
@@ -719,13 +843,13 @@ tested:
 * an ambient tax where it is not.
 
 In these models a budget-balanced transfer, equal sharing of output, does as
-well as the ambient tax (§4.6, post hoc), so we found no setting in which the
-gate is needed. That equivalence rests on agents having no private costs
-outside the shared ledger.
+well as the ambient tax (§4.6, post hoc). When agents bear private effort,
+equal sharing falls behind the gate, but a budget-balanced direct charge on
+verified shortcut load beats it (E13, pre-registered, kill criterion met). We
+found no setting in which the gate is needed.
 
-The line is closed. Four things could reopen it, none of them in scope here:
+The line is closed. Three things could reopen it, none of them in scope here:
 
-* agents with private costs, where equal sharing under-incentivises;
 * risk-averse agents facing a noisy ambient charge;
 * collusion against the ambient tax;
 * open-ended action spaces, such as agents that edit real code under a
@@ -736,7 +860,7 @@ The line is closed. Four things could reopen it, none of them in scope here:
 
 Code, raw records and analysis scripts are in this repository; commands are
 in [PROJECT.md §8](PROJECT.md#8-reproduce). The confirmatory runs take about
-four hours on a laptop. Results are deterministic given the commit,
+five and a half hours on a laptop (E13 alone about 90 minutes). Results are deterministic given the commit,
 and the analysis scripts regenerate the result files exactly from the stored
 records.
 

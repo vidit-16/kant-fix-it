@@ -17,7 +17,7 @@ Project page: **[kant-fix-it-web.vercel.app](https://kant-fix-it-web.vercel.app)
 
 ## What came out
 
-Five pre-registered studies and a pre-registered corrected rerun, 4,430
+Six pre-registered studies and a pre-registered corrected rerun, 4,810
 confirmatory run records (some shared between studies), two environments:
 
 * **The rule matters.** In a simulated interbank payment network, selfish
@@ -43,8 +43,16 @@ confirmatory run records (some shared between studies), two environments:
   a corrected, pre-registered rerun (E12) reached the same verdict. Details:
   [REPORT §4.5–4.6](docs/REPORT.md), [PROJECT §5.12–5.13](docs/PROJECT.md).
 
-So: Kant can't fix it, but a well-chosen price can, and here even an equal
-split of the output can.
+* **Private effort does not rescue the rule (E13, pre-registered).** Equal
+  sharing only matched the tax because agents had no costs of their own. When
+  avoiding shortcuts costs each agent private effort, equal sharing falls
+  behind the Kantian rule, as predicted, but a budget-balanced charge on each
+  agent's verified shortcut load, rebated equally, beats the rule in both
+  settings tested. The registered kill criterion was met. Details:
+  [REPORT §4.7](docs/REPORT.md), [PROJECT §5.14](docs/PROJECT.md).
+
+So: Kant can't fix it, but a well-chosen price can, and here even a
+budget-balanced charge can.
 
 ![The ambient tax against the Kantian gate as exposure becomes unequal](runs/fig_e10.png)
 
@@ -56,7 +64,8 @@ split of the output can.
 * Pilots used separate seeds and a separate scenario split. Results are
   scored on held-out scenario families never seen during evolution.
 * Failed predictions are reported as failed: 7 of 29 registered predictions
-  failed, six outright and one in part.
+  in E1–E11 failed, six outright and one in part. Every prediction registered
+  for E12 and E13 held.
 * Analysis scripts regenerate every reported number exactly from the stored
   records; 94 tests cover accounting, determinism and protocol isolation. An
   independent reviewer re-ran 120 headline runs and reproduced them exactly.
@@ -94,9 +103,13 @@ uv run python -m evortgs.cb_experiments unitspilot E11
 uv run python -m evortgs.analysis_e11
 uv run python -m evortgs.cb_experiments e12pilot E12
 uv run python -m evortgs.analysis_e12
+uv run python -m evortgs.e13 calib lock
+uv run python -m evortgs.e13 select lock   # commit runs/e13_lock.json before continuing
+uv run python -m evortgs.e13 E13 E13sens
+uv run python -m evortgs.analysis_e13
 ```
 
-The full set takes about four hours on a laptop. On a machine with little free
+The full set takes about five and a half hours on a laptop. On a machine with little free
 memory, set `EVO_WORKERS=4 OPENBLAS_NUM_THREADS=1`.
 
 ## Layout

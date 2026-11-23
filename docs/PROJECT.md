@@ -40,8 +40,10 @@ notes of 17 November 2026 are folded into §7 and §9; that file is deleted.
 | Confirmatory experiment E12 | Run, 240 runs, analysed (§5.13). **All four predictions held; E11's verdict survives the corrections** |
 | Independent review (23 November 2026) | Headline runs reproduced exactly. **Equal output sharing, a budget-balanced rule we never tested, equals the ambient tax in this model; the gate's budget-balanced niche is withdrawn** (§5.12, post hoc). Pooling rule and tests added; 94 tests with the E12 additions |
 | Pre-registration for E13 (gate vs budget-balanced transfers with off-ledger effort) | Frozen with its code, analysis and tests before any E13 run ([PREREGISTRATION_E13.md](PREREGISTRATION_E13.md)). Reopens the line through the first candidate in §7 (D39) |
+| Calibration and selection for E13 | 1 040 dev runs at `945b6ec`; comparators locked and committed at `d98ac2a` before any confirmatory run |
+| Confirmatory experiment E13 | Run, 380 confirmatory and 160 sensitivity runs, analysed (§5.14). **Kill criterion met: a budget-balanced direct charge beats the gate in both effort-on cells** |
 | Final write-up | REPORT.md rewritten as a standalone report; every number re-checked against regenerated results (18 November 2026) |
-| **Project status** | **Reopened for E13 (D39)** after concluding at D29, aiming at a journal paper |
+| **Project status** | **Concluded again after E13 (D40)**; next step is the journal paper |
 | Language-model proposers | Not started, by decision (D29, §7) |
 | External replication, peer review | None |
 
@@ -52,8 +54,10 @@ are alike and beats them when agents are unequally exposed (E10, the
 pre-registered rule closes the line); the narrower claim made earlier, that
 the gate beats budget-balanced charges, was withdrawn after an independent
 review showed that equal output sharing, which is budget-balanced, does as
-well as the ambient tax in this model (§5.12, post hoc). No novelty claim is
-made.
+well as the ambient tax in this model (§5.12, post hoc); and when agents bear
+private effort, which breaks that equivalence, a budget-balanced direct charge
+on verified shortcut load still beats the gate (E13, kill criterion met,
+§5.14). No novelty claim is made.
 
 ## 2. Direction taken, and why it differs from the handoff
 
@@ -859,6 +863,63 @@ broadcasting the realized instead of the raw change changed linear by 0.0000,
 **Decision.** The strong line does not reopen; the closure is robust to the
 corrected variants. E11's faults were real but did not drive its results.
 
+### 5.14 E13 — effort off the ledger (pre-registered)
+
+Protocol [PREREGISTRATION_E13.md](PREREGISTRATION_E13.md), frozen with code,
+analysis (`src/evortgs/analysis_e13.py`) and tests at `945b6ec`. Selection lock
+`runs/e13_lock.json`, committed at `d98ac2a` with the calibration (80 runs) and
+selection (960 runs) records, all at `945b6ec` and none dirty. Confirmatory records
+`runs/E13.jsonl` (380) and `runs/E13sens.jsonl` (160), all at `d98ac2a`, none
+dirty; results `runs/results_e13.json`. Seeds 3000–3019; holdout indices
+1 000 000–1 000 099 in each family.
+
+**Locked on dev data.**
+* Contract anchor: mid (0.5, 0, 0.5).
+* Direct-charge scale: 4.96 at skew 0 and 4.52 at skew 1.5.
+* Strict comparator: direct charge level 2 (skew 0) and level 1 (skew 1.5).
+* Ambient level: 1.5 and 1.
+* Compute-matched gate: M = 48.
+* No selection at a grid edge.
+
+**Invariants**, all held:
+* effort-off pool = ambient in 20/20 seeds per skew;
+* strict balance residual 5 × 10⁻¹⁴;
+* 16 000 search simulations per run.
+
+| Test | Outcome |
+|---|---|
+| Primary, strict, skew 0 (direct 2) | −0.0030 (−0.0040 to −0.0021), **comparator advantage** |
+| Primary, strict, skew 1.5 (direct 1) | −0.0034 (−0.0045 to −0.0022), **comparator advantage** |
+| Primary, ambient, skew 0 (level 1.5) | −0.0020 (−0.0032 to −0.0008), inconclusive |
+| Primary, ambient, skew 1.5 (level 1) | −0.0026 (−0.0035 to −0.0017), inconclusive |
+| Kill criterion (strict upper bound ≤ +0.002 in both cells) | **Met** (−0.0021, −0.0022) |
+| S1 effort widens pool − ambient | Held, +0.0069, p_Holm < 10⁻¹⁰ |
+| S2 skew widens gate − ambient (effort on) | Held, +0.0031, p_Holm = 4 × 10⁻⁶ |
+| S3 direct and contract beat pool on marginal error | Held; errors pool 1.23, direct 0.57 / 0.13, contract 0.09, ambient 0 |
+| D1 gate beats pool | Held, +0.0074 and +0.0043 |
+| D2 ambient comparator beats gate | Held, −0.0020 and −0.0026 (plain 95 % intervals exclude 0) |
+
+Primary intervals are Bonferroni familywise 95 %, comparator − gate.
+
+**Sensitivities** (labelled):
+* All six intervals lie entirely below zero.
+* At skew 1.5, peer noise and the 10 % cap keep a comparator advantage beyond
+  the margin.
+* At skew 0, both are inconclusive against the margin.
+* The compute-matched gate is inconclusive at both skews.
+
+**Descriptive.**
+* Share of agents worse off than going private:
+  - direct charge: 0 % and 18 %;
+  - gate: 30 % and 13 %;
+  - pool: 63 % and 50 %.
+* Largest settlement, as a share of nominal value: direct 0.03, pool 0.35,
+  ambient 1.9.
+
+**Decision.** The registered kill criterion closes the gate-advantage line for
+budget-balanced settings with off-ledger effort (D40). The result depends on
+verified shortcut load; the contract, not selected, has no confirmatory estimate.
+
 ## 6. Decision log
 
 | ID | Question | Resolution |
@@ -901,6 +962,7 @@ corrected variants. E11's faults were real but did not drive its results.
 | D36 | Does E11 stand as run? | Partly. U1 holds over the variants as implemented; the square-root variant is invalid, U2 confounds scale with convention, and one verdict flag had a sign error. Corrected rerun to be registered first, results reported beside the originals |
 | D38 | Does E11's verdict survive its corrections? | Yes (E12, pre-registered, `38d1e4f`). All four predictions held; the ambient tax stays clearly cheaper than the best of eleven valid variants, by less than the practical margin, as in E11 |
 | D39 | Reopen the research? | Yes, for one pre-registered study, E13: off-ledger effort breaks the pooling/ambient equivalence, so the gate is compared again with the strongest tested budget-balanced transfers (tuned pooling, a direct load charge with balanced rebate, a centred externality contract) and separately with the ambient tax. Calibration, selection and confirmation are staged; fresh seeds 3000-3019 and a fresh holdout block. Owner's decision, 23 November 2026 |
+| D40 | Does the gate beat budget-balanced transfers when effort is off the ledger? | No (E13, pre-registered, `945b6ec`/`d98ac2a`). Equal sharing falls behind the gate as predicted, but a tuned direct charge on verified shortcut load with equal rebate beats the gate by 0.0030 and 0.0034; the kill criterion is met and the line closes again. Next: the journal paper |
 | D37 | Unequal noise filters across gates? | No issue. With `min_t = 0` in every confirmatory study no gate filters; E7 used only gates that apply the filter. Raised while checking the review and retracted |
 
 ## 7. Unresolved questions and next steps
@@ -913,13 +975,15 @@ the best available instrument") is closed by the rule registered for E10
 After the independent review (§5.12) E11 was corrected and rerun as E12
 (§5.13, D38). The owner reopened the research for one study, E13, which takes
 up the first candidate below ([PREREGISTRATION_E13.md](PREREGISTRATION_E13.md), D39).
+Its kill criterion was met (§5.14, D40): with private effort, a budget-balanced
+direct charge still beats the gate, so that candidate no longer reopens the line.
 
 What would reopen the line, none of it planned:
 
-* **Agents with private costs** (effort, compute) outside the shared ledger.
-  Equal output sharing then under-incentivises (Holmström's team problem)
-  while the ambient tax does not, so a gate could matter against
-  budget-balanced rules again. The most direct follow-up to D34.
+* ~~Agents with private costs outside the shared ledger.~~ Tested in E13
+  (§5.14): equal sharing does fall behind the gate, but a direct charge on
+  verified shortcut load does not. A remaining variant is effort where the
+  load itself cannot be verified.
 * **Risk-averse agents facing a noisy ambient charge**, or **collusion**
   against it: the classic objections to ambient taxes, which E9 and E10
   exclude by construction. The only remaining test that could give gates a
@@ -964,10 +1028,15 @@ uv run python -m evortgs.cb_experiments unitspilot E11
 uv run python -m evortgs.analysis_e11
 uv run python -m evortgs.cb_experiments e12pilot E12
 uv run python -m evortgs.analysis_e12
+uv run python -m evortgs.e13 calib lock
+uv run python -m evortgs.e13 select lock   # commit runs/e13_lock.json before continuing
+uv run python -m evortgs.e13 E13 E13sens
+uv run python -m evortgs.analysis_e13
 ```
 
 E1–E8 take about 90 minutes on eight logical cores; E9 took 90 minutes and
-E10 46 minutes and E11 19 minutes with
+E10 46 minutes, E11 19 minutes, and E13 about 90 minutes in all (calibration 18,
+selection 38, confirmation 20, sensitivities 10) with
 four workers (`EVO_WORKERS=4 OPENBLAS_NUM_THREADS=1` on a machine with little
 free memory). Records carry the commit hash; results are deterministic given
 the commit.
